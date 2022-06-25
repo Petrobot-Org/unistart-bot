@@ -1,12 +1,12 @@
 package ru.spbstu.application.telegram
 
 import dev.inmo.tgbotapi.bot.ktor.telegramBot
-import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviourWithLongPolling
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import ru.spbstu.application.auth.telegram.handleStart
 
 class TelegramBot(token: TelegramToken) {
     private val bot = telegramBot(token.value)
@@ -15,9 +15,7 @@ class TelegramBot(token: TelegramToken) {
     fun start() {
         coroutineScope.launch {
             bot.buildBehaviourWithLongPolling {
-                onCommand("start") {
-                    sendTextMessage(it.chat, "Hi")
-                }
+                onCommand("start", scenarioReceiver = { handleStart(it) })
             }.join()
         }
     }
