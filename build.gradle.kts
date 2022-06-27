@@ -1,6 +1,7 @@
 plugins {
     kotlin("multiplatform") version Versions.kotlin
     kotlin("plugin.serialization") version Versions.kotlin
+    id("org.jetbrains.compose") version Versions.compose
     application
 }
 
@@ -10,6 +11,7 @@ version = "1.0-SNAPSHOT"
 repositories {
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
+    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
 kotlin {
@@ -23,18 +25,15 @@ kotlin {
         }
     }
     js(IR) {
+        browser()
         binaries.executable()
-        browser {
-            commonWebpackConfig {
-                cssSupport.enabled = true
-            }
-        }
     }
     sourceSets {
         val commonMain by getting {
             dependencies {
                 implementation("io.insert-koin:koin-core:${Versions.koin}")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.serialization}")
+                implementation(compose.runtime)
             }
         }
         val commonTest by getting {
@@ -57,19 +56,11 @@ kotlin {
         val jsMain by getting {
             dependencies {
                 implementation("dev.inmo:tgbotapi.webapps:${Versions.telegramBotApi}")
-                implementation("org.jetbrains.kotlin-wrappers:kotlin-react")
-                implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom")
-                implementation("org.jetbrains.kotlin-wrappers:kotlin-emotion")
-                implementation("org.jetbrains.kotlin-wrappers:kotlin-redux")
-                implementation("org.jetbrains.kotlin-wrappers:kotlin-react-redux")
+                implementation(compose.web.core)
             }
         }
         val jsTest by getting
     }
-}
-
-dependencies {
-    "jsMainImplementation"(enforcedPlatform("org.jetbrains.kotlin-wrappers:kotlin-wrappers-bom:${Versions.kotlinWrappers}"))
 }
 
 application {

@@ -15,15 +15,16 @@ import ru.spbstu.application.telegram.TelegramBot
 
 fun HTML.index() {
     head {
-        title("Hello from Ktor!")
+        meta("viewport", "initial-scale=1, width=device-width")
+        title("UniStart")
+        styleLink("https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap")
+        styleLink("/static/styles.css")
     }
     body {
         div {
-            +"Hello from Ktor"
-        }
-        div {
             id = "root"
         }
+        script(src = "https://telegram.org/js/telegram-web-app.js") {}
         script(src = "/static/unistart.js") {}
     }
 }
