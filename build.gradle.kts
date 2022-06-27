@@ -1,6 +1,7 @@
 plugins {
     kotlin("multiplatform") version Versions.kotlin
     kotlin("plugin.serialization") version Versions.kotlin
+    id("com.squareup.sqldelight") version Versions.sqlDelight
     application
 }
 
@@ -35,6 +36,7 @@ kotlin {
             dependencies {
                 implementation("io.insert-koin:koin-core:${Versions.koin}")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.serialization}")
+                implementation("com.squareup.sqldelight:runtime:${Versions.sqlDelight}")
             }
         }
         val commonTest by getting {
@@ -51,6 +53,14 @@ kotlin {
                 implementation("io.insert-koin:koin-ktor:${Versions.koin}")
                 implementation("io.insert-koin:koin-logger-slf4j:${Versions.koin}")
                 implementation("org.slf4j:slf4j-simple:${Versions.slf4jSimple}")
+                implementation("com.squareup.sqldelight:sqlite-driver:${Versions.sqlDelight}")
+                implementation("com.squareup.sqldelight:coroutines-extensions-jvm:${Versions.sqlDelight}")
+            }
+            sqldelight {
+                database("AppDatabase") {
+                    packageName = "ru.spbstu.unistart-bot.data.source"
+                    verifyMigrations = true
+                }
             }
         }
         val jvmTest by getting
