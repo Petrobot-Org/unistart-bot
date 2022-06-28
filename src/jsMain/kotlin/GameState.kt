@@ -4,6 +4,9 @@ sealed interface GameState {
     object Loading : GameState
     data class Playing(
         val cards: List<TrendCard>,
-        val ideas: List<String>
+        val ideasCount: Int
     ) : GameState
+    data class Details(
+        val card: TrendCard
+    )
 }

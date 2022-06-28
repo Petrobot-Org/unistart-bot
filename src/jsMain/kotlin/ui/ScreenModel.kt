@@ -18,26 +18,32 @@ class ScreenModel(
 ) {
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
     private val cardsFlow = MutableStateFlow<List<TrendCard>?>(null)
-    private val ideasFlow = MutableStateFlow(emptyList<String>())
-    val state = combine(cardsFlow, ideasFlow) { cards, ideas ->
+    private val ideasCountFlow = MutableStateFlow(0)
+    private val detailsPageFlow = MutableStateFlow(0)
+    val state = combine(cardsFlow, ideasCountFlow, detailsPageFlow) { cards, ideasCount, detailsPage ->
         if (cards == null) {
             GameState.Loading
+        } else if (detailsPage in cards.indices) {
+            GameState.Details(cards[detailsPage])
         } else {
-            GameState.Playing(cards, ideas)
+            GameState.Playing(cards, ideasCount)
         }
     }.stateIn(coroutineScope, SharingStarted.WhileSubscribed(5000L), GameState.Loading)
 
     fun addIdea(text: String) {
-        ideasFlow.value += text
+        ideasCountFlow.value += 1
     }
 
     fun loadCards() = coroutineScope.launch {
         delay(1000)
         cardsFlow.value = listOf(
-            TrendCard("Тренд 1", "de", "https://polikek.ithersta.com/static/cards/pochernin.webp"),
-            TrendCard("Тренд 2", "de", "https://polikek.ithersta.com/static/cards/pochernin2.webp"),
-            TrendCard("Тренд 3", "de", "https://polikek.ithersta.com/static/cards/chad.webp")
+            TrendCard("Тренд «тёмная тема»", "Объективно лучше", "https://lh3.googleusercontent.com/2dBw3e0xPpK37MzJ9pci2OySJiHhQCNY1RIHAYkJ5PBbBzApRNkbOgV0RCzsJw0VOOiiBxyoIc_QhbRxGiTw-DgHVc1-_NWaFJ0C=w1064-v0"),
+            TrendCard("Тренд «закруглённые края»", "Объективно красивее", "https://designmodo.com/wp-content/uploads/2012/06/rectangles.jpg"),
         )
         webApp.expand()
+    }
+
+    fun goNext() {
+        detailsPageFlow.value += 1
     }
 }
