@@ -56,12 +56,6 @@ kotlin {
                 implementation("com.squareup.sqldelight:sqlite-driver:${Versions.sqlDelight}")
                 implementation("com.squareup.sqldelight:coroutines-extensions-jvm:${Versions.sqlDelight}")
             }
-            sqldelight {
-                database("AppDatabase") {
-                    packageName = "ru.spbstu.unistart-bot.data.source"
-                    verifyMigrations = true
-                }
-            }
         }
         val jvmTest by getting
         val jsMain by getting {
@@ -94,4 +88,11 @@ tasks.named<Copy>("jvmProcessResources") {
 tasks.named<JavaExec>("run") {
     dependsOn(tasks.named<Jar>("jvmJar"))
     classpath(tasks.named<Jar>("jvmJar"))
+}
+
+sqldelight {
+    database("AppDatabase") {
+        packageName = "ru.spbstu.unistart-bot.data.source"
+        verifyMigrations = true
+    }
 }

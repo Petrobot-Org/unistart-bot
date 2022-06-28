@@ -4,7 +4,7 @@ import com.squareup.sqldelight.sqlite.driver.JdbcSqliteDriver
 import java.sql.SQLException
 import java.util.*
 
-fun createAppDatabase(jdbcString: String): AppDatabase {
+/*fun createAppDatabase(jdbcString: String): AppDatabase {
     val driver = JdbcSqliteDriver(
         jdbcString,
         Properties(1).apply { put("foreign_keys", "true") }
@@ -16,4 +16,4 @@ fun createAppDatabase(jdbcString: String): AppDatabase {
         }
     }
     //недописано
-}
+}*/
