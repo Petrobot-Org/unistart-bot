@@ -1,24 +1,12 @@
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import org.jetbrains.compose.web.css.padding
-import org.jetbrains.compose.web.css.px
-import org.jetbrains.compose.web.dom.*
+import dev.inmo.tgbotapi.webapps.webApp
 import org.jetbrains.compose.web.renderComposable
+import ui.App
+import ui.ScreenModel
 
 fun main() {
-    var count: Int by mutableStateOf(0)
-
+    val client = GameClient(webApp.initData, webApp.initDataUnsafe.hash)
+    val screenModel = ScreenModel(client)
     renderComposable(rootElementId = "root") {
-        Div({ style { padding(16.px) } }) {
-            Span {
-                Text(count.toString())
-            }
-            Button(attrs = {
-                onClick { count += 1 }
-            }) {
-                Text("+")
-            }
-        }
+        App(screenModel)
     }
 }

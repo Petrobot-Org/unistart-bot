@@ -25,7 +25,11 @@ kotlin {
         }
     }
     js(IR) {
-        browser()
+        browser {
+            commonWebpackConfig {
+                cssSupport.enabled = true
+            }
+        }
         binaries.executable()
     }
     sourceSets {
@@ -46,6 +50,9 @@ kotlin {
                 implementation("dev.inmo:tgbotapi:${Versions.telegramBotApi}")
                 implementation("io.ktor:ktor-server-netty:${Versions.ktor}")
                 implementation("io.ktor:ktor-server-html-builder-jvm:${Versions.ktor}")
+                implementation("io.ktor:ktor-server-auth:${Versions.ktor}")
+                implementation("io.ktor:ktor-server-content-negotiation:${Versions.ktor}")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:${Versions.ktor}")
                 implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:${Versions.kotlinxHtml}")
                 implementation("io.insert-koin:koin-ktor:${Versions.koin}")
                 implementation("io.insert-koin:koin-logger-slf4j:${Versions.koin}")
@@ -55,6 +62,10 @@ kotlin {
         val jvmTest by getting
         val jsMain by getting {
             dependencies {
+                implementation("io.ktor:ktor-client-core:${Versions.ktor}")
+                implementation("io.ktor:ktor-client-content-negotiation:${Versions.ktor}")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:${Versions.ktor}")
+                implementation("io.ktor:ktor-client-auth:${Versions.ktor}")
                 implementation("dev.inmo:tgbotapi.webapps:${Versions.telegramBotApi}")
                 implementation(compose.web.core)
             }

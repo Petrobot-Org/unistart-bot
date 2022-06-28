@@ -11,13 +11,15 @@ import kotlinx.html.*
 import org.koin.ktor.ext.get
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
+import ru.spbstu.application.configuration.configureAuthentication
+import ru.spbstu.application.configuration.configureRouting
+import ru.spbstu.application.configuration.configureSerialization
 import ru.spbstu.application.telegram.TelegramBot
 
 fun HTML.index() {
     head {
         meta("viewport", "initial-scale=1, width=device-width")
         title("UniStart")
-        styleLink("https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap")
         styleLink("/static/styles.css")
     }
     body {
@@ -35,14 +37,9 @@ fun main() {
             slf4jLogger()
             modules(unistartModule)
         }
-        routing {
-            get("/") {
-                call.respondHtml(HttpStatusCode.OK, HTML::index)
-            }
-            static("/static") {
-                resources()
-            }
-        }
+        configureSerialization()
+        configureAuthentication()
+        configureRouting()
         get<TelegramBot>().start()
     }.start(wait = true)
 }

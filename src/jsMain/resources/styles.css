@@ -1,0 +1,119 @@
+html, body {
+    height: 100vh;
+    margin: 0;
+    background-color: var(--tg-theme-bg-color)
+}
+
+h6 {
+    color: var(--tg-theme-text-color);
+    font-size: large;
+}
+
+.card {
+    background-color: var(--tg-theme-secondary-bg-color);
+    border-radius: 1rem;
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / .1);
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.card > img {
+    object-fit: cover;
+    width: 100%;
+    height: 50%;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.75rem;
+}
+
+.card-body {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+}
+
+.card.image-full > .card-body {
+    z-index: 20;
+}
+
+.card.image-full {
+    display: grid;
+}
+
+.card.image-full > img {
+    height: 100%;
+}
+
+.card.image-full::before, .card.image-full > * {
+    grid-column-start: 1;
+    grid-row-start: 1;
+}
+
+.card.image-full::before {
+    z-index: 10;
+    background-color: rgb(61, 68, 81);
+    opacity: 0.75;
+    position: relative;
+    content: "";
+}
+
+.card.image-full > .card-body {
+    color: white
+}
+
+button {
+    background-image: none;
+}
+
+.btn {
+    display: inline-flex;
+    flex-shrink: 0;
+    cursor: default;
+    user-select: none;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    border-color: transparent;
+    text-align: center;
+    transition-property: transform;
+    transition-duration: .2s;
+    transition-timing-function: cubic-bezier(.4,0,.2,1);
+    border-radius: .5rem;
+    height: 3rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    font-size: .875rem;
+    line-height: 1em;
+    min-height: 3rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    text-decoration-line: none;
+    border-width: 1px;
+    animation: button-pop .25s ease-out;
+    background-color: var(--tg-theme-button-color);
+    color: var(--tg-theme-button-text-color);
+}
+
+.btn:active:hover,
+.btn:active:focus {
+    animation: none;
+    transform: scale(0.95);
+}
+
+@keyframes button-pop {
+    0% {
+        transform: scale(.95)
+    }
+    40% {
+        transform: scale(1.02)
+    }
+    to {
+        transform: scale(1)
+    }
+}

@@ -1,3 +1,5 @@
+package trends
+
 import kotlinx.serialization.Serializable
 
 @Serializable
