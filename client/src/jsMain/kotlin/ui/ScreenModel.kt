@@ -12,7 +12,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import trends.TrendCard
+import trendyfriendy.Idea
+import trendyfriendy.TrendCard
 
 class ScreenModel(
     private val client: GameClient
@@ -42,7 +43,7 @@ class ScreenModel(
     fun addIdea(text: String) {
         coroutineScope.launch {
             loadingAddIdea += 1
-            val ideaResponse = client.addIdea(text)
+            val ideaResponse = client.addIdea(Idea(text))
             ideasCount = ideaResponse.ideasCount
             loadingAddIdea -= 1
         }

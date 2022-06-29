@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    kotlin("plugin.serialization")
     id("com.squareup.sqldelight") version Versions.sqlDelight
     application
 }

@@ -1,4 +1,4 @@
-import trends.TrendCard
+import trendyfriendy.TrendCard
 
 sealed interface GameState {
     object Loading : GameState

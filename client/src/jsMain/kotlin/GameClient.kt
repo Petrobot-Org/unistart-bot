@@ -5,7 +5,8 @@ import io.ktor.client.plugins.auth.providers.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.json.*
-import trends.IdeaResponse
+import trendyfriendy.Idea
+import trendyfriendy.IdeaResponse
 
 class GameClient(initData: String, hash: String) {
     private val client = HttpClient {
@@ -19,7 +20,7 @@ class GameClient(initData: String, hash: String) {
         }
     }
 
-    suspend fun addIdea(text: String): IdeaResponse {
-        return client.post("/trends/idea").body()
+    suspend fun addIdea(idea: Idea): IdeaResponse {
+        return client.post("/trendy-friendy/idea") { setBody(idea) }.body()
     }
 }

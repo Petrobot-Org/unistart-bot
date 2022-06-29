@@ -4,8 +4,21 @@ import dev.inmo.tgbotapi.utils.TelegramAPIUrlsKeeper
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 import org.koin.ktor.ext.inject
 import ru.spbstu.application.telegram.TelegramToken
+
+@Serializable
+class WebAppUser(
+    val id: Long,
+    @SerialName("first_name") val firstName: String,
+    @SerialName("last_name") val lastName: String,
+    val username: String,
+    @SerialName("language_code") val languageCode: String
+)
 
 fun Application.configureAuthentication() {
     val telegramToken: TelegramToken by inject()
@@ -18,11 +31,13 @@ fun Application.configureAuthentication() {
                 val data = credentials.name
                 val hash = credentials.password
                 if (telegramApiUrlsKeeper.checkWebAppData(data, hash)) {
-                    UserIdPrincipal(data
+                    val userData = data
                         .decodeURLQueryComponent()
                         .split("&")
-                        .first { it.startsWith("user") }
-                    )
+                        .first { it.startsWith("user=") }
+                        .removePrefix("user=")
+                    val webAppUser = Json.decodeFromString<WebAppUser>(userData)
+                    UserIdPrincipal(webAppUser.id.toString())
                 } else {
                     null
                 }

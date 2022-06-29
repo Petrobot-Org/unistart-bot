@@ -1,4 +1,4 @@
-package trends
+package trendyfriendy
 
 import kotlinx.serialization.Serializable
 

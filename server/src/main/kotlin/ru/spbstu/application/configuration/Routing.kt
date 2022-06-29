@@ -7,7 +7,7 @@ import io.ktor.server.http.content.*
 import io.ktor.server.routing.*
 import kotlinx.html.HTML
 import ru.spbstu.application.index
-import ru.spbstu.application.trends.trendsApi
+import ru.spbstu.application.trendyfriendy.trendyFriendyApi
 
 fun Application.configureRouting() {
     routing {
@@ -17,6 +17,6 @@ fun Application.configureRouting() {
         static("/static") {
             resources()
         }
-        trendsApi()
+        trendyFriendyApi()
     }
 }
