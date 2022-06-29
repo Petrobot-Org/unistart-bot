@@ -92,7 +92,8 @@ tasks.named<JavaExec>("run") {
 
 sqldelight {
     database("AppDatabase") {
-        packageName = "ru.spbstu.unistart-bot.data.source"
+        packageName = "ru.spbstu.unistart-bot.data.entities"
+        sourceFolders = listOf("sqldelight")
         verifyMigrations = true
     }
 }
