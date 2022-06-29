@@ -1,9 +1,24 @@
 package ru.spbstu.application.telegram
 
+import ru.spbstu.application.auth.entities.Avatar
+import ru.spbstu.application.auth.entities.Occupation
+
 
 object Strings {
-    val Avatars = arrayOf("Ж","М","DigitalAgile")
-    val Occupations = arrayOf("Бакалавриат 1 курс","Бакалавриат 2 курс","Бакалавриат 3 курс","Бакалавриат 4 курс", "Магистратура 1 курс","Магистратура 2 курс","У меня уже есть свой бизнес!","Работаю по найму","Студент")
+    val Avatars = mapOf(
+        "М" to Avatar.Male,
+        "Ж" to Avatar.Female ,
+        "DigitalAgile" to Avatar.DigitalAgile
+    )
+    val Occupations = mapOf(
+        "Бакалавриат 1 курс" to Occupation.BachelorYear1,
+        "Бакалавриат 2 курс" to Occupation.BachelorYear2,
+        "Бакалавриат 3 курс" to Occupation.BachelorYear3,
+        "Бакалавриат 4 курс" to Occupation.BachelorYear4,
+        "Магистратура 1 курс" to Occupation.MasterYear1,
+        "Магистратура 2 курс" to Occupation.MasterYear2,
+        "У меня уже есть свой бизнес!" to Occupation.Businessman,
+        "Работаю по найму" to Occupation.Employee)
 
     const val WelcomeRequirePhone = "Привет, меня зовут UniStart, и я буду с тобой на протяжении всего, надеюсь, увлекательного и успешного пути по развитию собственной идеи до реального бизнеса! Для начала давай ты укажешь свой номер, чтобы получить доступ"
     const val SendPhoneButton = "Отправить номер телефона"
@@ -18,5 +33,8 @@ object Strings {
     const val SoSoIdea="Вроде есть, но хочу еще погенерить и стартануть предпринимателем!"
     const val StartWithSecondStep="Отлично! Ты стартуешь со второго шага, так как первый - генерация идей у тебя уже пройден. Но если ты захочешь пройти первый шаг, он тебе уже доступен и можешь выбрать и начать с него. По мере прохождения нашего пути тебе будут открываться новые шаги, но ты всегда сможешь вернуться и пройти все, которые ты уже проходил, ведь движение в бизнесе не только прямолинейно)))"
     const val StartWithFirstStep = "Отлично! Делаем первый шаг! По мере прохождения нашего пути тебе будут открываться новые шаги, но ты всегда сможешь вернуться и пройти все, которые ты уже проходил, ведь движение в бизнесе не только прямолинейно)))"
+    const val Student = "Студент"
 
+    const val InvalidAvatar ="Такого аватара не существует"
+    const val InvalidOccupation ="Не могу понять род вашей деятельности"
 }
