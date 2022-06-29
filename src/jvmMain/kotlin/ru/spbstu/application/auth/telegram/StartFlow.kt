@@ -1,5 +1,6 @@
 package ru.spbstu.application.auth.telegram
 
+import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitContact
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitText
@@ -56,11 +57,11 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
                 oneTimeKeyboard = true
             )
         )
-    ).first()
+    ).first().text
 
     var av = Avatar.values()[0];
     for (i in 0..2) {
-        if (avatar.toString() == Avatars[i]) {
+        if (avatar == Avatars[i]) {
             av = Avatar.values()[i]
         }
     }
@@ -77,27 +78,27 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
                 oneTimeKeyboard = true
             )
         )
-    ).first().toString()
+    ).first().text
 
-//    if (occupation == Occupations[8]) {
-    var occ = waitText(
-        SendTextMessage(
-            message.chat.id, Strings.ChooseCourse,
-            replyMarkup = ReplyKeyboardMarkup(
-                buttons = arrayOf(
-                    SimpleKeyboardButton(Occupations[0]),
-                    SimpleKeyboardButton(Occupations[1]),
-                    SimpleKeyboardButton(Occupations[2]),
-                    SimpleKeyboardButton(Occupations[3]),
-                    SimpleKeyboardButton(Occupations[4]),
-                    SimpleKeyboardButton(Occupations[5])
-                ),
-                resizeKeyboard = true,
-                oneTimeKeyboard = true
+    if (occupation == Occupations[8]) {
+        occupation = waitText(
+            SendTextMessage(
+                message.chat.id, Strings.ChooseCourse,
+                replyMarkup = ReplyKeyboardMarkup(
+                    buttons = arrayOf(
+                        SimpleKeyboardButton(Occupations[0]),
+                        SimpleKeyboardButton(Occupations[1]),
+                        SimpleKeyboardButton(Occupations[2]),
+                        SimpleKeyboardButton(Occupations[3]),
+                        SimpleKeyboardButton(Occupations[4]),
+                        SimpleKeyboardButton(Occupations[5])
+                    ),
+                    resizeKeyboard = true,
+                    oneTimeKeyboard = true
+                )
             )
-        )
-    ).first().toString()
-//    }
+        ).first().text
+    }
 
     var oc = Occupation.values()[0];
     for (i in 0..8) {
@@ -120,7 +121,7 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
                 oneTimeKeyboard = true
             )
         )
-    ).first()
+    ).first().text
 
     var startLevel = 0
     var firstStepInfo = ""
@@ -134,7 +135,7 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
         }
     }
 
-    SendTextMessage(message.chat.id, firstStepInfo)
+    sendTextMessage(message.chat.id, firstStepInfo)
 
     val user = User(User.Id(message.chat.id.chatId), phoneNumber, av, oc, startLevel)
     userRepository.add(user)
