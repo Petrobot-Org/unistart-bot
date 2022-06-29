@@ -27,7 +27,7 @@ fun HTML.index() {
             id = "root"
         }
         script(src = "https://telegram.org/js/telegram-web-app.js") {}
-        script(src = "/static/unistart.js") {}
+        script(src = "/static/client.js") {}
     }
 }
 
