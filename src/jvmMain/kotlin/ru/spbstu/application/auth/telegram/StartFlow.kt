@@ -1,5 +1,6 @@
 package ru.spbstu.application.auth.telegram
 
+import dev.inmo.micro_utils.coroutines.firstNotNull
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitContact
@@ -14,7 +15,9 @@ import dev.inmo.tgbotapi.types.message.content.TextContent
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.row
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.simpleButton
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.forEach
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import org.koin.core.context.GlobalContext
 import ru.spbstu.application.auth.entities.Avatar
 import ru.spbstu.application.auth.entities.Occupation
@@ -48,38 +51,25 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
             )
         )
     ).map { PhoneNumber(it.contact.phoneNumber) }.first()
-    var hasAvatar=false
-    var hasOccupation=false
-    var hasIdea=false
+    var hasOccupation = false
+    var hasIdea = false
 
 //    if (userRepository.contains(phoneNumber)) {
-    var av = Avatar.values()[0]
 
     ///послать 3 картинки с аватарами и подписями
 
-    while (!hasAvatar) {
-        val avatar = waitText(
-            SendTextMessage(
-                message.chat.id, Strings.ChooseAvatar,
-                replyMarkup = ReplyKeyboardMarkup(
-                    buttons = arrayOf(
-                        SimpleKeyboardButton(Avatars.keys.elementAt(0)),
-                        SimpleKeyboardButton(Avatars.keys.elementAt(1)),
-                        SimpleKeyboardButton(Avatars.keys.elementAt(2))
-                    ),
-                    resizeKeyboard = true,
-                    oneTimeKeyboard = true
-                )
+    val avatar = waitText(
+        SendTextMessage(
+            message.chat.id, Strings.ChooseAvatar,
+            replyMarkup = ReplyKeyboardMarkup(
+                buttons = Avatars.keys.map { SimpleKeyboardButton(it) }.toTypedArray(),
+                resizeKeyboard = true,
+                oneTimeKeyboard = true
             )
-        ).first().text
-
-        if (Avatars.contains(avatar)) {
-            av = Avatars.getValue(avatar)
-            hasAvatar=true
-        } else {
-            sendTextMessage(message.chat.id, InvalidAvatar)
-        }
-    }
+        )
+    ).map { Avatars[it.text] }
+        .onEach { if (it == null) sendTextMessage(message.chat.id, InvalidAvatar) }
+        .firstNotNull()
 
     val keyboard = replyKeyboard(
         resizeKeyboard = true,
@@ -102,7 +92,7 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
 
     var oc = Occupation.values()[0]
 
-    while(!hasOccupation) {
+    while (!hasOccupation) {
         var occupation = waitText(
             SendTextMessage(
                 message.chat.id, Strings.ChooseOccupation,
@@ -130,7 +120,7 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
 
         if (Occupations.contains(occupation)) {
             oc = Occupations.getValue(occupation)
-            hasOccupation=true
+            hasOccupation = true
         } else {
             sendTextMessage(message.chat.id, InvalidOccupation)
         }
@@ -160,16 +150,16 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
         if ((level == SuperIdea) || (level == NotMyIdea)) {
             startLevel = 2
             firstStepInfo = StartWithSecondStep
-            hasIdea=true
+            hasIdea = true
         } else if ((level == SoSoIdea) || (level == NoIdea)) {
             startLevel = 1
             firstStepInfo = StartWithFirstStep
-            hasIdea=true
+            hasIdea = true
         }
     }
     sendTextMessage(message.chat.id, firstStepInfo)
 
-    val user = User(User.Id(message.chat.id.chatId), phoneNumber, av, oc, startLevel)
+    val user = User(User.Id(message.chat.id.chatId), phoneNumber, avatar, oc, startLevel)
     userRepository.add(user)
 //    } else {
 //        sendTextMessage(message.chat.id, Strings.NoPhoneInDataBase)
