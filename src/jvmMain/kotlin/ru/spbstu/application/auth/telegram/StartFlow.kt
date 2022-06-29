@@ -5,11 +5,14 @@ import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitContact
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitText
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.ReplyKeyboardMarkup
+import dev.inmo.tgbotapi.extensions.utils.types.buttons.replyKeyboard
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
+import dev.inmo.tgbotapi.types.buttons.ReplyKeyboardMarkup
 import dev.inmo.tgbotapi.types.buttons.RequestContactKeyboardButton
 import dev.inmo.tgbotapi.types.buttons.SimpleKeyboardButton
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
 import dev.inmo.tgbotapi.types.message.content.TextContent
+import dev.inmo.tgbotapi.utils.row
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import org.koin.core.context.GlobalContext
@@ -80,22 +83,21 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
         )
     ).first().text
 
+   val keyboard=replyKeyboard(
+        resizeKeyboard = true,
+        oneTimeKeyboard = true
+    )
+    {
+        row(SimpleKeyboardButton(Occupations[0]),SimpleKeyboardButton(Occupations[1]))
+        row(SimpleKeyboardButton(Occupations[2]),SimpleKeyboardButton(Occupations[3]))
+        row(SimpleKeyboardButton(Occupations[4]),SimpleKeyboardButton(Occupations[5]))
+    }
+
     if (occupation == Occupations[8]) {
         occupation = waitText(
             SendTextMessage(
                 message.chat.id, Strings.ChooseCourse,
-                replyMarkup = ReplyKeyboardMarkup(
-                    buttons = arrayOf(
-                        SimpleKeyboardButton(Occupations[0]),
-                        SimpleKeyboardButton(Occupations[1]),
-                        SimpleKeyboardButton(Occupations[2]),
-                        SimpleKeyboardButton(Occupations[3]),
-                        SimpleKeyboardButton(Occupations[4]),
-                        SimpleKeyboardButton(Occupations[5])
-                    ),
-                    resizeKeyboard = true,
-                    oneTimeKeyboard = true
-                )
+                replyMarkup = keyboard
             )
         ).first().text
     }
@@ -107,19 +109,18 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
         }
     }
 
+    val keyboardl=replyKeyboard(
+        resizeKeyboard = true,
+        oneTimeKeyboard = true
+    )
+    {
+        row(SimpleKeyboardButton(SuperIdea), SimpleKeyboardButton(NotMyIdea),)
+        row( SimpleKeyboardButton(NoIdea), SimpleKeyboardButton(SoSoIdea))
+    }
     val level = waitText(
         SendTextMessage(
             message.chat.id, Strings.HaveAlreadyHadIdea,
-            replyMarkup = ReplyKeyboardMarkup(
-                buttons = arrayOf(
-                    SimpleKeyboardButton(SuperIdea),
-                    SimpleKeyboardButton(NotMyIdea),
-                    SimpleKeyboardButton(NoIdea),
-                    SimpleKeyboardButton(SoSoIdea)
-                ),
-                resizeKeyboard = true,
-                oneTimeKeyboard = true
-            )
+            replyMarkup = keyboardl
         )
     ).first().text
 
