@@ -1,5 +1,7 @@
 package ru.spbstu.application.auth.entities
 
+import kotlin.jvm.JvmInline
+
 data class User(
     val id: Id,
     val phoneNumber: PhoneNumber,
