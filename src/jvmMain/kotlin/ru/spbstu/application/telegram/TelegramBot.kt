@@ -6,6 +6,7 @@ import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onComman
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import ru.spbstu.application.auth.telegram.Ideas
 import ru.spbstu.application.auth.telegram.handleStart
 
 class TelegramBot(token: TelegramToken) {
@@ -16,6 +17,14 @@ class TelegramBot(token: TelegramToken) {
         coroutineScope.launch {
             bot.buildBehaviourWithLongPolling {
                 onCommand("start", scenarioReceiver = { handleStart(it) })
+            }.join()
+        }
+    }
+
+    fun generationIdeas() {
+        coroutineScope.launch {
+            bot.buildBehaviourWithLongPolling {
+                onCommand("generationIdeas", scenarioReceiver = { Ideas(it) })
             }.join()
         }
     }
