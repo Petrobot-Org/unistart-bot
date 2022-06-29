@@ -11,7 +11,8 @@ import dev.inmo.tgbotapi.types.buttons.RequestContactKeyboardButton
 import dev.inmo.tgbotapi.types.buttons.SimpleKeyboardButton
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
 import dev.inmo.tgbotapi.types.message.content.TextContent
-import dev.inmo.tgbotapi.utils.row
+import dev.inmo.tgbotapi.extensions.utils.types.buttons.row
+import dev.inmo.tgbotapi.extensions.utils.types.buttons.simpleButton
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import org.koin.core.context.GlobalContext
@@ -87,9 +88,12 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
             oneTimeKeyboard = true
         )
         {
-            row(SimpleKeyboardButton(Occupations[0]), SimpleKeyboardButton(Occupations[1]))
-            row(SimpleKeyboardButton(Occupations[2]), SimpleKeyboardButton(Occupations[3]))
-            row(SimpleKeyboardButton(Occupations[4]), SimpleKeyboardButton(Occupations[5]))
+            row{simpleButton(Occupations[0])
+                simpleButton(Occupations[1])}
+            row{simpleButton(Occupations[2])
+                simpleButton(Occupations[3])}
+            row{simpleButton(Occupations[4])
+                simpleButton(Occupations[5])}
         }
 
         if (occupation == Occupations[8]) {
@@ -113,10 +117,10 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
             oneTimeKeyboard = true
         )
         {
-            row(SimpleKeyboardButton(SuperIdea))
-            row(SimpleKeyboardButton(NotMyIdea))
-            row(SimpleKeyboardButton(NoIdea))
-            row(SimpleKeyboardButton(SoSoIdea))
+            row{simpleButton(SuperIdea)}
+            row{simpleButton(NotMyIdea)}
+            row{simpleButton(NoIdea)}
+            row{simpleButton(SoSoIdea)}
         }
         val level = waitText(
             SendTextMessage(
