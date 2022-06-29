@@ -83,14 +83,14 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
         )
     ).first().text
 
-   val keyboard=replyKeyboard(
+    val keyboard = replyKeyboard(
         resizeKeyboard = true,
         oneTimeKeyboard = true
     )
     {
-        row(SimpleKeyboardButton(Occupations[0]),SimpleKeyboardButton(Occupations[1]))
-        row(SimpleKeyboardButton(Occupations[2]),SimpleKeyboardButton(Occupations[3]))
-        row(SimpleKeyboardButton(Occupations[4]),SimpleKeyboardButton(Occupations[5]))
+        row(SimpleKeyboardButton(Occupations[0]), SimpleKeyboardButton(Occupations[1]))
+        row(SimpleKeyboardButton(Occupations[2]), SimpleKeyboardButton(Occupations[3]))
+        row(SimpleKeyboardButton(Occupations[4]), SimpleKeyboardButton(Occupations[5]))
     }
 
     if (occupation == Occupations[8]) {
@@ -109,13 +109,13 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
         }
     }
 
-    val keyboardl=replyKeyboard(
+    val keyboardl = replyKeyboard(
         resizeKeyboard = true,
         oneTimeKeyboard = true
     )
     {
-        row(SimpleKeyboardButton(SuperIdea), SimpleKeyboardButton(NotMyIdea),)
-        row( SimpleKeyboardButton(NoIdea), SimpleKeyboardButton(SoSoIdea))
+        row(SimpleKeyboardButton(SuperIdea), SimpleKeyboardButton(NotMyIdea))
+        row(SimpleKeyboardButton(NoIdea), SimpleKeyboardButton(SoSoIdea))
     }
     val level = waitText(
         SendTextMessage(
