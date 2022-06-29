@@ -7,7 +7,6 @@ import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitText
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.ReplyKeyboardMarkup
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.replyKeyboard
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
-import dev.inmo.tgbotapi.types.buttons.ReplyKeyboardMarkup
 import dev.inmo.tgbotapi.types.buttons.RequestContactKeyboardButton
 import dev.inmo.tgbotapi.types.buttons.SimpleKeyboardButton
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
@@ -128,14 +127,13 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
 
         var startLevel = 0
         var firstStepInfo = ""
-        for (i in 0..8) {
-            if ((level.toString() == SuperIdea) || (level.toString() == NotMyIdea)) {
-                startLevel = 2
-                firstStepInfo = StartWithSecondStep
-            } else {
-                startLevel = 1
-                firstStepInfo = StartWithFirstStep
-            }
+
+        if ((level.toString() == SuperIdea) || (level.toString() == NotMyIdea)) {
+            startLevel = 2
+            firstStepInfo = StartWithSecondStep
+        } else {
+            startLevel = 1
+            firstStepInfo = StartWithFirstStep
         }
 
         sendTextMessage(message.chat.id, firstStepInfo)
