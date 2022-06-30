@@ -15,9 +15,14 @@ fun Routing.trendyFriendyApi() {
     val service: TrendyFriendyService by inject()
     authenticate {
         route("/trendy-friendy") {
-            post("/idea") {
-                val idea = call.receive<Idea>()
-                call.respond(IdeaResponse(service.addIdea(userId(), idea)))
+            route("/ideas") {
+                get {
+                    call.respond(IdeaResponse(service.getIdeaCount(userId())))
+                }
+                post {
+                    val idea = call.receive<Idea>()
+                    call.respond(IdeaResponse(service.addIdea(userId(), idea)))
+                }
             }
         }
     }

@@ -11,4 +11,8 @@ class TrendyFriendyService {
         ideas[userId] = newIdeas
         return newIdeas.size
     }
+
+    fun getIdeaCount(userId: Long): Int {
+        return ideas[userId]?.size ?: 0
+    }
 }

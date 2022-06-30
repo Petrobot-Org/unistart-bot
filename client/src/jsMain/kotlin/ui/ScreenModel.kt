@@ -8,6 +8,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import dev.inmo.tgbotapi.webapps.webApp
+import kotlinx.browser.document
+import kotlinx.browser.window
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -50,7 +52,7 @@ class ScreenModel(
     }
 
     fun loadCards() = coroutineScope.launch {
-        delay(1000)
+        ideasCount = client.getIdeaCount().ideasCount
         cards = listOf(
             TrendCard(
                 "Тренд «тёмная тема»",
