@@ -11,7 +11,7 @@ import ru.spbstu.application.telegram.TelegramBot
 val unistartModule = module(createdAtStart = true) {
     val appConfig = readAppConfig()
     single { appConfig.telegramToken }
-    single { createAppDatabase(appConfig.jdbcString)}
+    single { createAppDatabase(appConfig.jdbcString) }
     singleOf(::UserRepositoryImpl) bind UserRepository::class
     singleOf(::TelegramBot)
 }
