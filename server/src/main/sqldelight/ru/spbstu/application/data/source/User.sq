@@ -3,9 +3,21 @@ import ru.spbstu.application.auth.entities.Occupation;
 import ru.spbstu.application.auth.entities.PhoneNumber;
 
 CREATE TABLE User (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INTEGER PRIMARY KEY,
     phoneNumber TEXT AS PhoneNumber,
     avatar TEXT AS Avatar NOT NULL,
     occupation TEXT AS Occupation NOT NULL,
     avilableStepsCount INTEGER
 );
+
+getUserById:
+SELECT * FROM User
+WHERE id = :id;
+
+addUser:
+INSERT INTO User(id, phoneNumber, avatar, occupation, avilableStepsCount)
+VALUES (:id, :phoneNumber, :avatar, :occupation, :avilableStepsCount);
+
+containsUserByPhoneNumber:
+SELECT COUNT(1) FROM User
+WHERE phoneNumber = :phoneNumber;

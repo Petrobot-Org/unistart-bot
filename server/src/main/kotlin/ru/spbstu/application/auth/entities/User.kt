@@ -5,7 +5,7 @@ data class User(
     val phoneNumber: PhoneNumber,
     val avatar: Avatar,
     val occupation: Occupation,
-    val availableStepsCount: Int
+    val availableStepsCount: Long
 ) {
     @JvmInline
     value class Id(val value: Long)
