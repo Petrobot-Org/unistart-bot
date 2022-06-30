@@ -3,18 +3,38 @@ package ru.spbstu.application.trendyfriendy
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.html.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.util.pipeline.*
+import kotlinx.html.*
 import org.koin.ktor.ext.inject
 import trendyfriendy.Idea
 import trendyfriendy.IdeaResponse
 import trendyfriendy.TrendCardSet
 import kotlin.random.Random
 
+fun HTML.index() {
+    head {
+        meta("viewport", "initial-scale=1, width=device-width")
+        title("Trendy Friendy")
+        styleLink("/static/styles.css")
+    }
+    body {
+        div {
+            id = "root"
+        }
+        script(src = "https://telegram.org/js/telegram-web-app.js") {}
+        script(src = "/static/trendy-friendy-frontend.js") {}
+    }
+}
+
 fun Routing.trendyFriendyApi() {
     val service: TrendyFriendyService by inject()
+    get("/trendy-friendy") {
+        call.respondHtml(HttpStatusCode.OK, HTML::index)
+    }
     authenticate {
         route("/trendy-friendy") {
             route("/ideas") {

@@ -34,7 +34,7 @@ class TelegramBot(token: TelegramToken) {
                         "game",
                         replyMarkup = inlineKeyboard {
                             row {
-                                webAppButton("Open", WebAppInfo("https://unistart.ithersta.com"))
+                                webAppButton("Open", WebAppInfo("https://unistart.ithersta.com/trendy-friendy"))
                             }
                         }
                     )

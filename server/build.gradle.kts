@@ -51,9 +51,9 @@ tasks.named<JavaExec>("run") {
 }
 
 tasks.named<Jar>("jar") {
-    dependsOn(":client:jsBrowserProductionWebpack")
+    dependsOn(":trendy-friendy-frontend:jsBrowserProductionWebpack")
     from(
-        File("${rootProject.projectDir}/client/build/distributions/client.js"),
-        File("${rootProject.projectDir}/client/src/jsMain/resources/styles.css")
+        File("${rootProject.projectDir}/trendy-friendy-frontend/build/distributions/trendy-friendy-frontend.js"),
+        File("${rootProject.projectDir}/trendy-friendy-frontend/src/jsMain/resources/styles.css")
     )
 }
