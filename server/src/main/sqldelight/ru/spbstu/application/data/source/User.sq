@@ -4,7 +4,7 @@ import ru.spbstu.application.auth.entities.PhoneNumber;
 
 CREATE TABLE User (
     id INTEGER PRIMARY KEY,
-    phoneNumber TEXT AS PhoneNumber,
+    phoneNumber TEXT AS PhoneNumber UNIQUE,
     avatar TEXT AS Avatar NOT NULL,
     occupation TEXT AS Occupation NOT NULL,
     avilableStepsCount INTEGER
