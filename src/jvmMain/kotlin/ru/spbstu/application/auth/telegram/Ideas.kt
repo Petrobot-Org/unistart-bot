@@ -40,14 +40,13 @@ suspend fun BehaviourContext.handleStep1(message: CommonMessage<TextContent>) {
 
 suspend fun BehaviourContext.Ideas(message: CommonMessage<TextContent>) {
     var user = userRepository.get(User.Id(message.chat.id.chatId))
-    // Тут проверка пока что закомментирован потому что нет нормального USERa
 //    if (user != null) {
 //        var buttons = steps.take(user.availableStepsCount).map { SimpleKeyboardButton(it) }
     val selectedStep = waitText(
         SendTextMessage(
             message.chat.id, Strings.Ideas,
             replyMarkup = ReplyKeyboardMarkup(
-//                    *steps.toTypedArray(),
+//                    *buttons.toTypedArray(),
                 SimpleKeyboardButton(Strings.Step1),
                 SimpleKeyboardButton(Strings.Step2),
                 SimpleKeyboardButton(Strings.Step3),
