@@ -1,13 +1,8 @@
 package ru.spbstu.application
 
-import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
-import io.ktor.server.html.*
-import io.ktor.server.http.content.*
 import io.ktor.server.netty.*
-import io.ktor.server.routing.*
-import kotlinx.html.*
 import org.koin.ktor.ext.get
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
