@@ -16,10 +16,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.spbstu.application.auth.telegram.handleStart
+import ru.spbstu.application.trendyfriendy.sendTrendyFriendyApp
 import trendyfriendy.Idea
 
 class TelegramBot(token: TelegramToken) {
-    private val bot = telegramBot(token.value)
+    val bot = telegramBot(token.value)
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     fun start() {
@@ -27,25 +28,9 @@ class TelegramBot(token: TelegramToken) {
             bot.buildBehaviourWithLongPolling(
                 defaultExceptionsHandler = { it.printStackTrace() }
             ) {
-                onCommand("start", scenarioReceiver = { handleStart(it) })
-                onCommand("game") {
-                    sendTextMessage(
-                        it.chat,
-                        "game",
-                        replyMarkup = inlineKeyboard {
-                            row {
-                                webAppButton("Open", WebAppInfo("https://unistart.ithersta.com/trendy-friendy"))
-                            }
-                        }
-                    )
-                }
+                onCommand("start") { handleStart(it) }
+                onCommand("game") { sendTrendyFriendyApp(it.chat) }
             }.join()
-        }
-    }
-
-    fun sendTrendyFriendyIdeas(userId: Long, ideas: List<Idea>) {
-        coroutineScope.launch {
-            bot.sendTextMessage(userId.toChatId(), ideas.joinToString(separator = "\n") { it.text })
         }
     }
 }

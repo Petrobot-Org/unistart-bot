@@ -60,8 +60,8 @@ class TrendyFriendyService(private val telegramBot: TelegramBot) {
         return cards[userId] ?: emptyList()
     }
 
-    fun finish(userId: Long) {
-        telegramBot.sendTrendyFriendyIdeas(userId, ideas[userId] ?: emptyList())
+    suspend fun finish(userId: Long) {
+        sendTrendyFriendyIdeas(telegramBot.bot, userId, ideas[userId] ?: emptyList())
         ideas.remove(userId)
         cards.remove(userId)
     }
