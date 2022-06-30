@@ -7,21 +7,21 @@ import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.data.source.AppDatabase
 
 class UserRepositoryImpl(private val database: AppDatabase) : UserRepository {
-    private val map = { id: Long,
+    private val map = { id: User.Id?,
                         phoneNumber: PhoneNumber?,
                         avatar: Avatar,
                         occupation: Occupation,
                         availableStepsCount: Long? ->
-        val user = User(User.Id(id), phoneNumber!!, avatar, occupation, availableStepsCount!!)
+        User(id!!, phoneNumber!!, avatar, occupation, availableStepsCount!!)
     }
 
     override fun get(id: User.Id): User? {
-        return database.userQueries.getUserById(id.value, map);
+        return database.userQueries.getUserById(id, map).executeAsOneOrNull()
     }
 
     override fun add(user: User) {
         database.userQueries.addUser(
-            user.id.value,
+            user.id,
             user.phoneNumber,
             user.avatar,
             user.occupation,
