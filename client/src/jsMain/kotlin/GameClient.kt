@@ -13,6 +13,15 @@ import trendyfriendy.IdeaResponse
 
 class GameClient(initData: String, hash: String) {
     private val client = HttpClient {
+        expectSuccess = true
+        HttpResponseValidator {
+            handleResponseExceptionWithRequest { exception, _ ->
+                window.alert(exception.message.toString())
+            }
+        }
+        defaultRequest {
+            contentType(ContentType.Application.Json)
+        }
         install(ContentNegotiation) { json() }
         install(Auth) {
             basic {
@@ -21,19 +30,10 @@ class GameClient(initData: String, hash: String) {
                 }
             }
         }
-        expectSuccess = true
-        HttpResponseValidator {
-            handleResponseExceptionWithRequest { exception, _ ->
-                window.alert(exception.message.toString())
-            }
-        }
     }
 
     suspend fun addIdea(idea: Idea): IdeaResponse {
-        return client.post("/trendy-friendy/ideas") {
-            contentType(ContentType.Application.Json)
-            setBody(idea)
-        }.body()
+        return client.post("/trendy-friendy/ideas") { setBody(idea) }.body()
     }
 
     suspend fun getIdeaCount(): IdeaResponse {
