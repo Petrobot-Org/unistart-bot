@@ -8,7 +8,9 @@ import ru.spbstu.application.trendyfriendy.trendyFriendyApi
 fun Application.configureRouting() {
     routing {
         static("/static") {
-            resources()
+            preCompressed {
+                resources()
+            }
         }
         trendyFriendyApi()
     }

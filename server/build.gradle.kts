@@ -20,6 +20,7 @@ dependencies {
     implementation("io.ktor:ktor-server-auth:${Versions.ktor}")
     implementation("io.ktor:ktor-server-content-negotiation:${Versions.ktor}")
     implementation("io.ktor:ktor-serialization-kotlinx-json:${Versions.ktor}")
+    implementation("io.ktor:ktor-server-compression:${Versions.ktor}")
     implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:${Versions.kotlinxHtml}")
     implementation("io.insert-koin:koin-core:${Versions.koin}")
     implementation("io.insert-koin:koin-ktor:${Versions.koin}")

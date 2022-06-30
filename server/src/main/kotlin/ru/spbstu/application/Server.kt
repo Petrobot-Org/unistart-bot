@@ -3,6 +3,7 @@ package ru.spbstu.application
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import io.ktor.server.plugins.compression.*
 import org.koin.ktor.ext.get
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
@@ -17,6 +18,7 @@ fun main() {
             slf4jLogger()
             modules(unistartModule)
         }
+        install(Compression)
         configureSerialization()
         configureAuthentication()
         configureRouting()
