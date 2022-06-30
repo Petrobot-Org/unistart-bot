@@ -10,6 +10,8 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.browser.window
 import trendyfriendy.Idea
 import trendyfriendy.IdeaResponse
+import trendyfriendy.TrendCard
+import trendyfriendy.TrendCardSet
 
 class GameClient(initData: String, hash: String) {
     private val client = HttpClient {
@@ -38,5 +40,21 @@ class GameClient(initData: String, hash: String) {
 
     suspend fun getIdeaCount(): IdeaResponse {
         return client.get("/trendy-friendy/ideas").body()
+    }
+
+    suspend fun generateCards(): List<TrendCard> {
+        return client.post("/trendy-friendy/cards/0").body()
+    }
+
+    suspend fun getCards(): List<TrendCard> {
+        return client.get("/trendy-friendy/cards").body()
+    }
+
+    suspend fun getSets(): List<TrendCardSet> {
+        return client.get("/trendy-friendy/cards/sets").body()
+    }
+
+    suspend fun finish() {
+        client.post("/trendy-friendy/ideas/finish")
     }
 }

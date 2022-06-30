@@ -11,17 +11,17 @@ import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Text
 import org.jetbrains.compose.web.dom.*
 import trendyfriendy.TrendCard
+import trendyfriendy.TrendCardSet
 
 @Composable
 fun App(screenModel: ScreenModel) {
     val state = screenModel.state
     DisposableEffect(Unit) {
-        screenModel.loadCards()
+        screenModel.loadState()
         webApp.ready()
         onDispose { }
     }
     Div(attrs = {
-        classes("container", "mx-auto")
         style {
             display(DisplayStyle.Flex)
             flexDirection(FlexDirection.Column)
@@ -30,12 +30,77 @@ fun App(screenModel: ScreenModel) {
     }) {
         when (state) {
             GameState.Loading -> LoadingScreen()
+            is GameState.ChooseSet -> ChooseSetScreen(
+                state = state,
+                generateCards = { screenModel.generateCards() },
+                select = { screenModel.selectSet(it) },
+                unselect = { screenModel.unselectSet(it) }
+            )
             is GameState.Details -> DetailsScreen(state.card) { screenModel.goNext() }
             is GameState.Playing -> PlayingScreen(
-                state,
-                addIdea = { screenModel.addIdea(it) }
+                state = state,
+                addIdea = { screenModel.addIdea(it) },
+                resetCards = { screenModel.resetCards() },
+                finish = { screenModel.finish() }
             )
         }
+    }
+}
+
+@Composable
+private fun ChooseSetScreen(
+    state: GameState.ChooseSet,
+    generateCards: () -> Unit,
+    select: (TrendCardSet) -> Unit,
+    unselect: (TrendCardSet) -> Unit
+) {
+    Div(attrs = {
+        style {
+            flex(1)
+        }
+    })
+    state.sets.forEach { set ->
+        val checked = set in state.selectedSets
+        Div(attrs = {
+            classes("form-control")
+            onClick { if (checked) unselect(set) else select(set) }
+            style {
+                marginLeft(32.px)
+                marginRight(32.px)
+            }
+        }) {
+            Label(attrs = {
+                classes("label", "cursor-pointer")
+            }) {
+                Span(attrs = {
+                    classes("label-text")
+                }) {
+                    Text(set.displayName)
+                }
+                Input(InputType.Checkbox) {
+                    classes("checkbox")
+                    checked(checked)
+                }
+            }
+        }
+    }
+    Div(attrs = {
+        style {
+            flex(1)
+        }
+    })
+    Button(attrs = {
+        onClick { generateCards() }
+        classes(buildList {
+            add("btn")
+            add("btn-primary")
+            if (state.loadingState.gettingCards) add("loading")
+        })
+        style {
+            margin(8.px)
+        }
+    }) {
+        Text("Далее")
     }
 }
 
@@ -88,7 +153,9 @@ private fun DetailsScreen(card: TrendCard, goNext: () -> Unit) {
 @Composable
 private fun PlayingScreen(
     state: GameState.Playing,
-    addIdea: (String) -> Unit
+    addIdea: (String) -> Unit,
+    resetCards: () -> Unit,
+    finish: () -> Unit
 ) {
     Div(attrs = {
         style {
@@ -98,7 +165,7 @@ private fun PlayingScreen(
         }
     }) {
         Button(attrs = {
-            onClick {}
+            onClick { resetCards() }
             classes("btn")
             style {
                 marginLeft(8.px)
@@ -108,7 +175,7 @@ private fun PlayingScreen(
         }
         Div(attrs = { style { flex(1) } })
         Button(attrs = {
-            onClick {}
+            onClick { finish() }
             classes("btn")
             style {
                 marginRight(8.px)

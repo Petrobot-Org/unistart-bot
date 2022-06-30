@@ -1,4 +1,5 @@
 import trendyfriendy.TrendCard
+import trendyfriendy.TrendCardSet
 
 sealed interface GameState {
     object Loading : GameState
@@ -10,8 +11,14 @@ sealed interface GameState {
     data class Details(
         val card: TrendCard
     ) : GameState
+    data class ChooseSet(
+        val sets: List<TrendCardSet>,
+        val selectedSets: Set<TrendCardSet>,
+        val loadingState: LoadingState
+    ) : GameState
 }
 
 data class LoadingState(
-    val addingIdea: Boolean
+    val addingIdea: Boolean,
+    val gettingCards: Boolean
 )

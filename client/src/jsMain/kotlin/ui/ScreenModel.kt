@@ -8,23 +8,26 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import dev.inmo.tgbotapi.webapps.webApp
-import kotlinx.browser.document
-import kotlinx.browser.window
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import trendyfriendy.Idea
 import trendyfriendy.TrendCard
+import trendyfriendy.TrendCardSet
 
 class ScreenModel(
     private val client: GameClient
 ) {
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
-    private var cards by mutableStateOf<List<TrendCard>?>(null)
+    private var sets = emptyList<TrendCardSet>()
+    private var loadedInitialState by mutableStateOf(false)
+    private var cards by mutableStateOf<List<TrendCard>>(emptyList())
     private var ideasCount by mutableStateOf(0)
     private var pageIndex by mutableStateOf(0)
     private var loadingAddIdea by mutableStateOf(0)
+    private var loadingCards by mutableStateOf(0)
+    private var selectedSets by mutableStateOf(emptySet<TrendCardSet>())
 
     @get:Composable
     val state: GameState
@@ -32,13 +35,23 @@ class ScreenModel(
             val cards = this.cards
             val ideasCount = this.ideasCount
             val pageIndex = this.pageIndex
-            return if (cards == null) {
-                GameState.Loading
-            } else if (pageIndex in cards.indices) {
-                GameState.Details(cards[pageIndex])
-            } else {
-                val loadingState = LoadingState(loadingAddIdea != 0)
-                GameState.Playing(cards, ideasCount, loadingState)
+            val loadingState = LoadingState(
+                addingIdea = loadingAddIdea != 0,
+                gettingCards = loadingCards != 0
+            )
+            return when {
+                !loadedInitialState -> {
+                    GameState.Loading
+                }
+                cards.isEmpty() -> {
+                    GameState.ChooseSet(sets, selectedSets, loadingState)
+                }
+                pageIndex in cards.indices -> {
+                    GameState.Details(cards[pageIndex])
+                }
+                else -> {
+                    GameState.Playing(cards, ideasCount, loadingState)
+                }
             }
         }
 
@@ -51,24 +64,46 @@ class ScreenModel(
         }
     }
 
-    fun loadCards() = coroutineScope.launch {
-        ideasCount = client.getIdeaCount().ideasCount
-        cards = listOf(
-            TrendCard(
-                "Тренд «тёмная тема»",
-                "Объективно лучше",
-                "https://lh3.googleusercontent.com/2dBw3e0xPpK37MzJ9pci2OySJiHhQCNY1RIHAYkJ5PBbBzApRNkbOgV0RCzsJw0VOOiiBxyoIc_QhbRxGiTw-DgHVc1-_NWaFJ0C=w1064-v0"
-            ),
-            TrendCard(
-                "Тренд «закруглённые края»",
-                "Объективно красивее",
-                "https://designmodo.com/wp-content/uploads/2012/06/rectangles.jpg"
-            ),
-        )
+    fun loadState() = coroutineScope.launch {
+        val ideasCountDeferred = async { client.getIdeaCount().ideasCount }
+        val cardsDeferred = async { client.getCards() }
+        val setsDeferred = async { client.getSets() }
+        ideasCount = ideasCountDeferred.await()
+        cards = cardsDeferred.await()
+        sets = setsDeferred.await()
+        loadedInitialState = true
         webApp.expand()
     }
 
     fun goNext() {
         pageIndex += 1
+    }
+
+    fun generateCards() {
+        coroutineScope.launch {
+            loadingCards += 1
+            cards = client.generateCards()
+            loadingCards -= 1
+        }
+    }
+
+    fun selectSet(set: TrendCardSet) {
+        selectedSets = selectedSets + set
+    }
+
+    fun unselectSet(set: TrendCardSet) {
+        selectedSets = selectedSets - set
+    }
+
+    fun resetCards() {
+        pageIndex = 0
+        cards = emptyList()
+    }
+
+    fun finish() {
+        coroutineScope.launch {
+            client.finish()
+            webApp.close()
+        }
     }
 }
