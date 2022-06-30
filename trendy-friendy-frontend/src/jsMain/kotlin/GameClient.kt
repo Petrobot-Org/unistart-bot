@@ -30,6 +30,7 @@ class GameClient(initData: String, hash: String) {
                 credentials {
                     BasicAuthCredentials(initData, hash)
                 }
+                sendWithoutRequest { true }
             }
         }
     }
