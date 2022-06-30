@@ -4,6 +4,7 @@ import com.squareup.sqldelight.EnumColumnAdapter
 import com.squareup.sqldelight.sqlite.driver.JdbcSqliteDriver
 import ru.spbstu.application.auth.entities.Avatar
 import ru.spbstu.application.auth.entities.Occupation
+import ru.spbstu.application.data.adapters.UserIdAdapter
 import ru.spbstu.application.data.adapters.UserPhoneNumberAdapter
 import ru.spbstu.application.data.source.AppDatabase
 import ru.spbstu.application.data.source.User
@@ -24,6 +25,7 @@ fun createAppDatabase(jdbcString: String): AppDatabase {
     return AppDatabase(
         driver = driver,
         UserAdapter = User.Adapter(
+            idAdapter = UserIdAdapter,
             phoneNumberAdapter = UserPhoneNumberAdapter,
             avatarAdapter = EnumColumnAdapter<Avatar>(),
             occupationAdapter = EnumColumnAdapter<Occupation>()
