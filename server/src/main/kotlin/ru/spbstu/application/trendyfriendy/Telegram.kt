@@ -9,8 +9,12 @@ import dev.inmo.tgbotapi.extensions.utils.types.buttons.webAppButton
 import dev.inmo.tgbotapi.types.chat.Chat
 import dev.inmo.tgbotapi.types.toChatId
 import dev.inmo.tgbotapi.types.webapps.WebAppInfo
+import org.koin.core.context.GlobalContext
+import ru.spbstu.application.AppConfig
 import ru.spbstu.application.telegram.Strings
 import trendyfriendy.Idea
+
+private val appConfig: AppConfig by GlobalContext.get().inject()
 
 suspend fun BehaviourContext.sendTrendyFriendyApp(chat: Chat) {
     sendTextMessage(
@@ -18,7 +22,7 @@ suspend fun BehaviourContext.sendTrendyFriendyApp(chat: Chat) {
         Strings.TrendyFriendyDescription,
         replyMarkup = inlineKeyboard {
             row {
-                webAppButton(Strings.TrendyFriendyOpen, WebAppInfo("https://unistart.ithersta.com/trendy-friendy"))
+                webAppButton(Strings.TrendyFriendyOpen, WebAppInfo("${appConfig.publicHostname}/trendy-friendy"))
             }
         }
     )

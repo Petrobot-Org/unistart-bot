@@ -5,7 +5,8 @@ import java.util.*
 
 class AppConfig(
     val telegramToken: TelegramToken,
-    val jdbcString: String
+    val jdbcString: String,
+    val publicHostname: String
 )
 
 fun readAppConfig(): AppConfig {
@@ -14,9 +15,11 @@ fun readAppConfig(): AppConfig {
     ).use {inputStream->
         val properties = Properties().apply { load(inputStream) }
         val jdbcString = properties["jdbc"].toString()
+        val environmentVariables = System.getenv()
         AppConfig(
             jdbcString = jdbcString,
-            telegramToken = TelegramToken(System.getenv("TELEGRAM_TOKEN"))
+            telegramToken = TelegramToken(environmentVariables.getValue("TELEGRAM_TOKEN")),
+            publicHostname = environmentVariables["PUBLIC_HOSTNAME"] ?: "https://127.0.0.1"
         )
     }
 }

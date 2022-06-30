@@ -10,6 +10,7 @@ import ru.spbstu.application.trendyfriendy.TrendyFriendyService
 
 val unistartModule = module(createdAtStart = true) {
     val appConfig = readAppConfig()
+    single { appConfig }
     single { appConfig.telegramToken }
     singleOf(::FakeUserRepository) bind UserRepository::class
     singleOf(::TelegramBot)
