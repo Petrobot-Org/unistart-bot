@@ -14,34 +14,39 @@ import ru.spbstu.application.auth.repository.UserRepository
 import ru.spbstu.application.telegram.Strings
 
 private val userRepository: UserRepository by GlobalContext.get().inject()
-private var steps = listOf<String>(Strings.Step1, Strings.Step2, Strings.Step3, Strings.Step4)
-private var buttons = listOf<String>(Strings.Button1, Strings.Button2, Strings.Button3, Strings.Button4, Strings.BBack)
+private val steps = listOf<String>(Strings.Step1, Strings.Step2, Strings.Step3, Strings.Step4)
+private val buttons = listOf<String>(
+    Strings.Bisociation,
+    Strings.DelphiBrainstormMethod,
+    Strings.SCAMPER,
+    Strings.TrendyFriendy,
+    Strings.Back
+)
 
 suspend fun BehaviourContext.handleStep1(message: CommonMessage<TextContent>) {
-   val s =  waitText(
+    val buttons = buttons.map { SimpleKeyboardButton(it) }
+    val stage = waitText(
         SendTextMessage(
-            message.chat.id, Strings.WelcomeRequirePhone,
+            message.chat.id, Strings.Variants,
             replyMarkup = ReplyKeyboardMarkup(
-//                *buttons.toTypedArray(),
-                SimpleKeyboardButton(Strings.Button1),
-                SimpleKeyboardButton(Strings.Button2),
-                SimpleKeyboardButton(Strings.Button3),
-                SimpleKeyboardButton(Strings.Button4),
-                SimpleKeyboardButton(Strings.BBack),
+                *buttons.toTypedArray(),
                 resizeKeyboard = true,
-                oneTimeKeyboard = true
+                oneTimeKeyboard = false
             )
         )
     ).first().text
-    if (s.equals(Strings.BBack)){
-        Ideas(message)
+//     тут switch case нужен будет!
+    if (stage.equals(Strings.Back)) {
+        ideas(message)
     }
 }
 
-suspend fun BehaviourContext.Ideas(message: CommonMessage<TextContent>) {
-    var user = userRepository.get(User.Id(message.chat.id.chatId))
+suspend fun BehaviourContext.ideas(message: CommonMessage<TextContent>) {
+    val user = userRepository.get(User.Id(message.chat.id.chatId))
+    //todo :
+    // иначе не проверим пока что закомиченно
 //    if (user != null) {
-//        var buttons = steps.take(user.availableStepsCount).map { SimpleKeyboardButton(it) }
+//          val buttons = steps.take(user.availableStepsCount).map { SimpleKeyboardButton(it) }
     val selectedStep = waitText(
         SendTextMessage(
             message.chat.id, Strings.Ideas,
@@ -52,7 +57,7 @@ suspend fun BehaviourContext.Ideas(message: CommonMessage<TextContent>) {
                 SimpleKeyboardButton(Strings.Step3),
                 SimpleKeyboardButton(Strings.Step4),
                 resizeKeyboard = true,
-                oneTimeKeyboard = true
+                oneTimeKeyboard = false
             )
         )
     ).first().text
@@ -60,12 +65,13 @@ suspend fun BehaviourContext.Ideas(message: CommonMessage<TextContent>) {
         Strings.Step1 -> handleStep1(message)
         // TODO: 30.06.2022
         /*
-          * В БУДУЩЕМ ДОБАВИТЕ !
+         * В БУДУЩЕМ ДОБАВИТЕ !
         */
 //        Strings.Step2 -> handleStep2()
 //        Strings.Step3 -> handleStep3()
 //        Strings.Step4 -> handleStep4()
     }
 }
+//}
 
 
