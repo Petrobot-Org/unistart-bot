@@ -12,9 +12,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import org.w3c.dom.Image
 import trendyfriendy.Idea
 import trendyfriendy.TrendCard
 import trendyfriendy.TrendCardSet
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 class ScreenModel(
     private val client: GameClient
@@ -68,8 +72,9 @@ class ScreenModel(
         val ideasCountDeferred = async { client.getIdeaCount().ideasCount }
         val cardsDeferred = async { client.getCards() }
         val setsDeferred = async { client.getSets() }
-        ideasCount = ideasCountDeferred.await()
         cards = cardsDeferred.await()
+        cards.map { async { preloadImage(it.url) } }.forEach { it.await() }
+        ideasCount = ideasCountDeferred.await()
         sets = setsDeferred.await()
         loadedInitialState = true
         webApp.expand()
@@ -83,6 +88,7 @@ class ScreenModel(
         coroutineScope.launch {
             loadingCards += 1
             cards = client.generateCards()
+            cards.map { async { preloadImage(it.url) } }.forEach { it.await() }
             loadingCards -= 1
         }
     }
@@ -104,6 +110,19 @@ class ScreenModel(
         coroutineScope.launch {
             client.finish()
             webApp.close()
+        }
+    }
+}
+
+private suspend fun preloadImage(url: String) {
+    suspendCoroutine<Unit> { continuation ->
+        val image = Image()
+        image.src = url
+        image.onload = {
+            continuation.resume(Unit)
+        }
+        image.onerror = { _, _, _, _, _ ->
+            continuation.resumeWithException(Exception())
         }
     }
 }
