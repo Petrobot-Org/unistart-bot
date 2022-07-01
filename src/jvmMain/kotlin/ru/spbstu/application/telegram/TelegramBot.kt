@@ -7,7 +7,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.spbstu.application.auth.telegram.handleStart
-import ru.spbstu.application.auth.telegram.ideas
+import ru.spbstu.application.auth.telegram.steps
 
 class TelegramBot(token: TelegramToken) {
     private val bot = telegramBot(token.value)
@@ -17,7 +17,7 @@ class TelegramBot(token: TelegramToken) {
         coroutineScope.launch {
             bot.buildBehaviourWithLongPolling {
                 onCommand("start", scenarioReceiver = { handleStart(it) })
-                onCommand("generationIdeas", scenarioReceiver = { ideas(it) })
+                onCommand("generationIdeas", scenarioReceiver = { steps(it) })
             }.join()
         }
     }

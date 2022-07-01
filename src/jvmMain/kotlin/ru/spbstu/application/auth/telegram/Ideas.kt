@@ -36,7 +36,7 @@ suspend fun BehaviourContext.handleStep1(message: CommonMessage<TextContent>) {
         )
     ).first().text
     when (stage) {
-        Strings.Back -> ideas(message)
+        Strings.Back -> steps(message)
         // TODO: 30.06.2022
         /*
          * В БУДУЩЕМ ДОБАВИТЕ !
@@ -48,7 +48,7 @@ suspend fun BehaviourContext.handleStep1(message: CommonMessage<TextContent>) {
     }
 }
 
-suspend fun BehaviourContext.ideas(message: CommonMessage<TextContent>) {
+suspend fun BehaviourContext.steps(message: CommonMessage<TextContent>) {
     val user = userRepository.get(User.Id(message.chat.id.chatId))
     if (user != null) {
         val buttons = steps.take(user.availableStepsCount).map { SimpleKeyboardButton(it) }
