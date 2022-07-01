@@ -7,26 +7,23 @@ import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitContact
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitText
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.ReplyKeyboardMarkup
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.replyKeyboard
+import dev.inmo.tgbotapi.extensions.utils.types.buttons.row
+import dev.inmo.tgbotapi.extensions.utils.types.buttons.simpleButton
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.types.buttons.RequestContactKeyboardButton
 import dev.inmo.tgbotapi.types.buttons.SimpleKeyboardButton
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
 import dev.inmo.tgbotapi.types.message.content.TextContent
-import dev.inmo.tgbotapi.extensions.utils.types.buttons.row
-import dev.inmo.tgbotapi.extensions.utils.types.buttons.simpleButton
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.forEach
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import org.koin.core.context.GlobalContext
-import ru.spbstu.application.auth.entities.Avatar
-import ru.spbstu.application.auth.entities.Occupation
 import ru.spbstu.application.auth.entities.PhoneNumber
+import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.repository.UserRepository
 import ru.spbstu.application.telegram.Strings
-import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.telegram.Strings.Avatars
-import ru.spbstu.application.telegram.Strings.HaveAlreadyHadIdea
+import ru.spbstu.application.telegram.Strings.HaveIdeaQuestion
 import ru.spbstu.application.telegram.Strings.InvalidAvatar
 import ru.spbstu.application.telegram.Strings.InvalidOccupation
 import ru.spbstu.application.telegram.Strings.NoIdea
@@ -51,12 +48,10 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
             )
         )
     ).map { PhoneNumber(it.contact.phoneNumber) }.first()
-    var hasOccupation = false
-    var hasIdea = false
 
-//    if (userRepository.contains(phoneNumber)) {
-
-    ///послать 3 картинки с аватарами и подписями
+    // проверить номер телефона
+    // else sendTextMessage(message.chat.id, Strings.NoPhoneInDataBase)
+    // послать 3 картинки с аватарами и подписями
 
     val avatar = waitText(
         SendTextMessage(
@@ -71,97 +66,72 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
         .onEach { if (it == null) sendTextMessage(message.chat.id, InvalidAvatar) }
         .firstNotNull()
 
-    val keyboard = replyKeyboard(
-        resizeKeyboard = true,
-        oneTimeKeyboard = true
-    )
-    {
-        row {
-            simpleButton(Occupations.keys.elementAt(0))
-            simpleButton(Occupations.keys.elementAt(1))
-        }
-        row {
-            simpleButton(Occupations.keys.elementAt(2))
-            simpleButton(Occupations.keys.elementAt(3))
-        }
-        row {
-            simpleButton(Occupations.keys.elementAt(4))
-            simpleButton(Occupations.keys.elementAt(5))
-        }
-    }
-
-    var oc = Occupation.values()[0]
-
-    while (!hasOccupation) {
-        var occupation = waitText(
-            SendTextMessage(
-                message.chat.id, Strings.ChooseOccupation,
-                replyMarkup = ReplyKeyboardMarkup(
-                    buttons = arrayOf(
-                        SimpleKeyboardButton(Occupations.keys.elementAt(6)),
-                        SimpleKeyboardButton(Occupations.keys.elementAt(7)),
-                        SimpleKeyboardButton(Student)
-                    ),
+    val occupation = waitText(
+        SendTextMessage(
+            message.chat.id, Strings.ChooseOccupation,
+            replyMarkup = ReplyKeyboardMarkup(
+                buttons = arrayOf(
+                    SimpleKeyboardButton(Occupations.keys.elementAt(6)),
+                    SimpleKeyboardButton(Occupations.keys.elementAt(7)),
+                    SimpleKeyboardButton(Student)
+                ),
+                resizeKeyboard = true,
+                oneTimeKeyboard = true
+            )
+        )
+    ).onEach {
+        if (it.text == Student) {
+            sendTextMessage(
+                message.chat.id, Strings.ChooseCourse,
+                replyMarkup = replyKeyboard(
                     resizeKeyboard = true,
                     oneTimeKeyboard = true
                 )
+                {
+                    row {
+                        simpleButton(Occupations.keys.elementAt(0))
+                        simpleButton(Occupations.keys.elementAt(1))
+                    }
+                    row {
+                        simpleButton(Occupations.keys.elementAt(2))
+                        simpleButton(Occupations.keys.elementAt(3))
+                    }
+                    row {
+                        simpleButton(Occupations.keys.elementAt(4))
+                        simpleButton(Occupations.keys.elementAt(5))
+                    }
+                }
             )
-        ).first().text
-
-
-        if (occupation == Student) {
-            occupation = waitText(
-                SendTextMessage(
-                    message.chat.id, Strings.ChooseCourse,
-                    replyMarkup = keyboard
-                )
-            ).first().text
-        }
-
-        if (Occupations.contains(occupation)) {
-            oc = Occupations.getValue(occupation)
-            hasOccupation = true
-        } else {
+        } else if (it.text !in Occupations) {
             sendTextMessage(message.chat.id, InvalidOccupation)
         }
-    }
+    }.map { Occupations[it.text] }
+        .firstNotNull()
 
-    val keyboardl = replyKeyboard(
-        resizeKeyboard = true,
-        oneTimeKeyboard = true
-    )
-    {
-        row { simpleButton(SuperIdea) }
-        row { simpleButton(NotMyIdea) }
-        row { simpleButton(NoIdea) }
-        row { simpleButton(SoSoIdea) }
-    }
-    var startLevel = 0
-    var firstStepInfo = ""
-
-    while (!hasIdea) {
-        val level = waitText(
-            SendTextMessage(
-                message.chat.id, HaveAlreadyHadIdea,
-                replyMarkup = keyboardl
+    val (startLevel, firstStepInfo) = waitText(
+        SendTextMessage(
+            message.chat.id, HaveIdeaQuestion,
+            replyMarkup = replyKeyboard(
+                resizeKeyboard = true,
+                oneTimeKeyboard = true
             )
-        ).first().text
-
-        if ((level == SuperIdea) || (level == NotMyIdea)) {
-            startLevel = 2
-            firstStepInfo = StartWithSecondStep
-            hasIdea = true
-        } else if ((level == SoSoIdea) || (level == NoIdea)) {
-            startLevel = 1
-            firstStepInfo = StartWithFirstStep
-            hasIdea = true
+            {
+                row { simpleButton(SuperIdea) }
+                row { simpleButton(NotMyIdea) }
+                row { simpleButton(NoIdea) }
+                row { simpleButton(SoSoIdea) }
+            }
+        )
+    ).map {
+        when (it.text) {
+            SuperIdea, NotMyIdea -> 2L to StartWithSecondStep
+            SoSoIdea, NoIdea -> 1L to StartWithFirstStep
+            else -> null
         }
-    }
+    }.firstNotNull()
+
     sendTextMessage(message.chat.id, firstStepInfo)
 
-    val user = User(User.Id(message.chat.id.chatId), phoneNumber, avatar, oc, startLevel)
+    val user = User(User.Id(message.chat.id.chatId), phoneNumber, avatar, occupation, startLevel)
     userRepository.add(user)
-//    } else {
-//        sendTextMessage(message.chat.id, Strings.NoPhoneInDataBase)
-//    }
 }
