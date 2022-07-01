@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.spbstu.application.auth.telegram.handleStart
 import ru.spbstu.application.trendyfriendy.sendTrendyFriendyApp
+import kotlin.jvm.JvmInline
 
 class TelegramBot(token: TelegramToken) {
     val bot = telegramBot(token.value)

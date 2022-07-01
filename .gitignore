@@ -37,3 +37,4 @@ outTmp/
 /test.output
 /kotlin-native/dist
 kotlin-ide/
+/server/main.sqlite

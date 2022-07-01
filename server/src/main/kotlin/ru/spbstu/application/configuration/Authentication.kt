@@ -5,19 +5,19 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import kotlinx.serialization.SerialName
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import org.koin.ktor.ext.inject
 import ru.spbstu.application.telegram.TelegramToken
 
 @Serializable
 class WebAppUser(
     val id: Long,
-    @SerialName("first_name") val firstName: String,
-    @SerialName("last_name") val lastName: String,
-    val username: String,
-    @SerialName("language_code") val languageCode: String
+    @SerialName("first_name") val firstName: String? = null,
+    @SerialName("last_name") val lastName: String? = null,
+    val username: String? = null,
+    @SerialName("language_code") val languageCode: String? = null
 )
 
 fun Application.configureAuthentication() {
