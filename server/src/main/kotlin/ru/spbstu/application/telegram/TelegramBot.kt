@@ -7,6 +7,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.spbstu.application.auth.telegram.handleStart
+import kotlin.jvm.JvmInline
 
 class TelegramBot(token: TelegramToken) {
     private val bot = telegramBot(token.value)
