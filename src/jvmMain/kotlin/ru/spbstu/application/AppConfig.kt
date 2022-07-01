@@ -8,8 +8,6 @@ class AppConfig(
 
 fun readAppConfig(): AppConfig {
     return AppConfig(
-//        telegramToken = TelegramToken(System.getenv("TELEGRAM_TOKEN"))
-        // временно на тест
-        telegramToken = TelegramToken("5210213874:AAEtGKJg8qagNH4I0uQiegYHBUkFw1m-MPg")
+        telegramToken = TelegramToken(System.getenv("TELEGRAM_TOKEN"))
     )
 }

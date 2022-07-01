@@ -43,6 +43,5 @@ fun main() {
             }
         }
         get<TelegramBot>().start()
-        get<TelegramBot>().generationIdeas()
     }.start(wait = true)
 }

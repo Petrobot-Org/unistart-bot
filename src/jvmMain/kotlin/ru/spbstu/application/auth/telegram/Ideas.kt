@@ -35,43 +35,48 @@ suspend fun BehaviourContext.handleStep1(message: CommonMessage<TextContent>) {
             )
         )
     ).first().text
-//     тут switch case нужен будет!
-    if (stage.equals(Strings.Back)) {
-        ideas(message)
+    when (stage) {
+        Strings.Back -> ideas(message)
+        // TODO: 30.06.2022
+        /*
+         * В БУДУЩЕМ ДОБАВИТЕ !
+        */
+//        Strings.Bisociation -> handleStep2()
+//        Strings.DelphiBrainstormMethod -> handleStep2()
+//        Strings.SCAMPER -> handleStep3()
+//        Strings.TrendyFriendy -> handleStep4()
     }
 }
 
 suspend fun BehaviourContext.ideas(message: CommonMessage<TextContent>) {
     val user = userRepository.get(User.Id(message.chat.id.chatId))
-    //todo :
-    // иначе не проверим пока что закомиченно
-//    if (user != null) {
-//          val buttons = steps.take(user.availableStepsCount).map { SimpleKeyboardButton(it) }
-    val selectedStep = waitText(
-        SendTextMessage(
-            message.chat.id, Strings.Ideas,
-            replyMarkup = ReplyKeyboardMarkup(
-//                    *buttons.toTypedArray(),
-                SimpleKeyboardButton(Strings.Step1),
-                SimpleKeyboardButton(Strings.Step2),
-                SimpleKeyboardButton(Strings.Step3),
-                SimpleKeyboardButton(Strings.Step4),
-                resizeKeyboard = true,
-                oneTimeKeyboard = false
+    if (user != null) {
+        val buttons = steps.take(user.availableStepsCount).map { SimpleKeyboardButton(it) }
+        val selectedStep = waitText(
+            SendTextMessage(
+                message.chat.id, Strings.Ideas,
+                replyMarkup = ReplyKeyboardMarkup(
+                    *buttons.toTypedArray(),
+//                SimpleKeyboardButton(Strings.Step1),
+//                SimpleKeyboardButton(Strings.Step2),
+//                SimpleKeyboardButton(Strings.Step3),
+//                SimpleKeyboardButton(Strings.Step4),
+                    resizeKeyboard = true,
+                    oneTimeKeyboard = false
+                )
             )
-        )
-    ).first().text
-    when (selectedStep) {
-        Strings.Step1 -> handleStep1(message)
-        // TODO: 30.06.2022
-        /*
-         * В БУДУЩЕМ ДОБАВИТЕ !
-        */
+        ).first().text
+        when (selectedStep) {
+            Strings.Step1 -> handleStep1(message)
+            // TODO: 30.06.2022
+            /*
+             * В БУДУЩЕМ ДОБАВИТЕ !
+            */
 //        Strings.Step2 -> handleStep2()
 //        Strings.Step3 -> handleStep3()
 //        Strings.Step4 -> handleStep4()
+        }
     }
 }
-//}
 
 
