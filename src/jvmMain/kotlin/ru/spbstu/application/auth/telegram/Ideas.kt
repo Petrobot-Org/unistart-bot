@@ -15,32 +15,29 @@ import ru.spbstu.application.telegram.Strings
 
 private val userRepository: UserRepository by GlobalContext.get().inject()
 private val steps = listOf<String>(Strings.Step1, Strings.Step2, Strings.Step3, Strings.Step4)
-private val buttons = listOf<String>(
+private val buttonsForFirstStep = listOf<String>(
     Strings.Bisociation,
     Strings.DelphiBrainstormMethod,
-    Strings.SCAMPER,
+    Strings.Scamper,
     Strings.TrendyFriendy,
     Strings.Back
 )
 
 suspend fun BehaviourContext.handleStep1(message: CommonMessage<TextContent>) {
-    val buttons = buttons.map { SimpleKeyboardButton(it) }
+    val buttons = buttonsForFirstStep.map { SimpleKeyboardButton(it) }
     val stage = waitText(
         SendTextMessage(
             message.chat.id, Strings.Variants,
             replyMarkup = ReplyKeyboardMarkup(
                 *buttons.toTypedArray(),
                 resizeKeyboard = true,
-                oneTimeKeyboard = false
+                oneTimeKeyboard = true
             )
         )
-    ).first().text
+    ).first { it.text in buttonsForFirstStep }.text
     when (stage) {
         Strings.Back -> steps(message)
-        // TODO: 30.06.2022
-        /*
-         * В БУДУЩЕМ ДОБАВИТЕ !
-        */
+//        В БУДУЩЕМ ДОБАВИТЕ !
 //        Strings.Bisociation -> handleStep2()
 //        Strings.DelphiBrainstormMethod -> handleStep2()
 //        Strings.SCAMPER -> handleStep3()
@@ -57,26 +54,21 @@ suspend fun BehaviourContext.steps(message: CommonMessage<TextContent>) {
                 message.chat.id, Strings.Ideas,
                 replyMarkup = ReplyKeyboardMarkup(
                     *buttons.toTypedArray(),
-//                SimpleKeyboardButton(Strings.Step1),
-//                SimpleKeyboardButton(Strings.Step2),
-//                SimpleKeyboardButton(Strings.Step3),
-//                SimpleKeyboardButton(Strings.Step4),
+//                    SimpleKeyboardButton(Strings.Step1),
+//                    SimpleKeyboardButton(Strings.Step2),
+//                    SimpleKeyboardButton(Strings.Step3),
+//                    SimpleKeyboardButton(Strings.Step4),
                     resizeKeyboard = true,
-                    oneTimeKeyboard = false
+                    oneTimeKeyboard = true
                 )
             )
-        ).first().text
+        ).first { it.text in steps }.text
         when (selectedStep) {
             Strings.Step1 -> handleStep1(message)
-            // TODO: 30.06.2022
-            /*
-             * В БУДУЩЕМ ДОБАВИТЕ !
-            */
+//        В БУДУЩЕМ ДОБАВИТЕ !
 //        Strings.Step2 -> handleStep2()
 //        Strings.Step3 -> handleStep3()
 //        Strings.Step4 -> handleStep4()
         }
     }
 }
-
-
