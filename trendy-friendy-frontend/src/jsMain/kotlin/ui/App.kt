@@ -22,6 +22,11 @@ fun App(screenModel: ScreenModel) {
         onDispose { }
     }
     Div(attrs = {
+        classes(buildList{
+            add("loadable")
+            if (state.loadingState.finishing) add("loading")
+        })
+
         style {
             display(DisplayStyle.Flex)
             flexDirection(FlexDirection.Column)
@@ -94,6 +99,7 @@ private fun ChooseSetScreen(
         classes(buildList {
             add("btn")
             add("btn-primary")
+            add("loadable")
             if (state.loadingState.gettingCards) add("loading")
         })
         style {
@@ -230,6 +236,7 @@ private fun PlayingScreen(
             classes(buildList {
                 add("btn")
                 add("btn-primary")
+                add("loadable")
                 if (state.loadingState.addingIdea) {
                     add("loading")
                 }

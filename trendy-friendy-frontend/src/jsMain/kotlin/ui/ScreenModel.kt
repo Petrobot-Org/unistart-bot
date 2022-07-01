@@ -31,6 +31,7 @@ class ScreenModel(
     private var pageIndex by mutableStateOf(0)
     private var loadingAddIdea by mutableStateOf(0)
     private var loadingCards by mutableStateOf(0)
+    private var loadingFinish by mutableStateOf(0)
     private var selectedSets by mutableStateOf(emptySet<TrendCardSet>())
 
     @get:Composable
@@ -41,7 +42,8 @@ class ScreenModel(
             val pageIndex = this.pageIndex
             val loadingState = LoadingState(
                 addingIdea = loadingAddIdea != 0,
-                gettingCards = loadingCards != 0
+                gettingCards = loadingCards != 0,
+                finishing = loadingFinish != 0
             )
             return when {
                 !loadedInitialState -> {
@@ -51,7 +53,7 @@ class ScreenModel(
                     GameState.ChooseSet(sets, selectedSets, loadingState)
                 }
                 pageIndex in cards.indices -> {
-                    GameState.Details(cards[pageIndex])
+                    GameState.Details(cards[pageIndex], loadingState)
                 }
                 else -> {
                     GameState.Playing(cards, ideasCount, loadingState)
@@ -108,6 +110,7 @@ class ScreenModel(
 
     fun finish() {
         coroutineScope.launch {
+            loadingFinish += 1
             client.finish()
             webApp.close()
         }

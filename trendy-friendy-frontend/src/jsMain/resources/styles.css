@@ -110,7 +110,13 @@ button {
     transform: scale(0.95);
 }
 
-.btn.loading {
+.loadable {
+    transition-property: opacity;
+    transition-duration: .2s;
+    transition-timing-function: ease-in-out;
+}
+
+.loading {
     opacity: 0.5;
     pointer-events: none;
 }
