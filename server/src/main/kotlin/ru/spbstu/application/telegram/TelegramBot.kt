@@ -7,8 +7,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.spbstu.application.auth.telegram.handleStart
+import ru.spbstu.application.steps.telegram.steps
 import ru.spbstu.application.trendyfriendy.sendTrendyFriendyApp
-import kotlin.jvm.JvmInline
 
 class TelegramBot(token: TelegramToken) {
     val bot = telegramBot(token.value)
@@ -21,6 +21,7 @@ class TelegramBot(token: TelegramToken) {
             ) {
                 onCommand("start") { handleStart(it) }
                 onCommand("game") { sendTrendyFriendyApp(it.chat) }
+                onCommand("steps") { steps(it) }
             }.join()
         }
     }
