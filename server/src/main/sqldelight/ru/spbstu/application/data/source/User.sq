@@ -1,0 +1,24 @@
+import ru.spbstu.application.auth.entities.Avatar;
+import ru.spbstu.application.auth.entities.Occupation;
+import ru.spbstu.application.auth.entities.PhoneNumber;
+import ru.spbstu.application.auth.entities.User;
+
+CREATE TABLE User (
+    id INTEGER AS User.Id PRIMARY KEY,
+    phoneNumber TEXT AS PhoneNumber UNIQUE,
+    avatar TEXT AS Avatar NOT NULL,
+    occupation TEXT AS Occupation NOT NULL,
+    availableStepsCount INTEGER
+);
+
+getUserById:
+SELECT * FROM User
+WHERE id = :id;
+
+addUser:
+INSERT INTO User(id, phoneNumber, avatar, occupation, availableStepsCount)
+VALUES (:id, :phoneNumber, :avatar, :occupation, :availableStepsCount);
+
+containsUserByPhoneNumber:
+SELECT COUNT(1) FROM User
+WHERE phoneNumber = :phoneNumber;

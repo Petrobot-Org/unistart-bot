@@ -24,7 +24,7 @@ fun HTML.index() {
         div {
             id = "root"
         }
-        script(src = "/static/unistart.js") {}
+        script(src = "/static/client.js") {}
     }
 }
 
