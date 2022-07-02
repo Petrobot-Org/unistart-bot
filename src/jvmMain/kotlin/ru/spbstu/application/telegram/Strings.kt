@@ -9,7 +9,7 @@ object Strings {
     const val Step2 = "Шаг 2"
     const val Step3 = "Шаг 3"
     const val Step4 = "Шаг 4"
-    const val VariantsForStep1 = "Варианты для Шага 1"
+    const val ChooseIdeaGeneration = "Выбери технику генерации идей"
     const val Bisociation = "Бисоциации"
     const val DelphiBrainstormMethod = "Метод Дельфи/брейншторм"
     const val Scamper = "SCAMPER"
