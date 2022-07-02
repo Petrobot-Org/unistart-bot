@@ -15,6 +15,7 @@ import org.koin.core.context.GlobalContext
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.repository.UserRepository
 import ru.spbstu.application.telegram.Strings
+import ru.spbstu.application.trendyfriendy.sendTrendyFriendyApp
 
 private val userRepository: UserRepository by GlobalContext.get().inject()
 private val steps = listOf(Strings.Step1, Strings.Step2, Strings.Step3, Strings.Step4)
@@ -70,5 +71,6 @@ suspend fun BehaviourContext.handleStep1(message: CommonMessage<TextContent>) {
     ).first { it.text in ideaGenerationMethods }.text
     when (stage) {
         Strings.BackToSteps -> steps(message)
+        Strings.TrendyFriendy -> sendTrendyFriendyApp(message.chat)
     }
 }
