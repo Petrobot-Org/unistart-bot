@@ -6,9 +6,6 @@ import dev.inmo.tgbotapi.webapps.webApp
 import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.attributes.placeholder
 import org.jetbrains.compose.web.css.*
-import org.jetbrains.compose.web.dom.Button
-import org.jetbrains.compose.web.dom.Div
-import org.jetbrains.compose.web.dom.Text
 import org.jetbrains.compose.web.dom.*
 import trendyfriendy.TrendCard
 import trendyfriendy.TrendCardSet
@@ -22,7 +19,7 @@ fun App(screenModel: ScreenModel) {
         onDispose { }
     }
     Div(attrs = {
-        classes(buildList{
+        classes(buildList {
             add("loadable")
             if (state.loadingState.finishing) add("loading")
         })
@@ -64,6 +61,15 @@ private fun ChooseSetScreen(
             flex(1)
         }
     })
+    H6(
+        attrs = {
+            style {
+                marginLeft(32.px)
+            }
+        }
+    ) {
+        Text("Категории трендов")
+    }
     state.sets.forEach { set ->
         val checked = set in state.selectedSets
         Div(attrs = {
@@ -168,6 +174,7 @@ private fun PlayingScreen(
             display(DisplayStyle.Flex)
             flexDirection(FlexDirection.Row)
             alignItems(AlignItems.Center)
+            marginTop(8.px)
         }
     }) {
         Button(attrs = {
@@ -190,9 +197,9 @@ private fun PlayingScreen(
             Text("Отправить всё (${state.ideasCount})")
         }
     }
-    for (card in state.cards) {
+    state.cards.forEachIndexed { index, card ->
         Div(attrs = {
-            classes("card", "image-full")
+            classes("card", "image-full", "delay${index}")
             style {
                 flex(1)
                 margin(8.px)
@@ -233,16 +240,12 @@ private fun PlayingScreen(
                 addIdea(inputState)
                 inputState = ""
             }
-            classes(buildList {
-                add("btn")
-                add("btn-primary")
-                add("loadable")
-                if (state.loadingState.addingIdea) {
-                    add("loading")
-                }
-            })
+            classes("btn", "btn-primary", "loadable")
+            if (state.loadingState.addingIdea) {
+                classes("loading")
+            }
             style {
-                margin(8.px)
+                marginRight(8.px)
             }
         }) {
             Text("Добавить")

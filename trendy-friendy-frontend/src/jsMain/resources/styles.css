@@ -17,6 +17,19 @@ h6 {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    animation: card-pop .3s ease-in-out;
+}
+
+.delay0 {
+    animation-delay: 0s;
+}
+
+.delay1 {
+    animation-delay: .1s;
+}
+
+.delay2 {
+    animation-delay: .2s;
 }
 
 .card > img {
@@ -28,6 +41,8 @@ h6 {
 .card-title {
     font-size: 1.25rem;
     font-weight: 600;
+    line-height: 1.75rem;
+    margin: 0;
 }
 
 .card-body {
@@ -67,6 +82,18 @@ h6 {
     color: white
 }
 
+@keyframes card-pop {
+    0% {
+        transform: scale(1);
+    }
+    30% {
+        transform: scale(1.03);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
 button {
     background-image: none;
 }
@@ -95,8 +122,8 @@ button {
     text-decoration-line: none;
     border-width: 1px;
     animation: button-pop .25s ease-out;
-    background-color: transparent;
     color: var(--tg-theme-text-color);
+    background-color: var(--tg-theme-secondary-bg-color);
 }
 
 .btn.btn-primary {
@@ -140,10 +167,19 @@ button {
     padding-right: 1rem;
     font-size: .875rem;
     line-height: 2;
-    border-width: 1px;
-    border-color: var(--tg-theme-button-color);
-    background-color: var(--tg-theme-bg-color);
+    border-width: 2px;
+    border-color: transparent;
+    background-color: var(--tg-theme-secondary-bg-color);
+    color: var(--tg-theme-text-color);
     border-radius: .5rem;
+}
+
+.input:focus {
+    outline: none;
+    border-color: var(--tg-theme-button-color);
+}
+
+input::placeholder {
     color: var(--tg-theme-text-color);
 }
 
@@ -175,19 +211,20 @@ button {
     background-color: var(--tg-theme-button-color);
     background-repeat: no-repeat;
     animation: checkmark .2s ease-in-out;
-    background-image: linear-gradient(-45deg, transparent 65%, hsl(var(--chkbg)) 65.99%), linear-gradient(45deg, transparent 75%, hsl(var(--chkbg)) 75.99%), linear-gradient(-45deg, hsl(var(--chkbg)) 40%, transparent 40.99%), linear-gradient(45deg, hsl(var(--chkbg)) 30%, hsl(var(--chkfg)) 30.99%, hsl(var(--chkfg)) 40%, transparent 40.99%), linear-gradient(-45deg, hsl(var(--chkfg)) 50%, hsl(var(--chkbg)) 50.99%);
+    background-image: linear-gradient(-45deg, transparent 65%, var(--chkbg) 65.99%), linear-gradient(45deg, transparent 75%, var(--chkbg) 75.99%), linear-gradient(-45deg, var(--chkbg) 40%, transparent 40.99%), linear-gradient(45deg, var(--chkbg) 30%, var(--chkfg) 30.99%, var(--chkfg) 40%, transparent 40.99%), linear-gradient(-45deg, var(--chkfg) 50%, var(--chkbg) 50.99%);
 }
 
 .checkbox {
     --chkbg: var(--tg-theme-button-color);
     --chkfg: var(--tg-theme-button-text-color);
-    flex-shrink: 0;
     height: 1.5rem;
     width: 1.5rem;
+    flex-shrink: 0;
     appearance: none;
-    border-width: 1px;
-    border-color: var(--chkbg);
+    border-width: 2px;
+    border-color: var(--tg-theme-button-color);
     border-radius: .5rem;
+    border-style: solid;
 }
 
 @keyframes checkmark {
