@@ -19,6 +19,7 @@ class GameClient(initData: String, hash: String) {
         HttpResponseValidator {
             handleResponseExceptionWithRequest { exception, _ ->
                 window.alert(exception.message.toString())
+                window.location.reload()
             }
         }
         defaultRequest {
