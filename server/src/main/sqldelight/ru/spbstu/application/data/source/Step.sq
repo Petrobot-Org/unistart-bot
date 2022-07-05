@@ -1,0 +1,12 @@
+import java.time.Instant;
+import ru.spbstu.application.auth.entities.Step;
+
+CREATE TABLE Step (
+    id INTEGER AS Step.Id PRIMARY KEY,
+    start INTEGER AS Instant NOT NULL,
+    duration INTEGER AS Instant NOT NULL
+);
+
+getStepById:
+SELECT * FROM Step
+WHERE id = :id;
