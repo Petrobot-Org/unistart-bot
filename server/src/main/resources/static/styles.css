@@ -139,6 +139,11 @@ button {
     transform: scale(0.95);
 }
 
+.btn.disabled {
+    color: gray;
+    pointer-events: none;
+}
+
 .loadable {
     transition-property: opacity;
     transition-duration: .2s;

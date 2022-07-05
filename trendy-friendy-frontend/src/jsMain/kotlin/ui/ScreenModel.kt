@@ -61,6 +61,9 @@ class ScreenModel(
         }
 
     fun addIdea(text: String) {
+        if (text.isBlank()) {
+            return
+        }
         coroutineScope.launch {
             loadingAddIdea += 1
             val ideaResponse = client.addIdea(Idea(text))

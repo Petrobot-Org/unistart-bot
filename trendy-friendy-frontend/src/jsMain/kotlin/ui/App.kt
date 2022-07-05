@@ -190,6 +190,9 @@ private fun PlayingScreen(
         Button(attrs = {
             onClick { finish() }
             classes("btn")
+            if (state.ideasCount < 1) {
+                classes("disabled")
+            }
             style {
                 marginRight(8.px)
             }
