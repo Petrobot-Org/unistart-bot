@@ -1,5 +1,4 @@
 cards_per_game: 3
-pictures_path: static/trends/
 
 sets:
   Gartner:
@@ -22,3 +21,9 @@ sets:
     - name: грустно
       description: муя
       url: static/trends/cat3.webp
+    - name: я плачу от радости :)
+      description: спасите
+      url: static/trends/cat4.webp
+    - name: end me
+      description: pls
+      url: static/trends/cat5.webp

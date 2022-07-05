@@ -9,7 +9,6 @@ import trendyfriendy.TrendCard
 @Serializable
 data class TrendyFriendyConfig(
     @SerialName("cards_per_game") val cardsPerGame: Int,
-    @SerialName("pictures_path") val picturesPath: String,
     val sets: Map<String, List<TrendCard>>
 )
 
