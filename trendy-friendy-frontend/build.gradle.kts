@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
+
 plugins {
     kotlin("multiplatform")
     id("org.jetbrains.compose") version Versions.compose
@@ -35,4 +37,8 @@ kotlin {
         }
         val jsTest by getting
     }
+}
+
+tasks.named<KotlinWebpack>("jsBrowserProductionWebpack") {
+    outputFileName = "static/trendy-friendy-frontend.js"
 }

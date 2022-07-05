@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
+
 plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
@@ -46,15 +48,12 @@ sqldelight {
     }
 }
 
+tasks.named<Jar>("jar") {
+    dependsOn(":trendy-friendy-frontend:jsBrowserProductionWebpack")
+    from("${rootProject.projectDir}/trendy-friendy-frontend/build/distributions/")
+}
+
 tasks.named<JavaExec>("run") {
     dependsOn(tasks.named<Jar>("jar"))
     classpath(tasks.named<Jar>("jar"))
-}
-
-tasks.named<Jar>("jar") {
-    dependsOn(":trendy-friendy-frontend:jsBrowserProductionWebpack")
-    from(
-        File("${rootProject.projectDir}/trendy-friendy-frontend/build/distributions/trendy-friendy-frontend.js"),
-        File("${rootProject.projectDir}/trendy-friendy-frontend/src/jsMain/resources/styles.css")
-    )
 }

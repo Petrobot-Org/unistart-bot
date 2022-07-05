@@ -9,7 +9,7 @@ fun Application.configureRouting() {
     routing {
         static("/static") {
             preCompressed {
-                resources()
+                resources("/static")
             }
         }
         trendyFriendyApi()

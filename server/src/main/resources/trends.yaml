@@ -1,0 +1,15 @@
+Skolkovo:
+  fabric.jpeg:
+    name: Data Fabric
+    description: "The value of data has never been more clear. But often, data remains siloed within applications, which means it’s not being used as effectively as possible."
+  composable.jpeg:
+    name: Composable Applications
+    description: "Fusion teams face many challenges: They can lack coding skills, be locked into the wrong technologies and are often tasked with fast-paced delivery."
+Gartner:
+  fabric.jpeg:
+    name: Data Fabric
+    description: "The value of data has never been more clear. But often, data remains siloed within applications, which means it’s not being used as effectively as possible."
+  composable.jpeg:
+    name: Composable Applications
+    description: "Fusion teams face many challenges: They can lack coding skills, be locked into the wrong technologies and are often tasked with fast-paced delivery."
+
