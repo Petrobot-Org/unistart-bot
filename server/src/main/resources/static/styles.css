@@ -7,6 +7,7 @@ html, body {
 h6 {
     color: var(--tg-theme-text-color);
     font-size: large;
+    margin: 0;
 }
 
 .card {
@@ -244,4 +245,24 @@ input::placeholder {
     to {
         background-position-y: 0
     }
+}
+
+.divider {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    align-self: stretch;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    height: 1rem;
+    white-space: nowrap;
+}
+
+.divider::before, .divider::after {
+    content: "";
+    flex-grow: 1;
+    height: .125rem;
+    width: 100%;
+    background-color: var(--tg-theme-text-color);
+    opacity: 0.1;
 }

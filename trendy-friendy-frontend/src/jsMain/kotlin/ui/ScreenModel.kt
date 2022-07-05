@@ -105,6 +105,14 @@ class ScreenModel(
         selectedSets = selectedSets - set
     }
 
+    fun selectAllSets() {
+        selectedSets = sets
+    }
+
+    fun unselectAllSets() {
+        selectedSets = emptySet()
+    }
+
     fun resetCards() {
         pageIndex = 0
         cards = emptyList()

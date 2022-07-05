@@ -35,7 +35,9 @@ fun App(screenModel: ScreenModel) {
                 state = state,
                 generateCards = { screenModel.generateCards() },
                 select = { screenModel.selectSet(it) },
-                unselect = { screenModel.unselectSet(it) }
+                unselect = { screenModel.unselectSet(it) },
+                selectAll = { screenModel.selectAllSets() },
+                unselectAll = { screenModel.unselectAllSets() }
             )
             is GameState.Details -> DetailsScreen(state.card) { screenModel.goNext() }
             is GameState.Playing -> PlayingScreen(
@@ -53,46 +55,49 @@ private fun ChooseSetScreen(
     state: GameState.ChooseSet,
     generateCards: () -> Unit,
     select: (String) -> Unit,
-    unselect: (String) -> Unit
+    unselect: (String) -> Unit,
+    selectAll: () -> Unit,
+    unselectAll: () -> Unit
 ) {
     Div(attrs = {
         style {
             flex(1)
         }
     })
-    H6(
-        attrs = {
-            style {
-                marginTop((-32).px)
-                marginLeft(32.px)
-            }
+    Div(attrs = {
+        style {
+            marginLeft(32.px)
+            marginRight(32.px)
+            marginTop((-32).px)
         }
-    ) {
-        Text("Категории трендов")
-    }
-    state.sets.forEach { set ->
-        val checked = set in state.selectedSets
+    }) {
+        LabeledCheckbox(
+            text = {
+                H6 {
+                    Text("Категории трендов")
+                }
+            },
+            checked = state.sets.size == state.selectedSets.size,
+            select = selectAll,
+            unselect = unselectAll
+        )
         Div(attrs = {
-            classes("form-control")
-            onClick { if (checked) unselect(set) else select(set) }
-            style {
-                marginLeft(32.px)
-                marginRight(32.px)
-            }
-        }) {
-            Label(attrs = {
-                classes("label", "cursor-pointer")
-            }) {
-                Span(attrs = {
-                    classes("label-text")
-                }) {
-                    Text(set)
-                }
-                Input(InputType.Checkbox) {
-                    classes("checkbox")
-                    checked(checked)
-                }
-            }
+            classes("divider")
+        })
+        state.sets.forEach { set ->
+            val checked = set in state.selectedSets
+            LabeledCheckbox(
+                text = {
+                    Span(attrs = {
+                        classes("label-text")
+                    }) {
+                        Text(set)
+                    }
+                },
+                checked = checked,
+                select = { select(set) },
+                unselect = { unselect(set) }
+            )
         }
     }
     Div(attrs = {
@@ -113,6 +118,30 @@ private fun ChooseSetScreen(
         }
     }) {
         Text("Далее")
+    }
+}
+
+@Composable
+private fun LabeledCheckbox(
+    text: @Composable () -> Unit,
+    checked: Boolean,
+    select: () -> Unit,
+    unselect: () -> Unit
+) {
+    Div(attrs = {
+        classes("form-control")
+        onClick { if (checked) unselect() else select() }
+    }) {
+        Label(attrs = {
+            classes("label", "cursor-pointer")
+        }) {
+
+            text()
+            Input(InputType.Checkbox) {
+                classes("checkbox")
+                checked(checked)
+            }
+        }
     }
 }
 
