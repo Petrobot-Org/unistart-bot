@@ -11,7 +11,6 @@ import kotlinx.browser.window
 import trendyfriendy.Idea
 import trendyfriendy.IdeaResponse
 import trendyfriendy.TrendCard
-import trendyfriendy.TrendCardSet
 
 class GameClient(initData: String, hash: String) {
     private val client = HttpClient {
@@ -44,15 +43,15 @@ class GameClient(initData: String, hash: String) {
         return client.get("/trendy-friendy/ideas").body()
     }
 
-    suspend fun generateCards(): List<TrendCard> {
-        return client.post("/trendy-friendy/cards/0").body()
+    suspend fun generateCards(fromSets: Set<String>): List<TrendCard> {
+        return client.post("/trendy-friendy/cards") { setBody(fromSets) }.body()
     }
 
     suspend fun getCards(): List<TrendCard> {
         return client.get("/trendy-friendy/cards").body()
     }
 
-    suspend fun getSets(): List<TrendCardSet> {
+    suspend fun getSets(): Set<String> {
         return client.get("/trendy-friendy/cards/sets").body()
     }
 

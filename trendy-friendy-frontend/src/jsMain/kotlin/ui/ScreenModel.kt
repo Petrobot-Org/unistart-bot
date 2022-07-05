@@ -15,7 +15,6 @@ import kotlinx.coroutines.launch
 import org.w3c.dom.Image
 import trendyfriendy.Idea
 import trendyfriendy.TrendCard
-import trendyfriendy.TrendCardSet
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -24,7 +23,7 @@ class ScreenModel(
     private val client: GameClient
 ) {
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
-    private var sets = emptyList<TrendCardSet>()
+    private var sets = emptySet<String>()
     private var loadedInitialState by mutableStateOf(false)
     private var cards by mutableStateOf<List<TrendCard>>(emptyList())
     private var ideasCount by mutableStateOf(0)
@@ -32,7 +31,7 @@ class ScreenModel(
     private var loadingAddIdea by mutableStateOf(0)
     private var loadingCards by mutableStateOf(0)
     private var loadingFinish by mutableStateOf(0)
-    private var selectedSets by mutableStateOf(emptySet<TrendCardSet>())
+    private var selectedSets by mutableStateOf(emptySet<String>())
 
     @get:Composable
     val state: GameState
@@ -89,17 +88,17 @@ class ScreenModel(
     fun generateCards() {
         coroutineScope.launch {
             loadingCards += 1
-            cards = client.generateCards()
+            cards = client.generateCards(selectedSets)
             cards.map { async { preloadImage(it.url) } }.forEach { it.await() }
             loadingCards -= 1
         }
     }
 
-    fun selectSet(set: TrendCardSet) {
+    fun selectSet(set: String) {
         selectedSets = selectedSets + set
     }
 
-    fun unselectSet(set: TrendCardSet) {
+    fun unselectSet(set: String) {
         selectedSets = selectedSets - set
     }
 

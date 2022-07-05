@@ -30,6 +30,7 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:${Versions.slf4jSimple}")
     implementation("com.squareup.sqldelight:sqlite-driver:${Versions.sqlDelight}")
     implementation("com.squareup.sqldelight:coroutines-extensions-jvm:${Versions.sqlDelight}")
+    implementation("com.charleskorn.kaml:kaml:${Versions.kaml}")
 }
 
 tasks.getByName<Test>("test") {

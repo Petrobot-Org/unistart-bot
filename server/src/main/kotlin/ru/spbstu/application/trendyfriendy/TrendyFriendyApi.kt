@@ -12,8 +12,6 @@ import kotlinx.html.*
 import org.koin.ktor.ext.inject
 import trendyfriendy.Idea
 import trendyfriendy.IdeaResponse
-import trendyfriendy.TrendCardSet
-import kotlin.random.Random
 
 fun HTML.index() {
     head {
@@ -55,23 +53,13 @@ fun Routing.trendyFriendyApi() {
                     val cards = service.getCards(userId())
                     call.respond(cards)
                 }
-                post("/{id}") {
-                    val cards = service.generateCards(userId(), 0)
+                post {
+                    val fromSets = call.receive<Set<String>>()
+                    val cards = service.generateCards(userId(), fromSets)
                     call.respond(cards)
                 }
-                route("/sets") {
-                    get {
-                        call.respond(
-                            listOf(
-                                TrendCardSet("Технологические", 0),
-                                TrendCardSet("Глобальные рыночные", 1),
-                                TrendCardSet("Gartner", 2),
-                                TrendCardSet("Deloitte", 3),
-                                TrendCardSet("IBM Institute", 4),
-                                TrendCardSet("Skolkovo", 5)
-                            )
-                        )
-                    }
+                get("/sets") {
+                    call.respond(service.getSets())
                 }
             }
         }

@@ -8,7 +8,6 @@ import org.jetbrains.compose.web.attributes.placeholder
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import trendyfriendy.TrendCard
-import trendyfriendy.TrendCardSet
 
 @Composable
 fun App(screenModel: ScreenModel) {
@@ -53,8 +52,8 @@ fun App(screenModel: ScreenModel) {
 private fun ChooseSetScreen(
     state: GameState.ChooseSet,
     generateCards: () -> Unit,
-    select: (TrendCardSet) -> Unit,
-    unselect: (TrendCardSet) -> Unit
+    select: (String) -> Unit,
+    unselect: (String) -> Unit
 ) {
     Div(attrs = {
         style {
@@ -64,6 +63,7 @@ private fun ChooseSetScreen(
     H6(
         attrs = {
             style {
+                marginTop((-32).px)
                 marginLeft(32.px)
             }
         }
@@ -86,7 +86,7 @@ private fun ChooseSetScreen(
                 Span(attrs = {
                     classes("label-text")
                 }) {
-                    Text(set.displayName)
+                    Text(set)
                 }
                 Input(InputType.Checkbox) {
                     classes("checkbox")
