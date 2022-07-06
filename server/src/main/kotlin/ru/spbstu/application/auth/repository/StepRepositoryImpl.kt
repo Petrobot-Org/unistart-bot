@@ -4,10 +4,8 @@ import ru.spbstu.application.auth.entities.Step
 import ru.spbstu.application.data.source.AppDatabase
 import java.time.Instant
 
-class FakeStepRepository(private val database: AppDatabase) : StepRepository {
-    private val step = { id: Step.Id,
-                         start: Instant,
-                         duration: Instant ->
+class StepRepositoryImpl(private val database: AppDatabase) : StepRepository {
+    private val step = { id: Step.Id, start: Instant, duration: Long ->
         Step(id, start, duration)
     }
 
@@ -15,10 +13,8 @@ class FakeStepRepository(private val database: AppDatabase) : StepRepository {
         return database.stepQueries.getStepById(id, step).executeAsOne()
     }
 
-//    override fun add(user: Step) {
-//    }
 
-    override fun changeDuration(id: Step.Id, duration: Instant): Step? {
+    override fun changeDuration(id: Step.Id, duration: Long): Step {
         return Step(get(id).id, get(id).start, duration)
     }
 }
