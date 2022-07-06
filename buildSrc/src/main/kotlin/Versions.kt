@@ -9,4 +9,5 @@ object Versions {
     const val compose = "1.2.0-alpha01-dev729"
     const val sqlDelight = "1.5.3"
     const val kaml = "0.46.0"
+    const val poi = "5.2.2"
 }

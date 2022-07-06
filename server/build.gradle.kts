@@ -31,6 +31,8 @@ dependencies {
     implementation("com.squareup.sqldelight:sqlite-driver:${Versions.sqlDelight}")
     implementation("com.squareup.sqldelight:coroutines-extensions-jvm:${Versions.sqlDelight}")
     implementation("com.charleskorn.kaml:kaml:${Versions.kaml}")
+    implementation("org.apache.poi:poi:${Versions.poi}")
+    implementation("org.apache.poi:poi-ooxml:${Versions.poi}")
 }
 
 tasks.getByName<Test>("test") {
