@@ -40,6 +40,6 @@ class UserRepositoryImpl(private val database: AppDatabase) : UserRepository {
     }
 
     override fun getAll(): List<User> {
-        TODO("Not yet implemented")
+        return database.userQueries.getAll(map).executeAsList()
     }
 }

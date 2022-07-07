@@ -21,4 +21,8 @@ class FakeUserRepository : UserRepository {
     override fun getAmountOfCoins(id: User.Id): Long {
         return get(id)?.amountOfCoins ?:-100
     }
+
+    override fun getAll(): List<User> {
+        return getAll()
+    }
 }

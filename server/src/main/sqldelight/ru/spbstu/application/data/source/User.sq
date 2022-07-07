@@ -25,4 +25,4 @@ SELECT COUNT(1) FROM User
 WHERE phoneNumber = :phoneNumber;
 
 getAll:
-SELECT * FROM User
+SELECT * FROM User;
