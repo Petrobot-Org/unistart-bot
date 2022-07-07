@@ -249,7 +249,7 @@ private fun PlayingScreen(
             }
         }
     }
-    Div(attrs = {
+    Form(attrs = {
         style {
             display(DisplayStyle.Flex)
             flexDirection(FlexDirection.Row)
@@ -267,7 +267,7 @@ private fun PlayingScreen(
             placeholder("Опиши свою идею здесь")
             classes("input")
         }
-        Button(attrs = {
+        Input(InputType.Submit) {
             onClick {
                 addIdea(inputState)
                 inputState = ""
@@ -279,8 +279,7 @@ private fun PlayingScreen(
             style {
                 marginRight(8.px)
             }
-        }) {
-            Text("Добавить")
+            value("Добавить")
         }
     }
 }
