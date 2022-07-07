@@ -17,9 +17,9 @@ class TelegramBot(token: TelegramToken) {
     fun start() {
         coroutineScope.launch {
             bot.buildBehaviourWithLongPolling {
-                onCommand("start", scenarioReceiver = { handleStart(it) })
-                onCommand("steps", scenarioReceiver = { steps(it) })
-                onCommand("get_stats", scenarioReceiver = { handleStats(it) })
+                onCommand("start") { handleStart(it) }
+                onCommand("steps") { steps(it) }
+                onCommand("stats") { handleStats(it) }
             }.join()
         }
     }
