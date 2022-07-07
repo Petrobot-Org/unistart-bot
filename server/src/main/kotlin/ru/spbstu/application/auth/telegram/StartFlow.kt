@@ -96,17 +96,10 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
                     oneTimeKeyboard = true
                 )
                 {
-                    row {
-                        simpleButton(Occupations.keys.elementAt(0))
-                        simpleButton(Occupations.keys.elementAt(1))
-                    }
-                    row {
-                        simpleButton(Occupations.keys.elementAt(2))
-                        simpleButton(Occupations.keys.elementAt(3))
-                    }
-                    row {
-                        simpleButton(Occupations.keys.elementAt(4))
-                        simpleButton(Occupations.keys.elementAt(5))
+                    Occupations.keys.take(6).chunked(2).forEach {
+                        row {
+                            it.forEach { simpleButton(it) }
+                        }
                     }
                 }
             )
