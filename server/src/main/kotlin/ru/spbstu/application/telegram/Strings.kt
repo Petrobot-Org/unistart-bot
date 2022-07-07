@@ -2,6 +2,7 @@ package ru.spbstu.application.telegram
 
 import ru.spbstu.application.auth.entities.Avatar
 import ru.spbstu.application.auth.entities.Occupation
+import ru.spbstu.application.auth.entities.PhoneNumber
 
 object Strings {
     val Avatars = mapOf(
@@ -42,12 +43,14 @@ object Strings {
 
     const val InvalidAvatar = "Такого аватара не существует"
     const val InvalidOccupation = "Не могу понять род вашей деятельности"
+    const val PhoneNumberIsAlreadyInDataBase = "Этот номер телефона уже был исппользован при регистрации"
 
     const val ChooseStep = "Выбери шаг"
     const val Step1 = "1. Генерация идей"
     const val Step2 = "2. Команда"
     const val Step3 = "3. Рынок"
     const val Step4 = "4. Бизнес-модель"
+    const val GetMyStats = "Получить статистику об успехах"
     const val ChooseIdeaGeneration = "Выбери технику генерации идей"
     const val Bisociation = "Бисоциации"
     const val DelphiBrainstormMethod = "Метод Дельфи/брейншторм"

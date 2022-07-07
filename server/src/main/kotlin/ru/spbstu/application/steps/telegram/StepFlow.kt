@@ -2,12 +2,10 @@ package ru.spbstu.application.steps.telegram
 
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitText
-import dev.inmo.tgbotapi.extensions.utils.types.buttons.ReplyKeyboardMarkup
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.replyKeyboard
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.row
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.simpleButton
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
-import dev.inmo.tgbotapi.types.buttons.SimpleKeyboardButton
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
 import dev.inmo.tgbotapi.types.message.content.TextContent
 import kotlinx.coroutines.flow.first
@@ -28,20 +26,31 @@ private val ideaGenerationMethods = listOf(
 
 suspend fun BehaviourContext.steps(message: CommonMessage<TextContent>) {
     val user = userRepository.get(User.Id(message.chat.id.chatId)) ?: return
-    val buttons = steps.take(user.availableStepsCount.toInt()).map { SimpleKeyboardButton(it) }
+    val numberOfAvailableSteps = user.availableStepsCount.toInt()
+    val numbToSecRow = numberOfAvailableSteps / 2 + numberOfAvailableSteps % 2
+    val buttonsToSecRow= steps.take(numbToSecRow)
+    var buttonsToThirdRow = emptyList<String>()
+    if (numberOfAvailableSteps>2) {
+        buttonsToThirdRow = steps.subList(2, numberOfAvailableSteps)
+    }
     val selectedStep = waitText(
         SendTextMessage(
             message.chat.id,
             Strings.ChooseStep,
-            replyMarkup = ReplyKeyboardMarkup(
-                *buttons.toTypedArray(),
+            replyMarkup = replyKeyboard(
                 resizeKeyboard = true,
                 oneTimeKeyboard = true
             )
+            {
+                row { simpleButton(Strings.GetMyStats) }
+                row { buttonsToSecRow.map{simpleButton(it)}}
+                row { buttonsToThirdRow.map{simpleButton(it)}}
+            }
         )
-    ).first { it.text in steps }.text
+    ).first { it.text in steps || it.text == Strings.GetMyStats }.text
     when (selectedStep) {
         Strings.Step1 -> handleStep1(message)
+        Strings.GetMyStats -> handleStats(message)
     }
 }
 
@@ -72,3 +81,4 @@ suspend fun BehaviourContext.handleStep1(message: CommonMessage<TextContent>) {
         Strings.BackToSteps -> steps(message)
     }
 }
+
