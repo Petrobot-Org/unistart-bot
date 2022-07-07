@@ -2,7 +2,6 @@ package ru.spbstu.application.steps.telegram
 
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
-import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitText
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.replyKeyboard
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.row
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.simpleButton
@@ -15,6 +14,7 @@ import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.repository.UserRepository
 import ru.spbstu.application.telegram.Strings
 import ru.spbstu.application.telegram.Strings.MyRanking
+import ru.spbstu.application.telegram.waitTextFrom
 
 private val userRepository: UserRepository by GlobalContext.get().inject()
 private val steps = listOf(Strings.Step1, Strings.Step2, Strings.Step3, Strings.Step4)
@@ -35,7 +35,8 @@ suspend fun BehaviourContext.steps(message: CommonMessage<TextContent>) {
     if (numberOfAvailableSteps>2) {
         buttonsToThirdRow = steps.subList(2, numberOfAvailableSteps)
     }
-    val selectedStep = waitText(
+    val selectedStep = waitTextFrom(
+        message.chat,
         SendTextMessage(
             message.chat.id,
             Strings.ChooseStep,
@@ -57,7 +58,8 @@ suspend fun BehaviourContext.steps(message: CommonMessage<TextContent>) {
 }
 
 suspend fun BehaviourContext.handleStep1(message: CommonMessage<TextContent>) {
-    val stage = waitText(
+    val stage = waitTextFrom(
+        message.chat,
         SendTextMessage(
             message.chat.id,
             Strings.ChooseIdeaGeneration,
