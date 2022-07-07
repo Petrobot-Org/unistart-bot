@@ -28,13 +28,6 @@ private val ideaGenerationMethods = listOf(
 
 suspend fun BehaviourContext.steps(message: CommonMessage<TextContent>) {
     val user = userRepository.get(User.Id(message.chat.id.chatId)) ?: return
-    val numberOfAvailableSteps = user.availableStepsCount.toInt()
-    val numbToSecRow = numberOfAvailableSteps / 2 + numberOfAvailableSteps % 2
-    val buttonsToSecRow= steps.take(numbToSecRow)
-    var buttonsToThirdRow = emptyList<String>()
-    if (numberOfAvailableSteps>2) {
-        buttonsToThirdRow = steps.subList(2, numberOfAvailableSteps)
-    }
     val selectedStep = waitTextFrom(
         message.chat,
         SendTextMessage(
@@ -46,8 +39,11 @@ suspend fun BehaviourContext.steps(message: CommonMessage<TextContent>) {
             )
             {
                 row { simpleButton(Strings.GetMyStats) }
-                row { buttonsToSecRow.map{simpleButton(it)}}
-                row { buttonsToThirdRow.map{simpleButton(it)}}
+                steps.take(user.availableStepsCount.toInt()).chunked(2).forEach {
+                    row {
+                        it.forEach { simpleButton(it) }
+                    }
+                }
             }
         )
     ).first { it.text in steps || it.text == Strings.GetMyStats }.text
@@ -86,10 +82,9 @@ suspend fun BehaviourContext.handleStep1(message: CommonMessage<TextContent>) {
     }
 }
 
-suspend fun BehaviourContext.handleStats(message: CommonMessage<TextContent>)
-{
+suspend fun BehaviourContext.handleStats(message: CommonMessage<TextContent>) {
     val sortedUsers = userRepository.sortByAmountOfCoins()
     val user = userRepository.get(User.Id(message.chat.id.chatId)) ?: return
-    sendTextMessage( message.chat.id,MyRanking(sortedUsers.size,sortedUsers.indexOf(user)+1, user.amountOfCoins))
+    sendTextMessage(message.chat.id, MyRanking(sortedUsers.size, sortedUsers.indexOf(user) + 1, user.amountOfCoins))
     steps(message)
 }
