@@ -57,6 +57,6 @@ object Strings {
     const val TrendyFriendy = "Trendy Friendy"
     const val BackToSteps = "Обратно к шагам"
 
-    fun MyRanking(numberOfMembers:Int, myPosition:Int, myBonuses:Long) =
+    fun MyRanking(numberOfMembers: Int, myPosition: Int, myBonuses: Long) =
         "Всего участников в системе: $numberOfMembers человек, ваше текущее место в рейтинге - $myPosition, накоплено бонусов - $myBonuses"
 }

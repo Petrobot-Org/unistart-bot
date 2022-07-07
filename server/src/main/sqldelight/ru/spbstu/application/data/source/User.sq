@@ -18,7 +18,7 @@ WHERE id = :id;
 
 addUser:
 INSERT INTO User(id, phoneNumber, avatar, occupation, availableStepsCount, amountOfCoins)
-VALUES (:id, :phoneNumber, :avatar, :occupation, :availableStepsCount, : amountOfCoins);
+VALUES (:id, :phoneNumber, :avatar, :occupation, :availableStepsCount, :amountOfCoins);
 
 containsUserByPhoneNumber:
 SELECT COUNT(1) FROM User
