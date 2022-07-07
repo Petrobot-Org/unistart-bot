@@ -54,4 +54,7 @@ object Strings {
     const val Scamper = "SCAMPER"
     const val TrendyFriendy = "Trendy Friendy"
     const val BackToSteps = "Обратно к шагам"
+
+    fun MyRating(numberOfMembers:Long, myPosition:Long, myBonuses:Long) =
+        "Всего участников в системе: $numberOfMembers человек, ваше текущее место в рейтинге - $myPosition, накоплено бонусов - $myBonuses"
 }

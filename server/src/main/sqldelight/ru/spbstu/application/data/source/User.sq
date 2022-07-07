@@ -8,7 +8,8 @@ CREATE TABLE User (
     phoneNumber TEXT AS PhoneNumber UNIQUE,
     avatar TEXT AS Avatar NOT NULL,
     occupation TEXT AS Occupation NOT NULL,
-    availableStepsCount INTEGER
+    availableStepsCount INTEGER,
+    amountOfCoins INTEGER
 );
 
 getUserById:
@@ -16,9 +17,12 @@ SELECT * FROM User
 WHERE id = :id;
 
 addUser:
-INSERT INTO User(id, phoneNumber, avatar, occupation, availableStepsCount)
-VALUES (:id, :phoneNumber, :avatar, :occupation, :availableStepsCount);
+INSERT INTO User(id, phoneNumber, avatar, occupation, availableStepsCount, amountOfCoins)
+VALUES (:id, :phoneNumber, :avatar, :occupation, :availableStepsCount, : amountOfCoins);
 
 containsUserByPhoneNumber:
 SELECT COUNT(1) FROM User
 WHERE phoneNumber = :phoneNumber;
+
+getAll:
+SELECT * FROM User

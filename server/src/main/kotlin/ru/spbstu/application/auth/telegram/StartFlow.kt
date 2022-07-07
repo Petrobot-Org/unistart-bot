@@ -133,7 +133,7 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
 
     sendTextMessage(message.chat.id, firstStepInfo)
 
-    val user = User(User.Id(message.chat.id.chatId), phoneNumber, avatar, occupation, startLevel)
+    val user = User(User.Id(message.chat.id.chatId), phoneNumber, avatar, occupation, startLevel, 0)
     userRepository.add(user)
 
     steps(message)

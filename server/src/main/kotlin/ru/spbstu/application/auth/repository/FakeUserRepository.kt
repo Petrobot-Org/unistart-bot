@@ -17,4 +17,8 @@ class FakeUserRepository : UserRepository {
     override fun contains(phoneNumber: PhoneNumber): Boolean {
         return users.any { it.phoneNumber == phoneNumber }
     }
+
+    override fun getAmountOfCoins(id: User.Id): Long {
+        return get(id)?.amountOfCoins ?:-100
+    }
 }

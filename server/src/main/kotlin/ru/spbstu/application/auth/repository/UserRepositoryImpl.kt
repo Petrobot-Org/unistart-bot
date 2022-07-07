@@ -11,8 +11,9 @@ class UserRepositoryImpl(private val database: AppDatabase) : UserRepository {
                         phoneNumber: PhoneNumber?,
                         avatar: Avatar,
                         occupation: Occupation,
-                        availableStepsCount: Long? ->
-        User(id!!, phoneNumber!!, avatar, occupation, availableStepsCount!!)
+                        availableStepsCount: Long?,
+                        amountOfCoins: Long?->
+        User(id!!, phoneNumber!!, avatar, occupation, availableStepsCount!!,amountOfCoins!!)
     }
 
     override fun get(id: User.Id): User? {
@@ -25,11 +26,20 @@ class UserRepositoryImpl(private val database: AppDatabase) : UserRepository {
             user.phoneNumber,
             user.avatar,
             user.occupation,
-            user.availableStepsCount
+            user.availableStepsCount,
+            user.amountOfCoins
         )
     }
 
     override fun contains(phoneNumber: PhoneNumber): Boolean {
         return database.userQueries.containsUserByPhoneNumber(phoneNumber).executeAsOne() >= 1L
+    }
+
+    override fun getAmountOfCoins(id: User.Id): Long {
+        return database.userQueries.getUserById(id,map).executeAsOne().amountOfCoins
+    }
+
+    override fun getAll(): List<User> {
+        TODO("Not yet implemented")
     }
 }
