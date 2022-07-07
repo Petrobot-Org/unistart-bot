@@ -12,8 +12,8 @@ class UserRepositoryImpl(private val database: AppDatabase) : UserRepository {
                         avatar: Avatar,
                         occupation: Occupation,
                         availableStepsCount: Long?,
-                        amountOfCoins: Long?->
-        User(id!!, phoneNumber!!, avatar, occupation, availableStepsCount!!,amountOfCoins!!)
+                        amountOfCoins: Long? ->
+        User(id!!, phoneNumber!!, avatar, occupation, availableStepsCount!!, amountOfCoins!!)
     }
 
     override fun get(id: User.Id): User? {

@@ -51,101 +51,99 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
             )
         )
     ).map { PhoneNumber(it.contact.phoneNumber) }.first()
-    if (!userRepository.contains(phoneNumber)) {////TODO: добавить так же проверку на наличие номера в базе номеров от Оксаны
+    if (userRepository.contains(phoneNumber)) { ////TODO: добавить так же проверку на наличие номера в базе номеров от Оксаны
+        sendTextMessage(message.chat.id, PhoneNumberIsAlreadyInDataBase)
+        return
+    }
+    // проверить номер телефона
+    // else sendTextMessage(message.chat.id, Strings.NoPhoneInDataBase)
+    // послать 3 картинки с аватарами и подписями
 
-        // проверить номер телефона
-        // else sendTextMessage(message.chat.id, Strings.NoPhoneInDataBase)
-        // послать 3 картинки с аватарами и подписями
-
-        val avatar = waitTextFrom(
-            message.chat,
-            SendTextMessage(
-                message.chat.id, Strings.ChooseAvatar,
-                replyMarkup = ReplyKeyboardMarkup(
-                    buttons = Avatars.keys.map { SimpleKeyboardButton(it) }.toTypedArray(),
-                    resizeKeyboard = true,
-                    oneTimeKeyboard = true
-                )
+    val avatar = waitTextFrom(
+        message.chat,
+        SendTextMessage(
+            message.chat.id, Strings.ChooseAvatar,
+            replyMarkup = ReplyKeyboardMarkup(
+                buttons = Avatars.keys.map { SimpleKeyboardButton(it) }.toTypedArray(),
+                resizeKeyboard = true,
+                oneTimeKeyboard = true
             )
-        ).map { Avatars[it.text] }
-            .onEach { if (it == null) sendTextMessage(message.chat.id, InvalidAvatar) }
-            .firstNotNull()
+        )
+    ).map { Avatars[it.text] }
+        .onEach { if (it == null) sendTextMessage(message.chat.id, InvalidAvatar) }
+        .firstNotNull()
 
-        val occupation = waitTextFrom(
-            message.chat,
-            SendTextMessage(
-                message.chat.id, Strings.ChooseOccupation,
-                replyMarkup = ReplyKeyboardMarkup(
-                    buttons = arrayOf(
-                        SimpleKeyboardButton(Occupations.keys.elementAt(6)),
-                        SimpleKeyboardButton(Occupations.keys.elementAt(7)),
-                        SimpleKeyboardButton(Student)
-                    ),
-                    resizeKeyboard = true,
-                    oneTimeKeyboard = true
-                )
+    val occupation = waitTextFrom(
+        message.chat,
+        SendTextMessage(
+            message.chat.id, Strings.ChooseOccupation,
+            replyMarkup = ReplyKeyboardMarkup(
+                buttons = arrayOf(
+                    SimpleKeyboardButton(Occupations.keys.elementAt(6)),
+                    SimpleKeyboardButton(Occupations.keys.elementAt(7)),
+                    SimpleKeyboardButton(Student)
+                ),
+                resizeKeyboard = true,
+                oneTimeKeyboard = true
             )
-        ).onEach {
-            if (it.text == Student) {
-                sendTextMessage(
-                    message.chat.id, Strings.ChooseCourse,
-                    replyMarkup = replyKeyboard(
-                        resizeKeyboard = true,
-                        oneTimeKeyboard = true
-                    )
-                    {
-                        row {
-                            simpleButton(Occupations.keys.elementAt(0))
-                            simpleButton(Occupations.keys.elementAt(1))
-                        }
-                        row {
-                            simpleButton(Occupations.keys.elementAt(2))
-                            simpleButton(Occupations.keys.elementAt(3))
-                        }
-                        row {
-                            simpleButton(Occupations.keys.elementAt(4))
-                            simpleButton(Occupations.keys.elementAt(5))
-                        }
-                    }
-                )
-            } else if (it.text !in Occupations) {
-                sendTextMessage(message.chat.id, InvalidOccupation)
-            }
-        }.map { Occupations[it.text] }
-            .firstNotNull()
-
-        val (startLevel, firstStepInfo) = waitTextFrom(
-            message.chat,
-            SendTextMessage(
-                message.chat.id, HaveIdeaQuestion,
+        )
+    ).onEach {
+        if (it.text == Student) {
+            sendTextMessage(
+                message.chat.id, Strings.ChooseCourse,
                 replyMarkup = replyKeyboard(
                     resizeKeyboard = true,
                     oneTimeKeyboard = true
                 )
                 {
-                    row { simpleButton(SuperIdea) }
-                    row { simpleButton(NotMyIdea) }
-                    row { simpleButton(NoIdea) }
-                    row { simpleButton(SoSoIdea) }
+                    row {
+                        simpleButton(Occupations.keys.elementAt(0))
+                        simpleButton(Occupations.keys.elementAt(1))
+                    }
+                    row {
+                        simpleButton(Occupations.keys.elementAt(2))
+                        simpleButton(Occupations.keys.elementAt(3))
+                    }
+                    row {
+                        simpleButton(Occupations.keys.elementAt(4))
+                        simpleButton(Occupations.keys.elementAt(5))
+                    }
                 }
             )
-        ).map {
-            when (it.text) {
-                SuperIdea, NotMyIdea -> 2L to StartWithSecondStep
-                SoSoIdea, NoIdea -> 1L to StartWithFirstStep
-                else -> null
+        } else if (it.text !in Occupations) {
+            sendTextMessage(message.chat.id, InvalidOccupation)
+        }
+    }.map { Occupations[it.text] }
+        .firstNotNull()
+
+    val (startLevel, firstStepInfo) = waitTextFrom(
+        message.chat,
+        SendTextMessage(
+            message.chat.id, HaveIdeaQuestion,
+            replyMarkup = replyKeyboard(
+                resizeKeyboard = true,
+                oneTimeKeyboard = true
+            )
+            {
+                row { simpleButton(SuperIdea) }
+                row { simpleButton(NotMyIdea) }
+                row { simpleButton(NoIdea) }
+                row { simpleButton(SoSoIdea) }
             }
-        }.firstNotNull()
+        )
+    ).map {
+        when (it.text) {
+            SuperIdea, NotMyIdea -> 2L to StartWithSecondStep
+            SoSoIdea, NoIdea -> 1L to StartWithFirstStep
+            else -> null
+        }
+    }.firstNotNull()
 
-        sendTextMessage(message.chat.id, firstStepInfo)
+    sendTextMessage(message.chat.id, firstStepInfo)
 
 
-        val user = User(User.Id(message.chat.id.chatId), phoneNumber, avatar, occupation, startLevel, 0)
-        userRepository.add(user)
+    val user = User(User.Id(message.chat.id.chatId), phoneNumber, avatar, occupation, startLevel, 0)
+    userRepository.add(user)
 
-        steps(message)
-    }
-    else{
-        sendTextMessage(message.chat.id, PhoneNumberIsAlreadyInDataBase)
-    }
+    steps(message)
 }
