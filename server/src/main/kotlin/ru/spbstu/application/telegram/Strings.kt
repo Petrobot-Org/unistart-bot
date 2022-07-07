@@ -2,7 +2,6 @@ package ru.spbstu.application.telegram
 
 import ru.spbstu.application.auth.entities.Avatar
 import ru.spbstu.application.auth.entities.Occupation
-import ru.spbstu.application.auth.entities.PhoneNumber
 
 object Strings {
     val Avatars = mapOf(
@@ -58,6 +57,6 @@ object Strings {
     const val TrendyFriendy = "Trendy Friendy"
     const val BackToSteps = "Обратно к шагам"
 
-    fun MyRating(numberOfMembers:Long, myPosition:Long, myBonuses:Long) =
+    fun MyRanking(numberOfMembers:Int, myPosition:Int, myBonuses:Long) =
         "Всего участников в системе: $numberOfMembers человек, ваше текущее место в рейтинге - $myPosition, накоплено бонусов - $myBonuses"
 }

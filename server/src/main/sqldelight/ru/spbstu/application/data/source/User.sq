@@ -24,5 +24,6 @@ containsUserByPhoneNumber:
 SELECT COUNT(1) FROM User
 WHERE phoneNumber = :phoneNumber;
 
-getAll:
-SELECT * FROM User;
+sortByAmountOfCoins:
+SELECT * FROM User
+ORDER BY amountOfCoins DESC;

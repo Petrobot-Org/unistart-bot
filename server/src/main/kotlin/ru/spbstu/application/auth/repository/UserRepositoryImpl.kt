@@ -35,11 +35,8 @@ class UserRepositoryImpl(private val database: AppDatabase) : UserRepository {
         return database.userQueries.containsUserByPhoneNumber(phoneNumber).executeAsOne() >= 1L
     }
 
-    override fun getAmountOfCoins(id: User.Id): Long {
-        return database.userQueries.getUserById(id,map).executeAsOne().amountOfCoins
-    }
 
-    override fun getAll(): List<User> {
-        return database.userQueries.getAll(map).executeAsList()
+    override fun sortByAmountOfCoins(): List<User> {
+        return database.userQueries.sortByAmountOfCoins(map).executeAsList()
     }
 }

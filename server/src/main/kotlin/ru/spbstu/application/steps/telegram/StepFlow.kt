@@ -1,5 +1,6 @@
 package ru.spbstu.application.steps.telegram
 
+import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitText
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.replyKeyboard
@@ -13,6 +14,7 @@ import org.koin.core.context.GlobalContext
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.repository.UserRepository
 import ru.spbstu.application.telegram.Strings
+import ru.spbstu.application.telegram.Strings.MyRanking
 
 private val userRepository: UserRepository by GlobalContext.get().inject()
 private val steps = listOf(Strings.Step1, Strings.Step2, Strings.Step3, Strings.Step4)
@@ -82,3 +84,10 @@ suspend fun BehaviourContext.handleStep1(message: CommonMessage<TextContent>) {
     }
 }
 
+suspend fun BehaviourContext.handleStats(message: CommonMessage<TextContent>)
+{
+    val sortedUsers = userRepository.sortByAmountOfCoins()
+    val user = userRepository.get(User.Id(message.chat.id.chatId)) ?: return
+    sendTextMessage( message.chat.id,MyRanking(sortedUsers.size,sortedUsers.indexOf(user)+1, user.amountOfCoins))
+    steps(message)
+}
