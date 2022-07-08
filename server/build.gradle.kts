@@ -31,6 +31,7 @@ dependencies {
     implementation("com.charleskorn.kaml:kaml:${Versions.kaml}")
     implementation("org.apache.poi:poi:${Versions.poi}")
     implementation("org.apache.poi:poi-ooxml:${Versions.poi}")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
 }
 
 tasks.getByName<Test>("test") {
