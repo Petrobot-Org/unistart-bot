@@ -10,6 +10,7 @@ sealed interface GameState {
     data class Playing(
         val cards: List<TrendCard>,
         val ideasCount: Int,
+        val ideaInput: String,
         override val loadingState: LoadingState
     ) : GameState
     data class Details(

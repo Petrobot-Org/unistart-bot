@@ -4,6 +4,7 @@ import GameState
 import androidx.compose.runtime.*
 import dev.inmo.tgbotapi.webapps.webApp
 import org.jetbrains.compose.web.attributes.InputType
+import org.jetbrains.compose.web.attributes.onSubmit
 import org.jetbrains.compose.web.attributes.placeholder
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
@@ -42,7 +43,8 @@ fun App(screenModel: ScreenModel) {
             is GameState.Details -> DetailsScreen(state.card) { screenModel.goNext() }
             is GameState.Playing -> PlayingScreen(
                 state = state,
-                addIdea = { screenModel.addIdea(it) },
+                addIdea = { screenModel.addIdea() },
+                onIdeaInput = { screenModel.onIdeaInput(it) },
                 resetCards = { screenModel.resetCards() },
                 finish = { screenModel.finish() }
             )
@@ -194,9 +196,10 @@ private fun DetailsScreen(card: TrendCard, goNext: () -> Unit) {
 @Composable
 private fun PlayingScreen(
     state: GameState.Playing,
-    addIdea: (String) -> Unit,
+    addIdea: () -> Unit,
     resetCards: () -> Unit,
-    finish: () -> Unit
+    finish: () -> Unit,
+    onIdeaInput: (String) -> Unit
 ) {
     Div(attrs = {
         style {
@@ -255,11 +258,14 @@ private fun PlayingScreen(
             flexDirection(FlexDirection.Row)
             alignItems(AlignItems.Center)
         }
+        onSubmit {
+            addIdea()
+            it.preventDefault()
+        }
     }) {
-        var inputState by remember { mutableStateOf("") }
         Input(InputType.Text) {
-            value(inputState)
-            onInput { event -> inputState = event.value }
+            value(state.ideaInput)
+            onInput { event -> onIdeaInput(event.value) }
             style {
                 flex(1)
                 margin(8.px)
@@ -268,10 +274,6 @@ private fun PlayingScreen(
             classes("input")
         }
         Input(InputType.Submit) {
-            onClick {
-                addIdea(inputState)
-                inputState = ""
-            }
             classes("btn", "btn-primary", "loadable")
             if (state.loadingState.addingIdea) {
                 classes("loading")
