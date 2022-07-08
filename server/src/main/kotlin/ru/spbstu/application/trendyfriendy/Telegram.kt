@@ -41,17 +41,24 @@ private fun createIdeasXlsx(ideas: List<Idea>): ByteArray {
     val workbook = XSSFWorkbook()
     workbook.createSheet().apply {
         createRow(0).apply {
-            rowStyle = workbook.createCellStyle().apply {
+            val style = workbook.createCellStyle().apply {
                 setFont(workbook.createFont().apply {
                     bold = true
                 })
-                heightInPoints = 3 * defaultRowHeightInPoints
                 wrapText = true
+                heightInPoints = 3 * defaultRowHeightInPoints
             }
-            createCell(0).setCellValue(Strings.IdeasSpreadsheetNumber)
-            createCell(1).setCellValue(Strings.IdeasSpreadsheetDescription)
-            createCell(2).setCellValue(Strings.IdeasSpreadsheetTechnical)
-            createCell(3).setCellValue(Strings.IdeasSpreadsheetEconomical)
+            listOf(
+                Strings.IdeasSpreadsheetNumber,
+                Strings.IdeasSpreadsheetDescription,
+                Strings.IdeasSpreadsheetTechnical,
+                Strings.IdeasSpreadsheetEconomical
+            ).forEachIndexed { index, s ->
+                createCell(index).apply {
+                    setCellValue(s)
+                    cellStyle = style
+                }
+            }
         }
         ideas.forEachIndexed { index, idea ->
             createRow(index + 1).apply {
