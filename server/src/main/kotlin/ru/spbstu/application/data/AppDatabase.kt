@@ -27,12 +27,15 @@ fun createAppDatabase(jdbcString: String): AppDatabase {
         driver = driver,
         StepAdapter = Step.Adapter(
             idAdapter = StepIdAdapter,
-            startAdapter = StepStartAdapter
+            startAdapter = StartAdapter,
+            durationAdapter = DurationAdapter
         ),
         SubscriptionAdapter = Subscription.Adapter(
             idAdapter = SubscriptionIdAdapter,
-            startAdapter = SubscriptionStartAdapter,
+            startAdapter = StartAdapter,
+            durationAdapter = DurationAdapter,
             user_idAdapter = UserIdAdapter
+
         ),
         UserAdapter = User.Adapter(
             idAdapter = UserIdAdapter,
