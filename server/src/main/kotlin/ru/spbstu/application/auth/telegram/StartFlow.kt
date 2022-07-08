@@ -28,7 +28,7 @@ import ru.spbstu.application.telegram.Strings.InvalidOccupation
 import ru.spbstu.application.telegram.Strings.NoIdea
 import ru.spbstu.application.telegram.Strings.NotMyIdea
 import ru.spbstu.application.telegram.Strings.Occupations
-import ru.spbstu.application.telegram.Strings.PhoneNumberIsAlreadyInDataBase
+import ru.spbstu.application.telegram.Strings.PhoneNumberIsAlreadyInDatabase
 import ru.spbstu.application.telegram.Strings.SoSoIdea
 import ru.spbstu.application.telegram.Strings.StartWithFirstStep
 import ru.spbstu.application.telegram.Strings.StartWithSecondStep
@@ -52,7 +52,7 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
         )
     ).map { PhoneNumber(it.contact.phoneNumber) }.first()
     if (userRepository.contains(phoneNumber)) { ////TODO: добавить так же проверку на наличие номера в базе номеров от Оксаны
-        sendTextMessage(message.chat.id, PhoneNumberIsAlreadyInDataBase)
+        sendTextMessage(message.chat.id, PhoneNumberIsAlreadyInDatabase)
         return
     }
     // проверить номер телефона

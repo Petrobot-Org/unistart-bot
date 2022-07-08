@@ -42,7 +42,7 @@ object Strings {
 
     const val InvalidAvatar = "Такого аватара не существует"
     const val InvalidOccupation = "Не могу понять род вашей деятельности"
-    const val PhoneNumberIsAlreadyInDataBase = "Этот номер телефона уже был использован при регистрации"
+    const val PhoneNumberIsAlreadyInDatabase = "Этот номер телефона уже был использован при регистрации"
 
     const val ChooseStep = "Выбери шаг"
     const val Step1 = "1. Генерация идей"

@@ -36,8 +36,7 @@ suspend fun BehaviourContext.steps(message: CommonMessage<TextContent>) {
             replyMarkup = replyKeyboard(
                 resizeKeyboard = true,
                 oneTimeKeyboard = true
-            )
-            {
+            ) {
                 row { simpleButton(Strings.GetMyStats) }
                 steps.take(user.availableStepsCount.toInt()).chunked(2).forEach {
                     row {
