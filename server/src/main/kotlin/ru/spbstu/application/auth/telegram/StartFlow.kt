@@ -50,7 +50,7 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
                 oneTimeKeyboard = true
             )
         )
-    ).map { PhoneNumber(it.contact.phoneNumber) }.first()
+    ).map { PhoneNumber.valueOf(it.contact.phoneNumber)!! }.first()
     if (userRepository.contains(phoneNumber)) { ////TODO: добавить так же проверку на наличие номера в базе номеров от Оксаны
         sendTextMessage(message.chat.id, PhoneNumberIsAlreadyInDatabase)
         return
