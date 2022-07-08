@@ -1,13 +1,11 @@
 package ru.spbstu.application.steps.telegram
 
+import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
-import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitText
-import dev.inmo.tgbotapi.extensions.utils.types.buttons.ReplyKeyboardMarkup
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.replyKeyboard
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.row
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.simpleButton
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
-import dev.inmo.tgbotapi.types.buttons.SimpleKeyboardButton
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
 import dev.inmo.tgbotapi.types.message.content.TextContent
 import kotlinx.coroutines.flow.first
@@ -16,6 +14,8 @@ import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.repository.UserRepository
 import ru.spbstu.application.telegram.Strings
 import ru.spbstu.application.trendyfriendy.sendTrendyFriendyApp
+import ru.spbstu.application.telegram.Strings.MyRanking
+import ru.spbstu.application.telegram.waitTextFrom
 
 private val userRepository: UserRepository by GlobalContext.get().inject()
 private val steps = listOf(Strings.Step1, Strings.Step2, Strings.Step3, Strings.Step4)
@@ -29,25 +29,33 @@ private val ideaGenerationMethods = listOf(
 
 suspend fun BehaviourContext.steps(message: CommonMessage<TextContent>) {
     val user = userRepository.get(User.Id(message.chat.id.chatId)) ?: return
-    val buttons = steps.take(user.availableStepsCount.toInt()).map { SimpleKeyboardButton(it) }
-    val selectedStep = waitText(
+    val selectedStep = waitTextFrom(
+        message.chat,
         SendTextMessage(
             message.chat.id,
             Strings.ChooseStep,
-            replyMarkup = ReplyKeyboardMarkup(
-                *buttons.toTypedArray(),
+            replyMarkup = replyKeyboard(
                 resizeKeyboard = true,
                 oneTimeKeyboard = true
-            )
+            ) {
+                row { simpleButton(Strings.GetMyStats) }
+                steps.take(user.availableStepsCount.toInt()).chunked(2).forEach {
+                    row {
+                        it.forEach { simpleButton(it) }
+                    }
+                }
+            }
         )
-    ).first { it.text in steps }.text
+    ).first { it.text in steps || it.text == Strings.GetMyStats }.text
     when (selectedStep) {
         Strings.Step1 -> handleStep1(message)
+        Strings.GetMyStats -> handleStats(message)
     }
 }
 
 suspend fun BehaviourContext.handleStep1(message: CommonMessage<TextContent>) {
-    val stage = waitText(
+    val stage = waitTextFrom(
+        message.chat,
         SendTextMessage(
             message.chat.id,
             Strings.ChooseIdeaGeneration,
@@ -73,4 +81,11 @@ suspend fun BehaviourContext.handleStep1(message: CommonMessage<TextContent>) {
         Strings.BackToSteps -> steps(message)
         Strings.TrendyFriendy -> sendTrendyFriendyApp(message.chat)
     }
+}
+
+suspend fun BehaviourContext.handleStats(message: CommonMessage<TextContent>) {
+    val sortedUsers = userRepository.sortByAmountOfCoins()
+    val user = userRepository.get(User.Id(message.chat.id.chatId)) ?: return
+    sendTextMessage(message.chat.id, MyRanking(sortedUsers.size, sortedUsers.indexOf(user) + 1, user.amountOfCoins))
+    steps(message)
 }
