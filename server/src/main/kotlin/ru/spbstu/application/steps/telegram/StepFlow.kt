@@ -13,6 +13,7 @@ import org.koin.core.context.GlobalContext
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.repository.UserRepository
 import ru.spbstu.application.telegram.Strings
+import ru.spbstu.application.trendyfriendy.sendTrendyFriendyApp
 import ru.spbstu.application.telegram.Strings.MyRanking
 import ru.spbstu.application.telegram.waitTextFrom
 
@@ -78,6 +79,7 @@ suspend fun BehaviourContext.handleStep1(message: CommonMessage<TextContent>) {
     ).first { it.text in ideaGenerationMethods }.text
     when (stage) {
         Strings.BackToSteps -> steps(message)
+        Strings.TrendyFriendy -> sendTrendyFriendyApp(message.chat)
     }
 }
 
