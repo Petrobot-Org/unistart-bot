@@ -32,6 +32,7 @@ class ScreenModel(
     private var loadingCards by mutableStateOf(0)
     private var loadingFinish by mutableStateOf(0)
     private var selectedSets by mutableStateOf(emptySet<String>())
+    private var ideaInput by mutableStateOf("")
 
     @get:Composable
     val state: GameState
@@ -55,18 +56,24 @@ class ScreenModel(
                     GameState.Details(cards[pageIndex], loadingState)
                 }
                 else -> {
-                    GameState.Playing(cards, ideasCount, loadingState)
+                    GameState.Playing(cards, ideasCount, ideaInput, loadingState)
                 }
             }
         }
 
-    fun addIdea(text: String) {
-        if (text.isBlank()) {
+    fun onIdeaInput(text: String) {
+        ideaInput = text
+    }
+
+    fun addIdea() {
+        if (ideaInput.isBlank()) {
             return
         }
+        val idea = Idea(ideaInput)
+        ideaInput = ""
         coroutineScope.launch {
             loadingAddIdea += 1
-            val ideaResponse = client.addIdea(Idea(text))
+            val ideaResponse = client.addIdea(idea)
             ideasCount = ideaResponse.ideasCount
             loadingAddIdea -= 1
         }
