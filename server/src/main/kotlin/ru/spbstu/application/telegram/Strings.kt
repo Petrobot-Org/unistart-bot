@@ -42,16 +42,21 @@ object Strings {
 
     const val InvalidAvatar = "Такого аватара не существует"
     const val InvalidOccupation = "Не могу понять род вашей деятельности"
+    const val PhoneNumberIsAlreadyInDatabase = "Этот номер телефона уже был использован при регистрации"
 
     const val ChooseStep = "Выбери шаг"
     const val Step1 = "1. Генерация идей"
     const val Step2 = "2. Команда"
     const val Step3 = "3. Рынок"
     const val Step4 = "4. Бизнес-модель"
+    const val GetMyStats = "Получить статистику об успехах"
     const val ChooseIdeaGeneration = "Выбери технику генерации идей"
     const val Bisociation = "Бисоциации"
     const val DelphiBrainstormMethod = "Метод Дельфи/брейншторм"
     const val Scamper = "SCAMPER"
     const val TrendyFriendy = "Trendy Friendy"
     const val BackToSteps = "Обратно к шагам"
+
+    fun MyRanking(numberOfMembers: Int, myPosition: Int, myBonuses: Long) =
+        "Всего участников в системе: $numberOfMembers человек, ваше текущее место в рейтинге - $myPosition, накоплено бонусов - $myBonuses"
 }
