@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.first
 import org.koin.core.context.GlobalContext
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.repository.UserRepository
+import ru.spbstu.application.auth.telegram.requireSubscription
 import ru.spbstu.application.telegram.Strings
 import ru.spbstu.application.trendyfriendy.sendTrendyFriendyApp
 import ru.spbstu.application.telegram.Strings.MyRanking
@@ -28,6 +29,7 @@ private val ideaGenerationMethods = listOf(
 )
 
 suspend fun BehaviourContext.steps(message: CommonMessage<TextContent>) {
+    requireSubscription(message)
     val user = userRepository.get(User.Id(message.chat.id.chatId)) ?: return
     val selectedStep = waitTextFrom(
         message.chat,
