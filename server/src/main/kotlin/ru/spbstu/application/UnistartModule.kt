@@ -5,6 +5,8 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import ru.spbstu.application.auth.repository.UserRepository
 import ru.spbstu.application.auth.repository.UserRepositoryImpl
+import ru.spbstu.application.auth.repository.SubscriptionRepository
+import ru.spbstu.application.auth.repository.SubscriptionRepositoryImpl
 import ru.spbstu.application.steps.repository.StepDurationRepositoryImpl
 import ru.spbstu.application.steps.repository.StepDurationRepository
 import ru.spbstu.application.data.createAppDatabase
@@ -19,5 +21,6 @@ val unistartModule = module(createdAtStart = true) {
     single { createAppDatabase(appConfig.jdbcString) }
     singleOf(::UserRepositoryImpl) bind UserRepository::class
     singleOf(::StepDurationRepositoryImpl) bind StepDurationRepository::class
+    singleOf(::SubscriptionRepositoryImpl) bind SubscriptionRepository::class
     singleOf(::TelegramBot)
 }

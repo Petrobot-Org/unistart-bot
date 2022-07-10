@@ -12,15 +12,15 @@ CREATE TABLE User (
     amountOfCoins INTEGER
 );
 
-getUserById:
+get:
 SELECT * FROM User
 WHERE id = :id;
 
-addUser:
+add:
 INSERT INTO User(id, phoneNumber, avatar, occupation, availableStepsCount, amountOfCoins)
 VALUES (:id, :phoneNumber, :avatar, :occupation, :availableStepsCount, :amountOfCoins);
 
-containsUserByPhoneNumber:
+containsPhoneNumber:
 SELECT COUNT(1) FROM User
 WHERE phoneNumber = :phoneNumber;
 
