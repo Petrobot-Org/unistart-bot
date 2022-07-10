@@ -20,7 +20,7 @@ import ru.spbstu.application.auth.usecases.IsSubscribedUseCase
 import ru.spbstu.application.telegram.Strings
 import java.time.Instant
 
-private val isSubscribed by GlobalContext.get().inject<IsSubscribedUseCase>()
+private val isSubscribed: IsSubscribedUseCase by GlobalContext.get().inject()
 
 suspend fun BehaviourContext.requireSubscription(message: CommonMessage<*>) {
     require(isSubscribed(User.Id(message.chat.id.chatId), Instant.now())) {
