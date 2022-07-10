@@ -29,7 +29,6 @@ private val ideaGenerationMethods = listOf(
 )
 
 suspend fun BehaviourContext.steps(message: CommonMessage<TextContent>) {
-    requireSubscription(message)
     val user = userRepository.get(User.Id(message.chat.id.chatId)) ?: return
     val selectedStep = waitTextFrom(
         message.chat,
