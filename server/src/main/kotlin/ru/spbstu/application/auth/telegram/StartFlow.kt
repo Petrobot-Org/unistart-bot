@@ -3,8 +3,6 @@ package ru.spbstu.application.auth.telegram
 import dev.inmo.micro_utils.coroutines.firstNotNull
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
-import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitContact
-import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitText
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.ReplyKeyboardMarkup
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.replyKeyboard
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.row
@@ -30,16 +28,20 @@ import ru.spbstu.application.telegram.Strings.InvalidOccupation
 import ru.spbstu.application.telegram.Strings.NoIdea
 import ru.spbstu.application.telegram.Strings.NotMyIdea
 import ru.spbstu.application.telegram.Strings.Occupations
+import ru.spbstu.application.telegram.Strings.PhoneNumberIsAlreadyInDatabase
 import ru.spbstu.application.telegram.Strings.SoSoIdea
 import ru.spbstu.application.telegram.Strings.StartWithFirstStep
 import ru.spbstu.application.telegram.Strings.StartWithSecondStep
 import ru.spbstu.application.telegram.Strings.Student
 import ru.spbstu.application.telegram.Strings.SuperIdea
+import ru.spbstu.application.telegram.waitContactFrom
+import ru.spbstu.application.telegram.waitTextFrom
 
 private val userRepository: UserRepository by GlobalContext.get().inject()
 
 suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
-    val phoneNumber = waitContact(
+    val phoneNumber = waitContactFrom(
+        message.chat,
         SendTextMessage(
             message.chat.id, Strings.WelcomeRequirePhone,
             replyMarkup = ReplyKeyboardMarkup(
@@ -48,13 +50,17 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
                 oneTimeKeyboard = true
             )
         )
-    ).map { PhoneNumber(it.contact.phoneNumber) }.first()
-
+    ).map { PhoneNumber.valueOf(it.contact.phoneNumber)!! }.first()
+    if (userRepository.contains(phoneNumber)) { ////TODO: добавить так же проверку на наличие номера в базе номеров от Оксаны
+        sendTextMessage(message.chat.id, PhoneNumberIsAlreadyInDatabase)
+        return
+    }
     // проверить номер телефона
     // else sendTextMessage(message.chat.id, Strings.NoPhoneInDataBase)
     // послать 3 картинки с аватарами и подписями
 
-    val avatar = waitText(
+    val avatar = waitTextFrom(
+        message.chat,
         SendTextMessage(
             message.chat.id, Strings.ChooseAvatar,
             replyMarkup = ReplyKeyboardMarkup(
@@ -67,7 +73,8 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
         .onEach { if (it == null) sendTextMessage(message.chat.id, InvalidAvatar) }
         .firstNotNull()
 
-    val occupation = waitText(
+    val occupation = waitTextFrom(
+        message.chat,
         SendTextMessage(
             message.chat.id, Strings.ChooseOccupation,
             replyMarkup = ReplyKeyboardMarkup(
@@ -89,17 +96,10 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
                     oneTimeKeyboard = true
                 )
                 {
-                    row {
-                        simpleButton(Occupations.keys.elementAt(0))
-                        simpleButton(Occupations.keys.elementAt(1))
-                    }
-                    row {
-                        simpleButton(Occupations.keys.elementAt(2))
-                        simpleButton(Occupations.keys.elementAt(3))
-                    }
-                    row {
-                        simpleButton(Occupations.keys.elementAt(4))
-                        simpleButton(Occupations.keys.elementAt(5))
+                    Occupations.keys.take(6).chunked(2).forEach {
+                        row {
+                            it.forEach { simpleButton(it) }
+                        }
                     }
                 }
             )
@@ -109,7 +109,8 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
     }.map { Occupations[it.text] }
         .firstNotNull()
 
-    val (startLevel, firstStepInfo) = waitText(
+    val (startLevel, firstStepInfo) = waitTextFrom(
+        message.chat,
         SendTextMessage(
             message.chat.id, HaveIdeaQuestion,
             replyMarkup = replyKeyboard(
@@ -133,7 +134,8 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
 
     sendTextMessage(message.chat.id, firstStepInfo)
 
-    val user = User(User.Id(message.chat.id.chatId), phoneNumber, avatar, occupation, startLevel)
+
+    val user = User(User.Id(message.chat.id.chatId), phoneNumber, avatar, occupation, startLevel, 0)
     userRepository.add(user)
 
     steps(message)

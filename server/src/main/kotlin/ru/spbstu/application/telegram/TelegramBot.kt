@@ -7,17 +7,21 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.spbstu.application.auth.telegram.handleStart
+import ru.spbstu.application.steps.telegram.handleStats
 import ru.spbstu.application.steps.telegram.steps
 
 class TelegramBot(token: TelegramToken) {
-    private val bot = telegramBot(token.value)
+    val bot = telegramBot(token.value)
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     fun start() {
         coroutineScope.launch {
-            bot.buildBehaviourWithLongPolling {
-                onCommand("start", scenarioReceiver = { handleStart(it) })
-                onCommand("steps", scenarioReceiver = { steps(it) })
+            bot.buildBehaviourWithLongPolling(
+                defaultExceptionsHandler = { it.printStackTrace() }
+            ) {
+                onCommand("start") { handleStart(it) }
+                onCommand("steps") { steps(it) }
+                onCommand("stats") { handleStats(it) }
             }.join()
         }
     }

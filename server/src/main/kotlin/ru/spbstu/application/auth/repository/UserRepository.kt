@@ -7,4 +7,5 @@ interface UserRepository {
     fun get(id: User.Id): User?
     fun add(user: User)
     fun contains(phoneNumber: PhoneNumber): Boolean
+    fun sortByAmountOfCoins(): List<User>
 }
