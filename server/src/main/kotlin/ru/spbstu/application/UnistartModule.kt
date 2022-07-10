@@ -5,9 +5,10 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import ru.spbstu.application.auth.repository.UserRepository
 import ru.spbstu.application.auth.repository.UserRepositoryImpl
+import ru.spbstu.application.steps.repository.StepTimeFrameRepositoryImpl
+import ru.spbstu.application.steps.repository.StepTimeFrameRepository
 import ru.spbstu.application.data.createAppDatabase
 import ru.spbstu.application.telegram.TelegramBot
-import ru.spbstu.application.trendyfriendy.TrendyFriendyService
 import ru.spbstu.application.trendyfriendy.trendyFriendyModule
 
 val unistartModule = module(createdAtStart = true) {
@@ -17,5 +18,6 @@ val unistartModule = module(createdAtStart = true) {
     single { appConfig.telegramToken }
     single { createAppDatabase(appConfig.jdbcString) }
     singleOf(::UserRepositoryImpl) bind UserRepository::class
+    singleOf(::StepTimeFrameRepositoryImpl) bind StepTimeFrameRepository::class
     singleOf(::TelegramBot)
 }

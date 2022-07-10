@@ -3,7 +3,7 @@ package ru.spbstu.application.data.adapters
 import com.squareup.sqldelight.ColumnAdapter
 import java.time.Instant
 
-object StartAdapter : ColumnAdapter<Instant, Long> {
+object InstantAdapter : ColumnAdapter<Instant, Long> {
     override fun decode(databaseValue: Long): Instant =
         Instant.ofEpochSecond(databaseValue)
 

@@ -2,11 +2,9 @@ package ru.spbstu.application.data
 
 import com.squareup.sqldelight.EnumColumnAdapter
 import com.squareup.sqldelight.sqlite.driver.JdbcSqliteDriver
-import ru.spbstu.application.auth.entities.Avatar
-import ru.spbstu.application.auth.entities.Occupation
 import ru.spbstu.application.data.adapters.*
 import ru.spbstu.application.data.source.AppDatabase
-import ru.spbstu.application.data.source.Step
+import ru.spbstu.application.data.source.StepTimeFrame
 import ru.spbstu.application.data.source.Subscription
 import ru.spbstu.application.data.source.User
 import java.sql.SQLException
@@ -25,14 +23,14 @@ fun createAppDatabase(jdbcString: String): AppDatabase {
     }
     return AppDatabase(
         driver = driver,
-        StepAdapter = Step.Adapter(
-            idAdapter = StepIdAdapter,
-            startAdapter = StartAdapter,
+        StepTimeFrameAdapter = StepTimeFrame.Adapter(
+            stepAdapter = StepAdapter,
+            startAdapter = InstantAdapter,
             durationAdapter = DurationAdapter
         ),
         SubscriptionAdapter = Subscription.Adapter(
             idAdapter = SubscriptionIdAdapter,
-            startAdapter = StartAdapter,
+            startAdapter = InstantAdapter,
             durationAdapter = DurationAdapter,
             user_idAdapter = UserIdAdapter
 
@@ -40,8 +38,8 @@ fun createAppDatabase(jdbcString: String): AppDatabase {
         UserAdapter = User.Adapter(
             idAdapter = UserIdAdapter,
             phoneNumberAdapter = UserPhoneNumberAdapter,
-            avatarAdapter = EnumColumnAdapter<Avatar>(),
-            occupationAdapter = EnumColumnAdapter<Occupation>()
+            avatarAdapter = EnumColumnAdapter(),
+            occupationAdapter = EnumColumnAdapter()
         )
     )
 }
