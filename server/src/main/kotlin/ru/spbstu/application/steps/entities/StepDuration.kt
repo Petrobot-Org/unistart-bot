@@ -1,10 +1,8 @@
 package ru.spbstu.application.steps.entities
 
 import java.time.Duration
-import java.time.Instant
 
-data class StepTimeFrame(
+data class StepDuration(
     val step: Step,
-    val start: Instant,
     val duration: Duration
 )

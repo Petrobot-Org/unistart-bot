@@ -1,18 +1,16 @@
 import java.time.Duration;
-import java.time.Instant;
 import ru.spbstu.application.steps.entities.Step;
 
-CREATE TABLE StepTimeFrame (
+CREATE TABLE StepDuration (
     step INTEGER AS Step PRIMARY KEY,
-    start INTEGER AS Instant NOT NULL,
     duration INTEGER AS Duration NOT NULL
 );
 
 get:
-SELECT * FROM StepTimeFrame
+SELECT * FROM StepDuration
 WHERE step = :step;
 
 updateDuration:
-UPDATE StepTimeFrame
+UPDATE StepDuration
 SET duration = :duration
 WHERE step = :step;

@@ -4,7 +4,7 @@ import com.squareup.sqldelight.EnumColumnAdapter
 import com.squareup.sqldelight.sqlite.driver.JdbcSqliteDriver
 import ru.spbstu.application.data.adapters.*
 import ru.spbstu.application.data.source.AppDatabase
-import ru.spbstu.application.data.source.StepTimeFrame
+import ru.spbstu.application.data.source.StepDuration
 import ru.spbstu.application.data.source.Subscription
 import ru.spbstu.application.data.source.User
 import java.sql.SQLException
@@ -23,9 +23,8 @@ fun createAppDatabase(jdbcString: String): AppDatabase {
     }
     return AppDatabase(
         driver = driver,
-        StepTimeFrameAdapter = StepTimeFrame.Adapter(
+        StepDurationAdapter = StepDuration.Adapter(
             stepAdapter = StepAdapter,
-            startAdapter = InstantAdapter,
             durationAdapter = DurationAdapter
         ),
         SubscriptionAdapter = Subscription.Adapter(
@@ -33,7 +32,6 @@ fun createAppDatabase(jdbcString: String): AppDatabase {
             startAdapter = InstantAdapter,
             durationAdapter = DurationAdapter,
             user_idAdapter = UserIdAdapter
-
         ),
         UserAdapter = User.Adapter(
             idAdapter = UserIdAdapter,
