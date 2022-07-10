@@ -1,12 +1,12 @@
 package ru.spbstu.application.data.adapters
 
 import com.squareup.sqldelight.ColumnAdapter
-import ru.spbstu.application.auth.entities.Step
+import ru.spbstu.application.auth.entities.StepTimeFrame
 
-object StepIdAdapter : ColumnAdapter<Step.Id, Long> {
-    override fun decode(databaseValue: Long): Step.Id =
-        Step.Id(databaseValue)
+object StepIdAdapter : ColumnAdapter<StepTimeFrame.Id, Long> {
+    override fun decode(databaseValue: Long): StepTimeFrame.Id =
+        StepTimeFrame.Id(databaseValue)
 
-    override fun encode(value: Step.Id): Long =
+    override fun encode(value: StepTimeFrame.Id): Long =
         value.value
 }
