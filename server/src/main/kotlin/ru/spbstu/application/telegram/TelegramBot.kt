@@ -7,6 +7,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.spbstu.application.auth.telegram.handleStart
+import ru.spbstu.application.auth.telegram.onSubscriberCommand
 import ru.spbstu.application.steps.telegram.handleStats
 import ru.spbstu.application.steps.telegram.steps
 
@@ -20,8 +21,8 @@ class TelegramBot(token: TelegramToken) {
                 defaultExceptionsHandler = { it.printStackTrace() }
             ) {
                 onCommand("start") { handleStart(it) }
-                onCommand("steps") { steps(it) }
-                onCommand("stats") { handleStats(it) }
+                onSubscriberCommand("steps") { steps(it) }
+                onSubscriberCommand("stats") { handleStats(it) }
             }.join()
         }
     }
