@@ -1,8 +1,12 @@
 package ui
 
+import GameClient
 import GameState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import dev.inmo.tgbotapi.webapps.webApp
+import kotlinx.browser.window
 import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.attributes.onSubmit
 import org.jetbrains.compose.web.attributes.placeholder
@@ -13,6 +17,20 @@ import trendyfriendy.TrendCard
 @Composable
 fun App(screenModel: ScreenModel) {
     val state = screenModel.state
+    LaunchedEffect(Unit) {
+        screenModel.errorFlow.collect { error ->
+            when (error) {
+                is GameClient.Error.NotAuthorized -> {
+                    window.alert("Ошибка авторизации. Твоя подписка активна?")
+                    webApp.close()
+                }
+                is GameClient.Error.Other -> {
+                    error.message?.let { window.alert(it) }
+                    window.location.reload()
+                }
+            }
+        }
+    }
     DisposableEffect(Unit) {
         screenModel.loadState()
         webApp.ready()
