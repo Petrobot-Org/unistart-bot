@@ -4,7 +4,6 @@ import ru.spbstu.application.auth.entities.Avatar
 import ru.spbstu.application.auth.entities.Occupation
 import ru.spbstu.application.steps.entities.Step
 import ru.spbstu.application.steps.entities.StepDuration
-import java.time.Duration
 
 object Strings {
     val Avatars = mapOf(
@@ -65,7 +64,8 @@ object Strings {
     const val IdeasSpreadsheetName = "Идеация"
     const val IdeasSpreadsheetNumber = "№ п/п"
     const val IdeasSpreadsheetDescription = "Описание идеи"
-    const val IdeasSpreadsheetTechnical = "Идея технически реализуема (можно найти ресурсы для ее реализации в реальной жизни)"
+    const val IdeasSpreadsheetTechnical =
+        "Идея технически реализуема (можно найти ресурсы для ее реализации в реальной жизни)"
     const val IdeasSpreadsheetEconomical = "Идея экономически реализуема (можно найти потребителя и оценить экономику)"
 
     const val UnauthorizedError = "Недостаточно прав для этой команды"
@@ -73,11 +73,23 @@ object Strings {
     const val InvalidDurationDays = "Введите число дней"
 
     fun MyRanking(numberOfMembers: Int, myPosition: Int, myBonuses: Long) =
-        "Всего участников в системе: $numberOfMembers человек, ваше текущее место в рейтинге - $myPosition, накоплено бонусов - $myBonuses"
+        "Всего участников в системе: $numberOfMembers ${
+            pluralize(numberOfMembers.toLong(), "человек", "человека", "человек")
+        }, ваше текущее место в рейтинге – $myPosition, накоплено бонусов – $myBonuses"
 
-    fun StepDurationButton(stepDuration: StepDuration) =
-        "Этап ${stepDuration.step.value} – ${stepDuration.duration.toDays()} дн."
+    fun StepDurationButton(stepDuration: StepDuration): String {
+        val days = stepDuration.duration.toDays()
+        return "Этап ${stepDuration.step.value} – $days ${pluralize(days, "день", "дня", "дней")}"
+    }
 
     fun ChangeStepDuration(step: Step) =
         "Укажите новую продолжительность для этапа ${step.value} в днях"
+}
+
+private fun pluralize(quantity: Long, one: String, few: String, many: String): String {
+    return when {
+        quantity % 10 == 1L && quantity % 100 != 11L -> one
+        quantity % 10 in 2L..4L && quantity % 100 !in 12L..14L -> few
+        else -> many
+    }
 }
