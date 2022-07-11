@@ -6,6 +6,7 @@ import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onComman
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 import ru.spbstu.application.auth.telegram.handleStart
 import ru.spbstu.application.steps.telegram.handleStats
 import ru.spbstu.application.steps.telegram.steps
@@ -27,5 +28,6 @@ class TelegramBot(token: TelegramToken) {
     }
 }
 
+@Serializable
 @JvmInline
 value class TelegramToken(val value: String)
