@@ -42,7 +42,8 @@ suspend fun BehaviourContext.changeStepDuration(dataCallbackQuery: DataCallbackQ
     val duration = waitTextFrom(
         dataCallbackQuery.from,
         SendTextMessage(dataCallbackQuery.from.id, Strings.ChangeStepDuration(step))
-    ).map {
+    )
+        .map {
             try {
                 val days = it.text.toLong()
                 require(days > 0)
