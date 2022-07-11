@@ -42,8 +42,7 @@ suspend fun BehaviourContext.changeStepDuration(dataCallbackQuery: DataCallbackQ
     val duration = waitTextFrom(
         dataCallbackQuery.from,
         SendTextMessage(dataCallbackQuery.from.id, Strings.ChangeStepDuration(step))
-    )
-        .map {
+    ).map {
             try {
                 val days = it.text.toLong()
                 require(days > 0)
@@ -54,11 +53,13 @@ suspend fun BehaviourContext.changeStepDuration(dataCallbackQuery: DataCallbackQ
         }
         .onEach { if (it == null) sendTextMessage(dataCallbackQuery.from, Strings.InvalidDurationDays) }
         .firstNotNull()
+
     stepDurationRepository.changeDuration(step, duration)
+
     editMessageReplyMarkup(
-        dataCallbackQuery.from,
-        dataCallbackQuery.messageCallbackQueryOrThrow().message.messageId,
-        stepDurationKeyboard()
+        chat = dataCallbackQuery.from,
+        messageId = dataCallbackQuery.messageCallbackQueryOrThrow().message.messageId,
+        replyMarkup = stepDurationKeyboard()
     )
 }
 
