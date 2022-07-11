@@ -1,9 +1,0 @@
-jdbc: "jdbc:sqlite:main.sqlite"
-public_hostname: "https://unistart.ithersta.com"
-root_admin_user_ids:
-  - 105293829
-default_step_durations_seconds:
-  1: 604800
-  2: 604800
-  3: 604800
-  4: 604800
