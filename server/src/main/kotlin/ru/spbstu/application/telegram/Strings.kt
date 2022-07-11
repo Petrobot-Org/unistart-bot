@@ -2,6 +2,9 @@ package ru.spbstu.application.telegram
 
 import ru.spbstu.application.auth.entities.Avatar
 import ru.spbstu.application.auth.entities.Occupation
+import ru.spbstu.application.steps.entities.Step
+import ru.spbstu.application.steps.entities.StepDuration
+import java.time.Duration
 
 object Strings {
     val Avatars = mapOf(
@@ -20,8 +23,6 @@ object Strings {
         "У меня уже есть свой бизнес!" to Occupation.Businessman,
         "Работаю по найму" to Occupation.Employee
     )
-
-    const val UnauthorizedError = "Недостаточно прав для этой команды"
 
     const val WelcomeRequirePhone =
         "Привет, меня зовут UniStart, и я буду с тобой на протяжении всего, надеюсь, увлекательного и успешного пути по развитию собственной идеи до реального бизнеса! Для начала давай ты укажешь свой номер, чтобы получить доступ"
@@ -67,6 +68,16 @@ object Strings {
     const val IdeasSpreadsheetTechnical = "Идея технически реализуема (можно найти ресурсы для ее реализации в реальной жизни)"
     const val IdeasSpreadsheetEconomical = "Идея экономически реализуема (можно найти потребителя и оценить экономику)"
 
+    const val UnauthorizedError = "Недостаточно прав для этой команды"
+    const val StepDurationsHeader = "Продолжительность шагов. Нажмите, чтобы изменить."
+    const val InvalidDurationDays = "Введите число дней"
+
     fun MyRanking(numberOfMembers: Int, myPosition: Int, myBonuses: Long) =
         "Всего участников в системе: $numberOfMembers человек, ваше текущее место в рейтинге - $myPosition, накоплено бонусов - $myBonuses"
+
+    fun StepDurationButton(stepDuration: StepDuration) =
+        "Этап ${stepDuration.step.value} – ${stepDuration.duration.toDays()} дн."
+
+    fun ChangeStepDuration(step: Step) =
+        "Укажите новую продолжительность для этапа ${step.value} в днях"
 }

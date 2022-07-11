@@ -4,13 +4,14 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import ru.spbstu.application.admin.usecases.IsAdminUseCase
-import ru.spbstu.application.auth.repository.UserRepository
-import ru.spbstu.application.auth.repository.UserRepositoryImpl
 import ru.spbstu.application.auth.repository.SubscriptionRepository
 import ru.spbstu.application.auth.repository.SubscriptionRepositoryImpl
-import ru.spbstu.application.steps.repository.StepDurationRepositoryImpl
-import ru.spbstu.application.steps.repository.StepDurationRepository
+import ru.spbstu.application.auth.repository.UserRepository
+import ru.spbstu.application.auth.repository.UserRepositoryImpl
 import ru.spbstu.application.data.createAppDatabase
+import ru.spbstu.application.steps.repository.StepDurationRepository
+import ru.spbstu.application.steps.repository.StepDurationRepositoryImpl
+import ru.spbstu.application.steps.usecases.GetStepDurationUseCase
 import ru.spbstu.application.telegram.TelegramBot
 import ru.spbstu.application.trendyfriendy.trendyFriendyModule
 
@@ -25,5 +26,6 @@ val unistartModule = module(createdAtStart = true) {
     singleOf(::StepDurationRepositoryImpl) bind StepDurationRepository::class
     singleOf(::SubscriptionRepositoryImpl) bind SubscriptionRepository::class
     singleOf(::IsAdminUseCase)
+    singleOf(::GetStepDurationUseCase)
     singleOf(::TelegramBot)
 }

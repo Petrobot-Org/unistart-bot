@@ -5,10 +5,10 @@ import com.charleskorn.kaml.decodeFromStream
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import ru.spbstu.application.auth.entities.User
-import ru.spbstu.application.telegram.Strings
+import ru.spbstu.application.steps.entities.Step
 import ru.spbstu.application.telegram.TelegramToken
+import java.io.File
 import java.io.FileInputStream
-import java.util.*
 
 class Secrets(
     val telegramToken: TelegramToken
@@ -18,7 +18,8 @@ class Secrets(
 class AppConfig(
     @SerialName("jdbc") val jdbcString: String,
     @SerialName("public_hostname") val publicHostname: String,
-    @SerialName("root_admin_user_ids") val rootAdminUserIds: Collection<User.Id>
+    @SerialName("root_admin_user_ids") val rootAdminUserIds: Collection<User.Id>,
+    @SerialName("default_step_durations_seconds") val defaultStepDurationsSeconds: Map<Step, Long>
 )
 
 fun readSecrets(): Secrets {
@@ -40,11 +41,13 @@ inline fun <reified T> readConfig(path: String): T {
 }
 
 inline fun <reified T> readDefaultConfig(path: String): T {
-    val inputStream = AppConfig::class.java.getResourceAsStream("/$path")!!
-    return Yaml.default.decodeFromStream(inputStream)
+    return AppConfig::class.java.getResourceAsStream("/$path")!!.use { inputStream ->
+        Yaml.default.decodeFromStream(inputStream)
+    }
 }
 
 inline fun <reified T> readCustomConfig(path: String): T {
-    val inputStream = FileInputStream(path)
-    return Yaml.default.decodeFromStream(inputStream)
+    return FileInputStream(path).use { inputStream ->
+        Yaml.default.decodeFromStream(inputStream)
+    }
 }
