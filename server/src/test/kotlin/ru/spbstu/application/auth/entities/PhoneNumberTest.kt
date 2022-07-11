@@ -8,7 +8,7 @@ internal class PhoneNumberTest {
 
     @Test
     fun test() {
-        assertEquals(PhoneNumber.valueOf("+000")!!.value, "+000")
-        assertEquals(PhoneNumber.valueOf("000"), null)
+        assertEquals(PhoneNumber.valueOf("000")!!.value, "000")
+        assertEquals(PhoneNumber.valueOf("000a"), null)
     }
 }

@@ -7,18 +7,28 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
-import kotlinx.browser.window
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import trendyfriendy.Idea
 import trendyfriendy.IdeaResponse
 import trendyfriendy.TrendCard
 
 class GameClient(initData: String, hash: String) {
+    sealed interface Error {
+        object NotAuthorized : Error
+        data class Other(val message: String?) : Error
+    }
+
     private val client = HttpClient {
         expectSuccess = true
         HttpResponseValidator {
             handleResponseExceptionWithRequest { exception, _ ->
-                window.alert(exception.message.toString())
-                window.location.reload()
+                if ((exception as? ClientRequestException)?.response?.status == HttpStatusCode.Unauthorized) {
+                    _errorFlow.tryEmit(Error.NotAuthorized)
+                } else if (exception !is CancellationException) {
+                    _errorFlow.tryEmit(Error.Other(exception.message))
+                }
             }
         }
         defaultRequest {
@@ -34,6 +44,9 @@ class GameClient(initData: String, hash: String) {
             }
         }
     }
+
+    private val _errorFlow = MutableSharedFlow<Error>(replay = 1)
+    val errorFlow = _errorFlow.asSharedFlow()
 
     suspend fun addIdea(idea: Idea): IdeaResponse {
         return client.post("/trendy-friendy/ideas") { setBody(idea) }.body()

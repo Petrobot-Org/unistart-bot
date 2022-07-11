@@ -33,6 +33,7 @@ class ScreenModel(
     private var loadingFinish by mutableStateOf(0)
     private var selectedSets by mutableStateOf(emptySet<String>())
     private var ideaInput by mutableStateOf("")
+    val errorFlow = client.errorFlow
 
     @get:Composable
     val state: GameState
@@ -135,7 +136,7 @@ class ScreenModel(
 }
 
 private suspend fun preloadImage(url: String) {
-    suspendCoroutine<Unit> { continuation ->
+    suspendCoroutine { continuation ->
         val image = Image()
         image.src = url
         image.onload = {

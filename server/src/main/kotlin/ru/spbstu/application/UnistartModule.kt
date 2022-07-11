@@ -8,9 +8,10 @@ import ru.spbstu.application.auth.repository.SubscriptionRepository
 import ru.spbstu.application.auth.repository.SubscriptionRepositoryImpl
 import ru.spbstu.application.auth.repository.UserRepository
 import ru.spbstu.application.auth.repository.UserRepositoryImpl
-import ru.spbstu.application.data.createAppDatabase
-import ru.spbstu.application.steps.repository.StepDurationRepository
+import ru.spbstu.application.auth.usecases.IsSubscribedUseCase
 import ru.spbstu.application.steps.repository.StepDurationRepositoryImpl
+import ru.spbstu.application.steps.repository.StepDurationRepository
+import ru.spbstu.application.data.createAppDatabase
 import ru.spbstu.application.steps.usecases.GetStepDurationUseCase
 import ru.spbstu.application.telegram.TelegramBot
 import ru.spbstu.application.trendyfriendy.trendyFriendyModule
@@ -27,5 +28,6 @@ val unistartModule = module(createdAtStart = true) {
     singleOf(::SubscriptionRepositoryImpl) bind SubscriptionRepository::class
     singleOf(::IsAdminUseCase)
     singleOf(::GetStepDurationUseCase)
+    singleOf(::IsSubscribedUseCase)
     singleOf(::TelegramBot)
 }
