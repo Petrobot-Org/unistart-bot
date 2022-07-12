@@ -1,3 +1,4 @@
+timezone: Europe/Moscow
 jdbc: "jdbc:sqlite:main.sqlite"
 public_hostname: "https://127.0.0.1"
 root_admin_user_ids: []

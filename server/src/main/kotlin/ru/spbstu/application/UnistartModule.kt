@@ -9,12 +9,13 @@ import ru.spbstu.application.auth.repository.SubscriptionRepositoryImpl
 import ru.spbstu.application.auth.repository.UserRepository
 import ru.spbstu.application.auth.repository.UserRepositoryImpl
 import ru.spbstu.application.auth.usecases.IsSubscribedUseCase
-import ru.spbstu.application.steps.repository.StepDurationRepositoryImpl
-import ru.spbstu.application.steps.repository.StepDurationRepository
 import ru.spbstu.application.data.createAppDatabase
+import ru.spbstu.application.steps.repository.StepDurationRepository
+import ru.spbstu.application.steps.repository.StepDurationRepositoryImpl
 import ru.spbstu.application.steps.usecases.GetStepDurationUseCase
 import ru.spbstu.application.telegram.TelegramBot
 import ru.spbstu.application.trendyfriendy.trendyFriendyModule
+import java.time.ZoneId
 
 val unistartModule = module(createdAtStart = true) {
     includes(trendyFriendyModule)
@@ -23,6 +24,7 @@ val unistartModule = module(createdAtStart = true) {
     single { appConfig }
     single { secrets.telegramToken }
     single { createAppDatabase(appConfig.jdbcString) }
+    single { ZoneId.of(appConfig.timezone) }
     singleOf(::UserRepositoryImpl) bind UserRepository::class
     singleOf(::StepDurationRepositoryImpl) bind StepDurationRepository::class
     singleOf(::SubscriptionRepositoryImpl) bind SubscriptionRepository::class

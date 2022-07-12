@@ -16,6 +16,7 @@ class Secrets(
 
 @Serializable
 class AppConfig(
+    val timezone: String,
     @SerialName("jdbc") val jdbcString: String,
     @SerialName("public_hostname") val publicHostname: String,
     @SerialName("root_admin_user_ids") val rootAdminUserIds: Collection<User.Id>,

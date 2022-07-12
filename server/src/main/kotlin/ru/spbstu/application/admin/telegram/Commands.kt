@@ -30,12 +30,13 @@ import ru.spbstu.application.telegram.waitTextFrom
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneOffset
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
 private val getStepDuration: GetStepDurationUseCase by GlobalContext.get().inject()
 private val stepDurationRepository: StepDurationRepository by GlobalContext.get().inject()
+private val zoneId: ZoneId by GlobalContext.get().inject()
 
 suspend fun BehaviourContext.adminCommands() {
     onAdminCommand("uploadnumbers") { uploadPhoneNumbers(it) }
@@ -72,7 +73,7 @@ private suspend fun BehaviourContext.waitStartInstant(chat: Chat): Instant {
         .map {
             try {
                 val date = dateTimeFormatter.parse(it.text, LocalDate::from)
-                date.atTime(0, 0).toInstant(ZoneOffset.UTC)
+                date.atStartOfDay(zoneId).toInstant()
             } catch (e: DateTimeParseException) {
                 null
             }
