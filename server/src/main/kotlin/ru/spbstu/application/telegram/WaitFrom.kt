@@ -6,6 +6,7 @@ import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitContentMe
 import dev.inmo.tgbotapi.requests.abstracts.Request
 import dev.inmo.tgbotapi.types.chat.Chat
 import dev.inmo.tgbotapi.types.message.content.ContactContent
+import dev.inmo.tgbotapi.types.message.content.DocumentContent
 import dev.inmo.tgbotapi.types.message.content.MessageContent
 import dev.inmo.tgbotapi.types.message.content.TextContent
 import dev.inmo.tgbotapi.utils.RiskFeature
@@ -34,3 +35,10 @@ suspend fun BehaviourContext.waitTextFrom(
     initRequest: Request<*>? = null,
     errorFactory: NullableRequestBuilder<*> = { null }
 ) = waitFrom<TextContent>(chat, initRequest, false, errorFactory)
+
+suspend fun BehaviourContext.waitDocumentFrom(
+    chat: Chat,
+    initRequest: Request<*>? = null,
+    errorFactory: NullableRequestBuilder<*> = { null },
+    includeMediaGroups: Boolean = false
+) = waitFrom<DocumentContent>(chat, initRequest, includeMediaGroups, errorFactory)

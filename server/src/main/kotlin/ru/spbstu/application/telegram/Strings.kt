@@ -73,6 +73,10 @@ object Strings {
     const val UnauthorizedError = "Недостаточно прав для этой команды"
     const val StepDurationsHeader = "Продолжительность шагов. Нажмите, чтобы изменить."
     const val InvalidDurationDays = "Введите число дней"
+    const val RequirePhoneNumbersDocument = "Загрузите документ .xlsx с номерами"
+    const val RequireStartDate = "Дата начала подписки для этих номеров (дд.мм.гггг)"
+    const val InvalidDate = "Некорректная дата"
+    const val RequireDurationDays = "Продолжительность подписки в днях"
 
     fun MyRanking(numberOfMembers: Int, myPosition: Int, myBonuses: Long) =
         "Всего участников в системе: $numberOfMembers ${
@@ -86,6 +90,9 @@ object Strings {
 
     fun ChangeStepDuration(step: Step) =
         "Укажите новую продолжительность для этапа ${step.value} в днях"
+
+    fun InvalidSpreadsheet(rows: List<Int>) =
+        "Ошибки в таблице в строках ${rows.joinToString()}"
 }
 
 private fun pluralize(quantity: Long, one: String, few: String, many: String): String {
