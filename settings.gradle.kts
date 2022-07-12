@@ -7,6 +7,7 @@ pluginManagement {
 }
 
 rootProject.name = "unistart"
+
 include(":common")
-include(":client")
 include(":server")
+include(":trendy-friendy-frontend")

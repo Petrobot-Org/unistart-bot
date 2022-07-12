@@ -7,21 +7,21 @@ import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.data.source.AppDatabase
 
 class UserRepositoryImpl(private val database: AppDatabase) : UserRepository {
-    private val map = { id: User.Id?,
-                        phoneNumber: PhoneNumber?,
-                        avatar: Avatar,
-                        occupation: Occupation,
-                        availableStepsCount: Long?,
-                        amountOfCoins: Long? ->
+    private val mapper = { id: User.Id?,
+                           phoneNumber: PhoneNumber?,
+                           avatar: Avatar,
+                           occupation: Occupation,
+                           availableStepsCount: Long?,
+                           amountOfCoins: Long? ->
         User(id!!, phoneNumber!!, avatar, occupation, availableStepsCount!!, amountOfCoins!!)
     }
 
     override fun get(id: User.Id): User? {
-        return database.userQueries.getUserById(id, map).executeAsOneOrNull()
+        return database.userQueries.get(id, mapper).executeAsOneOrNull()
     }
 
     override fun add(user: User) {
-        database.userQueries.addUser(
+        database.userQueries.add(
             user.id,
             user.phoneNumber,
             user.avatar,
@@ -32,11 +32,11 @@ class UserRepositoryImpl(private val database: AppDatabase) : UserRepository {
     }
 
     override fun contains(phoneNumber: PhoneNumber): Boolean {
-        return database.userQueries.containsUserByPhoneNumber(phoneNumber).executeAsOne() >= 1L
+        return database.userQueries.containsPhoneNumber(phoneNumber).executeAsOne() >= 1L
     }
 
 
     override fun sortByAmountOfCoins(): List<User> {
-        return database.userQueries.sortByAmountOfCoins(map).executeAsList()
+        return database.userQueries.sortByAmountOfCoins(mapper).executeAsList()
     }
 }

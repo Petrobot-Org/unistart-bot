@@ -19,7 +19,7 @@ import org.koin.core.context.GlobalContext
 import ru.spbstu.application.auth.entities.PhoneNumber
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.repository.UserRepository
-import ru.spbstu.application.steps.telegram.handleSteps
+import ru.spbstu.application.steps.telegram.steps
 import ru.spbstu.application.telegram.Strings
 import ru.spbstu.application.telegram.Strings.Avatars
 import ru.spbstu.application.telegram.Strings.HaveIdeaQuestion
@@ -28,7 +28,7 @@ import ru.spbstu.application.telegram.Strings.InvalidOccupation
 import ru.spbstu.application.telegram.Strings.NoIdea
 import ru.spbstu.application.telegram.Strings.NotMyIdea
 import ru.spbstu.application.telegram.Strings.Occupations
-import ru.spbstu.application.telegram.Strings.PhoneNumberIsAlreadyInDataBase
+import ru.spbstu.application.telegram.Strings.PhoneNumberIsAlreadyInDatabase
 import ru.spbstu.application.telegram.Strings.SoSoIdea
 import ru.spbstu.application.telegram.Strings.StartWithFirstStep
 import ru.spbstu.application.telegram.Strings.StartWithSecondStep
@@ -50,9 +50,9 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
                 oneTimeKeyboard = true
             )
         )
-    ).map { PhoneNumber(it.contact.phoneNumber) }.first()
+    ).map { PhoneNumber.valueOf(it.contact.phoneNumber)!! }.first()
     if (userRepository.contains(phoneNumber)) { ////TODO: добавить так же проверку на наличие номера в базе номеров от Оксаны
-        sendTextMessage(message.chat.id, PhoneNumberIsAlreadyInDataBase)
+        sendTextMessage(message.chat.id, PhoneNumberIsAlreadyInDatabase)
         return
     }
     // проверить номер телефона
@@ -134,8 +134,9 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
 
     sendTextMessage(message.chat.id, firstStepInfo)
 
+
     val user = User(User.Id(message.chat.id.chatId), phoneNumber, avatar, occupation, startLevel, 0)
     userRepository.add(user)
 
-    handleSteps(message)
+    steps(message)
 }

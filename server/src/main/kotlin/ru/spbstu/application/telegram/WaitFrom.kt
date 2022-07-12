@@ -2,7 +2,6 @@ package ru.spbstu.application.telegram
 
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.NullableRequestBuilder
-import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitContent
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitContentMessage
 import dev.inmo.tgbotapi.requests.abstracts.Request
 import dev.inmo.tgbotapi.types.chat.Chat

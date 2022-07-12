@@ -42,7 +42,7 @@ object Strings {
 
     const val InvalidAvatar = "Такого аватара не существует"
     const val InvalidOccupation = "Не могу понять род вашей деятельности"
-    const val PhoneNumberIsAlreadyInDataBase = "Этот номер телефона уже был использован при регистрации"
+    const val PhoneNumberIsAlreadyInDatabase = "Этот номер телефона уже был использован при регистрации"
 
     const val ChooseStep = "Выбери шаг"
     const val Step1 = "1. Генерация идей"
@@ -56,6 +56,14 @@ object Strings {
     const val Scamper = "SCAMPER"
     const val TrendyFriendy = "Trendy Friendy"
     const val BackToSteps = "Обратно к шагам"
+
+    const val TrendyFriendyDescription = "Trendy Friendy"
+    const val TrendyFriendyOpen = "Start"
+    const val IdeasSpreadsheetName = "Идеация"
+    const val IdeasSpreadsheetNumber = "№ п/п"
+    const val IdeasSpreadsheetDescription = "Описание идеи"
+    const val IdeasSpreadsheetTechnical = "Идея технически реализуема (можно найти ресурсы для ее реализации в реальной жизни)"
+    const val IdeasSpreadsheetEconomical = "Идея экономически реализуема (можно найти потребителя и оценить экономику)"
 
     fun MyRanking(numberOfMembers: Int, myPosition: Int, myBonuses: Long) =
         "Всего участников в системе: $numberOfMembers человек, ваше текущее место в рейтинге - $myPosition, накоплено бонусов - $myBonuses"

@@ -1,0 +1,29 @@
+cards_per_game: 3
+
+sets:
+  Gartner:
+    - name: Data Fabric
+      description: "The value of data has never been more clear. But often, data remains siloed within applications, which means it’s not being used as effectively as possible."
+      url: static/trends/fabric.webp
+    - name: Composable Applications
+      description: "Fusion teams face many challenges: They can lack coding skills, be locked into the wrong technologies and are often tasked with fast-paced delivery."
+      url: static/trends/composable.webp
+    - name: Generative AI
+      description: "For the most part, AI is trained to produce conclusions, but true force-multiplying technologies can innovate on their own."
+      url: static/trends/ai.webp
+  Cats:
+    - name: я плачу
+      description: мяу
+      url: static/trends/cat1.webp
+    - name: упал
+      description: меу
+      url: static/trends/cat2.webp
+    - name: грустно
+      description: муя
+      url: static/trends/cat3.webp
+    - name: я плачу от радости :)
+      description: спасите
+      url: static/trends/cat4.webp
+    - name: end me
+      description: pls
+      url: static/trends/cat5.webp

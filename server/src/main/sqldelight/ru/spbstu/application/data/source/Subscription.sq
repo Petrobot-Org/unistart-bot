@@ -1,0 +1,21 @@
+import java.time.Duration;
+import java.time.Instant;
+import ru.spbstu.application.auth.entities.Subscription;
+import ru.spbstu.application.auth.entities.User;
+
+CREATE TABLE Subscription (
+    id INTEGER AS Subscription.Id PRIMARY KEY,
+    start INTEGER AS Instant NOT NULL,
+    duration INTEGER AS Duration NOT NULL,
+    user_id INTEGER AS User.Id NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES User (id),
+    UNIQUE(start, duration, user_id)
+);
+
+add:
+INSERT OR IGNORE INTO Subscription(id, start, duration, user_id)
+VALUES (:id, :start, :duration, :userId);
+
+get:
+SELECT * FROM Subscription
+WHERE user_id = :userId;

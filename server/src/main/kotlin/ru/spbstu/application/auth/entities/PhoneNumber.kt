@@ -1,6 +1,14 @@
 package ru.spbstu.application.auth.entities
 
-import kotlin.jvm.JvmInline
-
 @JvmInline
-value class PhoneNumber(val value: String)
+value class PhoneNumber private constructor(val value: String) {
+    companion object {
+        fun valueOf(value: String): PhoneNumber? {
+            return if (value.all { it.isDigit() }) {
+                PhoneNumber(value)
+            } else {
+                null
+            }
+        }
+    }
+}

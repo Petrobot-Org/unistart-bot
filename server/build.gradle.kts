@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    kotlin("plugin.serialization")
     id("com.squareup.sqldelight") version Versions.sqlDelight
     application
 }
@@ -16,6 +17,10 @@ dependencies {
     implementation("dev.inmo:tgbotapi:${Versions.telegramBotApi}")
     implementation("io.ktor:ktor-server-netty:${Versions.ktor}")
     implementation("io.ktor:ktor-server-html-builder-jvm:${Versions.ktor}")
+    implementation("io.ktor:ktor-server-auth:${Versions.ktor}")
+    implementation("io.ktor:ktor-server-content-negotiation:${Versions.ktor}")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:${Versions.ktor}")
+    implementation("io.ktor:ktor-server-compression:${Versions.ktor}")
     implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:${Versions.kotlinxHtml}")
     implementation("io.insert-koin:koin-core:${Versions.koin}")
     implementation("io.insert-koin:koin-ktor:${Versions.koin}")
@@ -23,6 +28,10 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:${Versions.slf4jSimple}")
     implementation("com.squareup.sqldelight:sqlite-driver:${Versions.sqlDelight}")
     implementation("com.squareup.sqldelight:coroutines-extensions-jvm:${Versions.sqlDelight}")
+    implementation("com.charleskorn.kaml:kaml:${Versions.kaml}")
+    implementation("org.apache.poi:poi:${Versions.poi}")
+    implementation("org.apache.poi:poi-ooxml:${Versions.poi}")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
 }
 
 tasks.getByName<Test>("test") {
@@ -41,12 +50,12 @@ sqldelight {
     }
 }
 
+tasks.named<Jar>("jar") {
+    dependsOn(":trendy-friendy-frontend:jsBrowserProductionWebpack")
+    from("${rootProject.projectDir}/trendy-friendy-frontend/build/distributions/")
+}
+
 tasks.named<JavaExec>("run") {
     dependsOn(tasks.named<Jar>("jar"))
     classpath(tasks.named<Jar>("jar"))
-}
-
-tasks.named<Jar>("jar") {
-    dependsOn(":client:jsBrowserProductionWebpack")
-    from(File("${rootProject.projectDir}/client/build/distributions/client.js"))
 }
