@@ -25,7 +25,7 @@ class TelegramBot(token: TelegramToken) {
                 onCommand("start") { handleStart(it) }
                 onCommand("steps") { handleSteps(it) }
                 onCommand("stats") { handleStats(it) }
-                onText({ it.content.text == Strings.Step1 }) { handleStep1(it) }
+                onText({ it.content.text in setOf(Strings.Step1, Strings.BackToIdeaGeneration) }) { handleStep1(it) }
                 onText({ it.content.text == Strings.GetMyStats }) { handleStats(it) }
                 onText({ it.content.text == Strings.BackToSteps }) { handleSteps(it) }
                 onText({ it.content.text == Strings.TrendyFriendy }) { sendTrendyFriendyApp(it.chat)}

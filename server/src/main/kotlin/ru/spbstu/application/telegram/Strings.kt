@@ -62,6 +62,7 @@ object Strings {
     const val Scamper = "SCAMPER"
     const val TrendyFriendy = "Trendy Friendy"
     const val BackToSteps = "Обратно к шагам"
+    const val BackToIdeaGeneration = "Попробовать другие техники"
 
     const val TrendyFriendyDescription = "Trendy Friendy"
     const val TrendyFriendyOpen = "Start"
