@@ -9,11 +9,5 @@ import java.time.Instant
 interface CompletedStepRepository {
     fun add(step: Step, userId: User.Id, endTime: Instant)
 
-    fun getByUserId(userId: User.Id): List<CompletedStep>
-
-    fun getByStep(step: Step): List<CompletedStep>
-
-    fun getAll(): List<CompletedStep>
-
     fun joinUser(): List<UserWithCompletedSteps>
 }

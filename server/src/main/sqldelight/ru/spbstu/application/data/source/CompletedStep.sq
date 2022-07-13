@@ -14,17 +14,6 @@ add:
 INSERT INTO CompletedStep(step, userId, endTime)
 VALUES (:step, :userId, :endTime);
 
-getByUserId:
-SELECT * FROM CompletedStep
-WHERE userId = :userId;
-
-getByStep:
-SELECT * FROM CompletedStep
-WHERE step = :step;
-
-getAll:
-SELECT * FROM CompletedStep;
-
 joinUser:
 SELECT *
 FROM CompletedStep
