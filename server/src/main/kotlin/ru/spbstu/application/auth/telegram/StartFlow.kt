@@ -34,12 +34,18 @@ import ru.spbstu.application.telegram.Strings.StartWithFirstStep
 import ru.spbstu.application.telegram.Strings.StartWithSecondStep
 import ru.spbstu.application.telegram.Strings.Student
 import ru.spbstu.application.telegram.Strings.SuperIdea
+import ru.spbstu.application.telegram.Strings.UserHasAlreadyBeenRegistered
 import ru.spbstu.application.telegram.waitContactFrom
 import ru.spbstu.application.telegram.waitTextFrom
 
 private val userRepository: UserRepository by GlobalContext.get().inject()
 
 suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
+    if (userRepository.contains(User.Id(message.chat.id.chatId))){
+        sendTextMessage(message.chat.id, UserHasAlreadyBeenRegistered)
+        handleSteps(message)
+        return
+    }
     val phoneNumber = waitContactFrom(
         message.chat,
         SendTextMessage(
