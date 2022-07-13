@@ -19,7 +19,7 @@ import org.koin.core.context.GlobalContext
 import ru.spbstu.application.auth.entities.PhoneNumber
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.repository.UserRepository
-import ru.spbstu.application.steps.telegram.steps
+import ru.spbstu.application.steps.telegram.handleSteps
 import ru.spbstu.application.telegram.Strings
 import ru.spbstu.application.telegram.Strings.Avatars
 import ru.spbstu.application.telegram.Strings.HaveIdeaQuestion
@@ -34,12 +34,18 @@ import ru.spbstu.application.telegram.Strings.StartWithFirstStep
 import ru.spbstu.application.telegram.Strings.StartWithSecondStep
 import ru.spbstu.application.telegram.Strings.Student
 import ru.spbstu.application.telegram.Strings.SuperIdea
+import ru.spbstu.application.telegram.Strings.UserHasAlreadyBeenRegistered
 import ru.spbstu.application.telegram.waitContactFrom
 import ru.spbstu.application.telegram.waitTextFrom
 
 private val userRepository: UserRepository by GlobalContext.get().inject()
 
 suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
+    if (userRepository.contains(User.Id(message.chat.id.chatId))){
+        sendTextMessage(message.chat.id, UserHasAlreadyBeenRegistered)
+        handleSteps(message)
+        return
+    }
     val phoneNumber = waitContactFrom(
         message.chat,
         SendTextMessage(
@@ -138,5 +144,5 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
     val user = User(User.Id(message.chat.id.chatId), phoneNumber, avatar, occupation, startLevel, 0)
     userRepository.add(user)
 
-    steps(message)
+    handleSteps(message)
 }
