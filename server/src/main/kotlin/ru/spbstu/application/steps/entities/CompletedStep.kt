@@ -6,4 +6,5 @@ import java.time.Instant
 class CompletedStep(
     val userId: User.Id,
     val step: Step,
-    val endTime: Instant)
+    val endTime: Instant
+)
