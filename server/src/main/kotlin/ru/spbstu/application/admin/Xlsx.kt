@@ -5,6 +5,7 @@ import org.apache.poi.ss.usermodel.VerticalAlignment
 import org.apache.poi.ss.util.CellRangeAddress
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import ru.spbstu.application.auth.entities.PhoneNumber
+import ru.spbstu.application.steps.entities.Step
 import ru.spbstu.application.steps.entities.UserWithCompletedSteps
 import ru.spbstu.application.telegram.Strings
 import java.io.ByteArrayOutputStream
@@ -67,15 +68,9 @@ object Xlsx {
                 }
             }
             createRow(1).apply {
-
-                listOf(
-                    Strings.StatisticSpreadsheetFirstStep,
-                    Strings.StatisticSpreadsheetSecondStep,
-                    Strings.StatisticSpreadsheetThirdStep,
-                    Strings.StatisticSpreadsheetFourthStep
-                ).forEachIndexed { index, s ->
-                    createCell(index + 1).apply {
-                        setCellValue(s)
+                (1..4).forEach { index ->
+                    createCell(index).apply {
+                        setCellValue(Strings.StatisticSpreadsheetStep(Step(index.toLong())))
                         cellStyle = style
                     }
                 }
@@ -94,7 +89,7 @@ object Xlsx {
                             createCell(index + 1).setCellValue(s)
                         }
                     createCell(5).setCellValue(userWithCompletedSteps.user.amountOfCoins.toDouble())
-                    createCell(6).setCellValue(Strings.deOccupations[userWithCompletedSteps.user.occupation])
+                    createCell(6).setCellValue(Strings.Occupations[userWithCompletedSteps.user.occupation])
                 }
             }
             autoSizeColumn(0, true)
