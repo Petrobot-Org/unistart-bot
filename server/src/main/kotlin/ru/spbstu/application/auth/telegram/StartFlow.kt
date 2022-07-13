@@ -19,7 +19,7 @@ import org.koin.core.context.GlobalContext
 import ru.spbstu.application.auth.entities.PhoneNumber
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.repository.UserRepository
-import ru.spbstu.application.steps.telegram.steps
+import ru.spbstu.application.steps.telegram.handleSteps
 import ru.spbstu.application.telegram.Strings
 import ru.spbstu.application.telegram.Strings.Avatars
 import ru.spbstu.application.telegram.Strings.HaveIdeaQuestion
@@ -138,5 +138,5 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
     val user = User(User.Id(message.chat.id.chatId), phoneNumber, avatar, occupation, startLevel, 0)
     userRepository.add(user)
 
-    steps(message)
+    handleSteps(message)
 }
