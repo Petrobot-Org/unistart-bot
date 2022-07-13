@@ -1,0 +1,21 @@
+import java.time.Instant;
+import ru.spbstu.application.auth.entities.User;
+import ru.spbstu.application.steps.entities.Step;
+
+CREATE TABLE CompletedStep (
+    userId INTEGER AS User.Id NOT NULL,
+    step INTEGER AS Step NOT NULL,
+    endTime INTEGER AS Instant NOT NULL ,
+    FOREIGN KEY (userId) REFERENCES User(id),
+    PRIMARY KEY (userId, step)
+);
+
+add:
+INSERT INTO CompletedStep(step, userId, endTime)
+VALUES (:step, :userId, :endTime);
+
+joinUser:
+SELECT *
+FROM CompletedStep
+INNER JOIN User
+ON User.id = CompletedStep.userId;

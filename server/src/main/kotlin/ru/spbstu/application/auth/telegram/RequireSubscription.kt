@@ -8,6 +8,7 @@ import dev.inmo.tgbotapi.extensions.behaviour_builder.filters.CommonMessageFilte
 import dev.inmo.tgbotapi.extensions.behaviour_builder.filters.MessageFilterByChat
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.CommonMessageFilter
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
+import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onText
 import dev.inmo.tgbotapi.extensions.behaviour_builder.utils.marker_factories.ByChatMessageMarkerFactory
 import dev.inmo.tgbotapi.extensions.behaviour_builder.utils.marker_factories.MarkerFactory
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
@@ -39,6 +40,20 @@ suspend fun <BC : BehaviourContext> BC.onSubscriberCommand(
     command,
     requireOnlyCommandInMessage,
     initialFilter,
+    subcontextUpdatesFilter,
+    markerFactory
+) {
+    requireSubscription(it)
+    scenarioReceiver(this, it)
+}
+
+suspend fun <BC : BehaviourContext> BC.onSubscriberText(
+    vararg text: String,
+    subcontextUpdatesFilter: CustomBehaviourContextAndTwoTypesReceiver<BC, Boolean, CommonMessage<TextContent>, Update> = MessageFilterByChat,
+    markerFactory: MarkerFactory<in CommonMessage<TextContent>, Any> = ByChatMessageMarkerFactory,
+    scenarioReceiver: CustomBehaviourContextAndTypeReceiver<BC, Unit, CommonMessage<TextContent>>
+) = onText(
+    initialFilter = { it.content.text in text },
     subcontextUpdatesFilter,
     markerFactory
 ) {

@@ -4,9 +4,7 @@ import dev.inmo.tgbotapi.bot.TelegramBot
 import dev.inmo.tgbotapi.extensions.api.send.media.sendDocument
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
-import dev.inmo.tgbotapi.extensions.utils.types.buttons.inlineKeyboard
-import dev.inmo.tgbotapi.extensions.utils.types.buttons.row
-import dev.inmo.tgbotapi.extensions.utils.types.buttons.webAppButton
+import dev.inmo.tgbotapi.extensions.utils.types.buttons.*
 import dev.inmo.tgbotapi.requests.abstracts.asMultipartFile
 import dev.inmo.tgbotapi.types.chat.Chat
 import dev.inmo.tgbotapi.types.toChatId
@@ -34,7 +32,7 @@ suspend fun BehaviourContext.sendTrendyFriendyApp(chat: Chat) {
 
 suspend fun sendTrendyFriendyIdeas(bot: TelegramBot, userId: Long, ideas: List<Idea>) {
     val document = createIdeasXlsx(ideas).asMultipartFile(Strings.IdeasSpreadsheetName + ".xlsx")
-    bot.sendDocument(userId.toChatId(), document)
+    bot.sendDocument(userId.toChatId(), document, replyMarkup = flatReplyKeyboard { simpleButton(Strings.BackToIdeaGeneration) })
 }
 
 private fun createIdeasXlsx(ideas: List<Idea>): ByteArray {
