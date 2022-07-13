@@ -40,8 +40,6 @@ import ru.spbstu.application.telegram.Strings.SuperIdea
 import ru.spbstu.application.telegram.Strings.UserHasAlreadyBeenRegistered
 import ru.spbstu.application.telegram.waitContactFrom
 import ru.spbstu.application.telegram.waitTextFrom
-import java.time.Duration
-import java.time.Instant
 import java.time.Instant
 
 private val userRepository: UserRepository by GlobalContext.get().inject()
@@ -50,7 +48,7 @@ private val subscriptionRepository: SubscriptionRepository by GlobalContext.get(
 private val registerUser: RegisterUserUseCase by GlobalContext.get().inject()
 
 suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
-    if (userRepository.contains(User.Id(message.chat.id.chatId))){
+    if (userRepository.contains(User.Id(message.chat.id.chatId))) {
         sendTextMessage(message.chat.id, UserHasAlreadyBeenRegistered)
         handleSteps(message)
         return
@@ -66,8 +64,7 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
             )
         )
     ).map { PhoneNumber.valueOf(it.contact.phoneNumber)!! }.first()
-    if (!startInfoRepository.contains(phoneNumber))
-    {
+    if (!startInfoRepository.contains(phoneNumber)) {
         sendTextMessage(message.chat.id, Strings.NoPhoneInDatabase)
         return
     }
@@ -156,12 +153,10 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
 
     sendTextMessage(message.chat.id, firstStepInfo)
 
-////
-    val user = User(User.Id(message.chat.id.chatId), phoneNumber, avatar, occupation, startLevel, 0)
-    userRepository.add(user)
-    val end = startInfoRepository.getByPhoneNumber(phoneNumber)?.end
+    val user = userRepository.get(User.Id(message.chat.id.chatId))
+    val startInfo = startInfoRepository.getByPhoneNumber(phoneNumber)
 
-    subscriptionRepository.add(Instant.now(), Duration.between(Instant.now(), end),user.id)
+    subscriptionRepository.add(startInfo!!.begin, startInfo.duration, user!!.id)
 
     handleSteps(message)
 }

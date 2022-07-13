@@ -1,17 +1,18 @@
 import java.time.Instant;
 import ru.spbstu.application.auth.entities.PhoneNumber;
 import ru.spbstu.application.auth.entities.StartInfo;
+import java.time.Duration;
 
 CREATE TABLE StartInfo(
     id INTEGER AS StartInfo.Id PRIMARY KEY AUTOINCREMENT,
     phoneNumber TEXT AS PhoneNumber UNIQUE,
     begin INTEGER AS Instant NOT NULL,
-    end INTEGER AS Instant NOT NULL
+    duration INTEGER AS Duration NOT NULL
 );
 
 add:
-INSERT OR IGNORE INTO StartInfo(phoneNumber, begin, end)
-VALUES (:phoneNumber, :begin, :end);
+INSERT OR IGNORE INTO StartInfo(phoneNumber, begin, duration)
+VALUES (:phoneNumber, :begin, :duration);
 
 containsPhoneNumber:
 SELECT COUNT(1) FROM StartInfo

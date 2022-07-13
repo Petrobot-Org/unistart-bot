@@ -17,8 +17,6 @@ import ru.spbstu.application.data.DatabaseTransactionImpl
 import ru.spbstu.application.data.createAppDatabase
 import ru.spbstu.application.steps.repository.CompletedStepRepository
 import ru.spbstu.application.steps.repository.CompletedStepRepositoryImpl
-import ru.spbstu.application.steps.repository.StepDurationRepository
-import ru.spbstu.application.steps.repository.StepDurationRepositoryImpl
 import ru.spbstu.application.telegram.TelegramBot
 import ru.spbstu.application.trendyfriendy.trendyFriendyModule
 

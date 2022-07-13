@@ -3,10 +3,11 @@ package ru.spbstu.application.auth.repository
 import ru.spbstu.application.auth.entities.PhoneNumber
 import ru.spbstu.application.auth.entities.StartInfo
 import ru.spbstu.application.data.source.AppDatabase
+import java.time.Duration
 import java.time.Instant
 
-private val mapper = { id: StartInfo.Id, number: PhoneNumber?, begin: Instant, end: Instant ->
-    StartInfo(id, number!!, begin, end)
+private val mapper = { id: StartInfo.Id, number: PhoneNumber?, begin: Instant, duration: Duration ->
+    StartInfo(id, number!!, begin, duration)
 }
 
 class StartInfoRepositoryImpl(private val database: AppDatabase) : StartInfoRepository {
@@ -14,7 +15,7 @@ class StartInfoRepositoryImpl(private val database: AppDatabase) : StartInfoRepo
         database.startInfoQueries.add(
             startInfo.phoneNumber,
             startInfo.begin,
-            startInfo.end
+            startInfo.duration
         )
     }
 
