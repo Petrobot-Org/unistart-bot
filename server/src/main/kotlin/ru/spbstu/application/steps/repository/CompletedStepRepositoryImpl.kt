@@ -1,8 +1,5 @@
 package ru.spbstu.application.steps.repository
 
-import ru.spbstu.application.auth.entities.Avatar
-import ru.spbstu.application.auth.entities.Occupation
-import ru.spbstu.application.auth.entities.PhoneNumber
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.data.source.AppDatabase
 import ru.spbstu.application.steps.entities.CompletedStep
@@ -21,7 +18,7 @@ class CompletedStepRepositoryImpl(private val database: AppDatabase) : Completed
         database.completedStepQueries.add(step, userId, endTime)
     }
 
-    override fun joinUser(): List<UserWithCompletedSteps> {
+    override fun getUsersWithCompletedSteps(): List<UserWithCompletedSteps> {
         return database.completedStepQueries.joinUser().executeAsList().groupBy(
             { t -> User(t.id, t.phoneNumber!!, t.avatar, t.occupation, t.availableStepsCount!!, t.amountOfCoins!!) },
             { t -> CompletedStep(t.userId, t.step, t.endTime) })

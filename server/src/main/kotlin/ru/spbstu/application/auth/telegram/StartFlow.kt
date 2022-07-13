@@ -23,13 +23,13 @@ import ru.spbstu.application.steps.entities.Step
 import ru.spbstu.application.steps.repository.CompletedStepRepository
 import ru.spbstu.application.steps.telegram.steps
 import ru.spbstu.application.telegram.Strings
-import ru.spbstu.application.telegram.Strings.Avatars
+import ru.spbstu.application.telegram.Strings.AvatarByString
 import ru.spbstu.application.telegram.Strings.HaveIdeaQuestion
 import ru.spbstu.application.telegram.Strings.InvalidAvatar
 import ru.spbstu.application.telegram.Strings.InvalidOccupation
 import ru.spbstu.application.telegram.Strings.NoIdea
 import ru.spbstu.application.telegram.Strings.NotMyIdea
-import ru.spbstu.application.telegram.Strings.Occupations
+import ru.spbstu.application.telegram.Strings.OccupationByString
 import ru.spbstu.application.telegram.Strings.PhoneNumberIsAlreadyInDatabase
 import ru.spbstu.application.telegram.Strings.SoSoIdea
 import ru.spbstu.application.telegram.Strings.StartWithFirstStep
@@ -68,12 +68,12 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
         SendTextMessage(
             message.chat.id, Strings.ChooseAvatar,
             replyMarkup = ReplyKeyboardMarkup(
-                buttons = Avatars.keys.map { SimpleKeyboardButton(it) }.toTypedArray(),
+                buttons = AvatarByString.keys.map { SimpleKeyboardButton(it) }.toTypedArray(),
                 resizeKeyboard = true,
                 oneTimeKeyboard = true
             )
         )
-    ).map { Avatars[it.text] }
+    ).map { AvatarByString[it.text] }
         .onEach { if (it == null) sendTextMessage(message.chat.id, InvalidAvatar) }
         .firstNotNull()
 
@@ -83,8 +83,8 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
             message.chat.id, Strings.ChooseOccupation,
             replyMarkup = ReplyKeyboardMarkup(
                 buttons = arrayOf(
-                    SimpleKeyboardButton(Occupations.keys.elementAt(6)),
-                    SimpleKeyboardButton(Occupations.keys.elementAt(7)),
+                    SimpleKeyboardButton(OccupationByString.keys.elementAt(6)),
+                    SimpleKeyboardButton(OccupationByString.keys.elementAt(7)),
                     SimpleKeyboardButton(Student)
                 ),
                 resizeKeyboard = true,
@@ -100,17 +100,17 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
                     oneTimeKeyboard = true
                 )
                 {
-                    Occupations.keys.take(6).chunked(2).forEach {
+                    OccupationByString.keys.take(6).chunked(2).forEach {
                         row {
                             it.forEach { simpleButton(it) }
                         }
                     }
                 }
             )
-        } else if (it.text !in Occupations) {
+        } else if (it.text !in OccupationByString) {
             sendTextMessage(message.chat.id, InvalidOccupation)
         }
-    }.map { Occupations[it.text] }
+    }.map { OccupationByString[it.text] }
         .firstNotNull()
 
     val (startLevel, firstStepInfo) = waitTextFrom(

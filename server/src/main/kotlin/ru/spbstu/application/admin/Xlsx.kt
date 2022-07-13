@@ -89,7 +89,7 @@ object Xlsx {
                             createCell(index + 1).setCellValue(s)
                         }
                     createCell(5).setCellValue(userWithCompletedSteps.user.amountOfCoins.toDouble())
-                    createCell(6).setCellValue(Strings.deOccupations[userWithCompletedSteps.user.occupation])
+                    createCell(6).setCellValue(Strings.Occupations[userWithCompletedSteps.user.occupation])
                 }
             }
             autoSizeColumn(0, true)
