@@ -3,16 +3,20 @@ import ru.spbstu.application.auth.entities.PhoneNumber;
 import ru.spbstu.application.auth.entities.StartInfo;
 
 CREATE TABLE StartInfo(
-    id INTEGER AS StartInfo.Id PRIMARY KEY,
-    number TEXT AS PhoneNumber UNIQUE,
+    id INTEGER AS StartInfo.Id PRIMARY KEY AUTOINCREMENT,
+    phoneNumber TEXT AS PhoneNumber UNIQUE,
     begin INTEGER AS Instant NOT NULL,
     end INTEGER AS Instant NOT NULL
 );
 
 add:
-INSERT OR IGNORE INTO StartInfo(id, number, begin, end)
-VALUES (:id, :number, :begin, :end);
+INSERT OR IGNORE INTO StartInfo(phoneNumber, begin, end)
+VALUES (:phoneNumber, :begin, :end);
 
 containsPhoneNumber:
 SELECT COUNT(1) FROM StartInfo
-WHERE number = :number;
+WHERE phoneNumber = :phoneNumber;
+
+getByPhoneNumber:
+SELECT * FROM StartInfo
+WHERE phoneNumber = :phoneNumber;

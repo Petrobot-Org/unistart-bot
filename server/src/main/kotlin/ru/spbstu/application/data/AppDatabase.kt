@@ -32,7 +32,7 @@ fun createAppDatabase(jdbcString: String): AppDatabase {
         ),
         StartInfoAdapter = StartInfo.Adapter(
             idAdapter = StartInfoIdAdapter,
-            numberAdapter = UserPhoneNumberAdapter,
+            phoneNumberAdapter = UserPhoneNumberAdapter,
             beginAdapter = InstantAdapter,
             endAdapter = InstantAdapter
         ),

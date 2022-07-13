@@ -11,9 +11,9 @@ class SubscriptionRepositoryImpl(private val database: AppDatabase) : Subscripti
         Subscription(id, start, duration, user)
     }
 
-    override fun add(subscription: Subscription) {
+    override fun add(start: Instant, duration: Duration, userId: User.Id) {
         database.subscriptionQueries.add(
-            subscription.id, subscription.start, subscription.duration, subscription.userId
+            start, duration, userId
         )
     }
 

@@ -4,7 +4,7 @@ import java.time.Instant
 
 class StartInfo (
     val id: Id,
-    val number: PhoneNumber,
+    val phoneNumber: PhoneNumber,
     val begin: Instant,
     val end: Instant
 )

@@ -19,6 +19,7 @@ import org.koin.core.context.GlobalContext
 import ru.spbstu.application.auth.entities.PhoneNumber
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.repository.StartInfoRepository
+import ru.spbstu.application.auth.repository.SubscriptionRepository
 import ru.spbstu.application.auth.repository.UserRepository
 import ru.spbstu.application.steps.telegram.handleSteps
 import ru.spbstu.application.telegram.Strings
@@ -38,9 +39,12 @@ import ru.spbstu.application.telegram.Strings.SuperIdea
 import ru.spbstu.application.telegram.Strings.UserHasAlreadyBeenRegistered
 import ru.spbstu.application.telegram.waitContactFrom
 import ru.spbstu.application.telegram.waitTextFrom
+import java.time.Duration
+import java.time.Instant
 
 private val userRepository: UserRepository by GlobalContext.get().inject()
 private val startInfoRepository: StartInfoRepository by GlobalContext.get().inject()
+private val subscriptionRepository: SubscriptionRepository by GlobalContext.get().inject()
 
 suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
     if (userRepository.contains(User.Id(message.chat.id.chatId))){
@@ -148,6 +152,9 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
 
     val user = User(User.Id(message.chat.id.chatId), phoneNumber, avatar, occupation, startLevel, 0)
     userRepository.add(user)
+    val end = startInfoRepository.getByPhoneNumber(phoneNumber)?.end
+
+    subscriptionRepository.add(Instant.now(), Duration.between(Instant.now(), end),user.id)
 
     handleSteps(message)
 }
