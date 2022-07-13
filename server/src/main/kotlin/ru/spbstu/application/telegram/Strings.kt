@@ -2,6 +2,7 @@ package ru.spbstu.application.telegram
 
 import ru.spbstu.application.auth.entities.Avatar
 import ru.spbstu.application.auth.entities.Occupation
+import ru.spbstu.application.steps.entities.Step
 
 object Strings {
     val Avatars = mapOf(
@@ -69,10 +70,8 @@ object Strings {
     const val StatisticSpreadsheetDuration = "Длительность прохождения, дни"
     const val StatisticSpreadsheetExtraPoints = "Бонусы"
     const val StatisticSpreadsheetOccupation = "Род занятий"
-    const val StatisticSpreadsheetFirstStep = "Этап 1"
-    const val StatisticSpreadsheetSecondStep = "этап 2"
-    const val StatisticSpreadsheetThirdStep = "этап 3"
-    const val StatisticSpreadsheetFourthStep = "этап 4"
+
+    fun StatisticSpreadsheetStep(step: Step) = "Этап ${step.value}"
 
     fun MyRanking(numberOfMembers: Int, myPosition: Int, myBonuses: Long) =
         "Всего участников в системе: $numberOfMembers человек, ваше текущее место в рейтинге - $myPosition, накоплено бонусов - $myBonuses"
