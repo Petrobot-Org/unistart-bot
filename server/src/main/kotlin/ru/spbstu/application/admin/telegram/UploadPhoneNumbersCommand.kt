@@ -26,7 +26,7 @@ import java.time.format.DateTimeParseException
 private val zoneId: ZoneId by GlobalContext.get().inject()
 
 suspend fun BehaviourContext.uploadPhoneNumbersCommand() {
-    onAdminCommand("uploadnumbers") { uploadPhoneNumbers(it) }
+    onAdminText(Strings.UploadPhoneNumbersButton) { uploadPhoneNumbers(it) }
 }
 
 private suspend fun BehaviourContext.uploadPhoneNumbers(message: CommonMessage<TextContent>) {

@@ -76,6 +76,10 @@ object Strings {
     const val IdeasSpreadsheetEconomical = "Идея экономически реализуема (можно найти потребителя и оценить экономику)"
 
     const val UnauthorizedError = "Недостаточно прав для этой команды"
+    const val AdminControlPanel = "Панель администратора"
+    const val UploadPhoneNumbersButton = "Загрузить номера телефонов"
+    const val StepDurationButton = "Длительность шагов"
+    const val StatisticsSpreadsheetButton = "Получить сводку"
     const val StepDurationsHeader = "Продолжительность шагов. Нажмите, чтобы изменить."
     const val InvalidDurationDays = "Введите число дней"
     const val RequirePhoneNumbersDocument = "Загрузите документ .xlsx с номерами"
@@ -83,12 +87,13 @@ object Strings {
     const val InvalidDate = "Некорректная дата"
     const val RequireDurationDays = "Продолжительность подписки в днях"
 
-    const val StatisticSpreadsheetPhoneNumber = "Номер телефона"
-    const val StatisticSpreadsheetDuration = "Длительность прохождения, дни"
-    const val StatisticSpreadsheetExtraPoints = "Бонусы"
-    const val StatisticSpreadsheetOccupation = "Род занятий"
+    const val StatisticsSpreadsheetName = "Сводка UniStart"
+    const val StatisticsSpreadsheetPhoneNumber = "Номер телефона"
+    const val StatisticsSpreadsheetDuration = "Длительность прохождения, дни"
+    const val StatisticsSpreadsheetExtraPoints = "Бонусы"
+    const val StatisticsSpreadsheetOccupation = "Род занятий"
 
-    fun StatisticSpreadsheetStep(step: Step) = "Этап ${step.value}"
+    fun StatisticsSpreadsheetStep(step: Step) = "Этап ${step.value}"
 
     fun MyRanking(numberOfMembers: Int, myPosition: Int, myBonuses: Long) =
         "Всего участников в системе: $numberOfMembers ${

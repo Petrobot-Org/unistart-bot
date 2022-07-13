@@ -29,7 +29,7 @@ private val getStepDuration: GetStepDurationUseCase by GlobalContext.get().injec
 private val stepDurationRepository: StepDurationRepository by GlobalContext.get().inject()
 
 suspend fun BehaviourContext.stepDurationCommand() {
-    onAdminCommand("stepduration") { showStepDurations(it) }
+    onAdminText(Strings.StepDurationButton) { showStepDurations(it) }
     onAdminDataCallbackQuery(Regex("change_step_duration \\d")) { changeStepDuration(it) }
 }
 

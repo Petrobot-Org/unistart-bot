@@ -10,6 +10,7 @@ import dev.inmo.tgbotapi.extensions.behaviour_builder.filters.MessageFilterByCha
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.CommonMessageFilter
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onDataCallbackQuery
+import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onText
 import dev.inmo.tgbotapi.extensions.behaviour_builder.utils.SimpleFilter
 import dev.inmo.tgbotapi.extensions.behaviour_builder.utils.marker_factories.ByChatMessageMarkerFactory
 import dev.inmo.tgbotapi.extensions.behaviour_builder.utils.marker_factories.ByUserCallbackQueryMarkerFactory
@@ -24,6 +25,7 @@ import kotlinx.coroutines.Job
 import org.koin.core.context.GlobalContext
 import ru.spbstu.application.admin.usecases.IsAdminUseCase
 import ru.spbstu.application.auth.entities.User
+import ru.spbstu.application.auth.telegram.requireSubscription
 import ru.spbstu.application.telegram.Strings
 
 private val isAdmin: IsAdminUseCase by GlobalContext.get().inject()
@@ -67,4 +69,18 @@ suspend fun <BC : BehaviourContext> BC.onAdminDataCallbackQuery(
 ) {
     requireAdmin(it.from)
     scenarioReceiver(it)
+}
+
+suspend fun <BC : BehaviourContext> BC.onAdminText(
+    vararg text: String,
+    subcontextUpdatesFilter: CustomBehaviourContextAndTwoTypesReceiver<BC, Boolean, CommonMessage<TextContent>, Update> = MessageFilterByChat,
+    markerFactory: MarkerFactory<in CommonMessage<TextContent>, Any> = ByChatMessageMarkerFactory,
+    scenarioReceiver: CustomBehaviourContextAndTypeReceiver<BC, Unit, CommonMessage<TextContent>>
+) = onText(
+    initialFilter = { it.content.text in text },
+    subcontextUpdatesFilter,
+    markerFactory
+) {
+    requireAdmin(it.chat)
+    scenarioReceiver(this, it)
 }
