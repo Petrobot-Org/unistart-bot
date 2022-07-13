@@ -12,10 +12,7 @@ import ru.spbstu.application.steps.entities.Step
 import ru.spbstu.application.steps.entities.UserWithCompletedSteps
 import java.io.File
 import java.io.FileOutputStream
-import java.io.OutputStream
 import java.time.Instant
-import java.time.temporal.Temporal
-import java.time.temporal.TemporalUnit
 
 internal class XlsxTest {
 
@@ -41,7 +38,7 @@ internal class XlsxTest {
         val list = listOf(
             UserWithCompletedSteps(
                 User(
-                    User.Id(12), PhoneNumber.valueOf("+19")!!,
+                    User.Id(12), PhoneNumber.valueOf("19")!!,
                     Avatar.DigitalAgile, Occupation.BachelorYear1, 20, 20
                 ),
                 listOf(
@@ -54,7 +51,7 @@ internal class XlsxTest {
             ),
             UserWithCompletedSteps(
                 User(
-                    User.Id(1), PhoneNumber.valueOf("+20")!!,
+                    User.Id(1), PhoneNumber.valueOf("20")!!,
                     Avatar.DigitalAgile, Occupation.BachelorYear1, 20, 20
                 ),
                 listOf(
@@ -65,6 +62,6 @@ internal class XlsxTest {
             )
         )
         val res = Xlsx.createStatisticFile(list)
-        FileOutputStream("src/test/newFile.xlsx").write(res)
+        FileOutputStream("src/test/stats.xlsx").write(res)
     }
 }
