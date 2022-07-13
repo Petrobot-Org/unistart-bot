@@ -16,9 +16,6 @@ class CompletedStepRepositoryImpl(private val database: AppDatabase) : Completed
 
     override fun add(step: Step, userId: User.Id, endTime: Instant) {
         database.completedStepQueries.add(step, userId, endTime)
-        database.transaction {
-
-        }
     }
 
     override fun getUsersWithCompletedSteps(): List<UserWithCompletedSteps> {

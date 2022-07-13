@@ -20,8 +20,6 @@ import ru.spbstu.application.auth.entities.PhoneNumber
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.repository.UserRepository
 import ru.spbstu.application.auth.usecases.RegisterUserUseCase
-import ru.spbstu.application.steps.entities.Step
-import ru.spbstu.application.steps.repository.CompletedStepRepository
 import ru.spbstu.application.steps.telegram.handleSteps
 import ru.spbstu.application.telegram.Strings
 import ru.spbstu.application.telegram.Strings.AvatarByString
