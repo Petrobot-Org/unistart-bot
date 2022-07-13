@@ -24,7 +24,7 @@ object Xlsx {
             } catch (ignore: IllegalStateException) {
                 String()
             }
-        }.dropLastWhile { it.isEmpty() }.map { PhoneNumber.valueOf(it) }
+        }.dropLastWhile { it.isEmpty() }.map { PhoneNumber.valueOf(it.removePrefix("+")) }
         return if (!phoneNumbers.contains(null)) {
             Result.OK(phoneNumbers.filterNotNull())
         } else {

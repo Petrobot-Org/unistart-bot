@@ -25,7 +25,7 @@ internal class XlsxTest {
             when (val result = Xlsx.parsePhoneNumbers(inputStream)) {
                 is Xlsx.Result.OK -> {
                     val expected =
-                        listOf("+000", "+111", "+222", "+333", "+444", "+555", "+666", "+777", "+888", "+999", "+111")
+                        listOf("000", "111", "222", "333", "444", "555", "666", "777", "888", "999", "111")
                             .map { PhoneNumber.valueOf(it) }
                     assertEquals(expected, result.value)
                 }
