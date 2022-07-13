@@ -36,8 +36,7 @@ class UserRepositoryImpl(private val database: AppDatabase) : UserRepository {
     }
 
     override fun contains(id: User.Id): Boolean {
-        database.userQueries.get(id, mapper).executeAsOneOrNull() ?: return false
-        return true
+        return database.userQueries.get(id, mapper).executeAsOneOrNull() != null
     }
 
 
