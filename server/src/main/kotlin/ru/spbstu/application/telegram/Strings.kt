@@ -22,6 +22,8 @@ object Strings {
         "Работаю по найму" to Occupation.Employee
     )
 
+    val deOccupations = Occupations.map { it.value to it.key }.toMap()
+
     const val WelcomeRequirePhone =
         "Привет, меня зовут UniStart, и я буду с тобой на протяжении всего, надеюсь, увлекательного и успешного пути по развитию собственной идеи до реального бизнеса! Для начала давай ты укажешь свой номер, чтобы получить доступ"
     const val SendPhoneButton = "Отправить номер телефона"
