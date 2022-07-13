@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.onEach
 import org.koin.core.context.GlobalContext
 import ru.spbstu.application.auth.entities.PhoneNumber
 import ru.spbstu.application.auth.entities.User
+import ru.spbstu.application.auth.repository.StartInfoRepository
 import ru.spbstu.application.auth.repository.UserRepository
 import ru.spbstu.application.steps.telegram.handleSteps
 import ru.spbstu.application.telegram.Strings
@@ -39,6 +40,7 @@ import ru.spbstu.application.telegram.waitContactFrom
 import ru.spbstu.application.telegram.waitTextFrom
 
 private val userRepository: UserRepository by GlobalContext.get().inject()
+private val startInfoRepository: StartInfoRepository by GlobalContext.get().inject()
 
 suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
     if (userRepository.contains(User.Id(message.chat.id.chatId))){
@@ -57,12 +59,15 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
             )
         )
     ).map { PhoneNumber.valueOf(it.contact.phoneNumber)!! }.first()
-    if (userRepository.contains(phoneNumber)) { ////TODO: добавить так же проверку на наличие номера в базе номеров от Оксаны
+    if (!startInfoRepository.contains(phoneNumber))
+    {
+        sendTextMessage(message.chat.id, Strings.NoPhoneInDatabase)
+        return
+    }
+    if (userRepository.contains(phoneNumber)) {
         sendTextMessage(message.chat.id, PhoneNumberIsAlreadyInDatabase)
         return
     }
-    // проверить номер телефона
-    // else sendTextMessage(message.chat.id, Strings.NoPhoneInDataBase)
     // послать 3 картинки с аватарами и подписями
 
     val avatar = waitTextFrom(
