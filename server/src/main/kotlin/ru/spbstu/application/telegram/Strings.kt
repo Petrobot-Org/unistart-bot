@@ -2,24 +2,29 @@ package ru.spbstu.application.telegram
 
 import ru.spbstu.application.auth.entities.Avatar
 import ru.spbstu.application.auth.entities.Occupation
+import ru.spbstu.application.steps.entities.Step
 
 object Strings {
     val Avatars = mapOf(
-        "М" to Avatar.Male,
-        "Ж" to Avatar.Female,
-        "DigitalAgile" to Avatar.DigitalAgile
+        Avatar.Male to "М",
+        Avatar.Female to "Ж",
+        Avatar.DigitalAgile to "DigitalAgile"
     )
 
+    val AvatarByString = Avatars.map { it.value to it.key }.toMap()
+
     val Occupations = mapOf(
-        "Бакалавриат 1 курс" to Occupation.BachelorYear1,
-        "Бакалавриат 2 курс" to Occupation.BachelorYear2,
-        "Бакалавриат 3 курс" to Occupation.BachelorYear3,
-        "Бакалавриат 4 курс" to Occupation.BachelorYear4,
-        "Магистратура 1 курс" to Occupation.MasterYear1,
-        "Магистратура 2 курс" to Occupation.MasterYear2,
-        "У меня уже есть свой бизнес!" to Occupation.Businessman,
-        "Работаю по найму" to Occupation.Employee
+        Occupation.BachelorYear1 to "Бакалавриат 1 курс",
+        Occupation.BachelorYear2 to "Бакалавриат 2 курс",
+        Occupation.BachelorYear3 to "Бакалавриат 3 курс",
+        Occupation.BachelorYear4 to "Бакалавриат 4 курс",
+        Occupation.MasterYear1 to "Магистратура 1 курс",
+        Occupation.MasterYear2 to "Магистратура 2 курс",
+        Occupation.Businessman to "У меня уже есть свой бизнес!",
+        Occupation.Employee to "Работаю по найму"
     )
+
+    val OccupationByString = Occupations.map { it.value to it.key }.toMap()
 
     const val WelcomeRequirePhone =
         "Привет, меня зовут UniStart, и я буду с тобой на протяжении всего, надеюсь, увлекательного и успешного пути по развитию собственной идеи до реального бизнеса! Для начала давай ты укажешь свой номер, чтобы получить доступ"
@@ -57,14 +62,23 @@ object Strings {
     const val Scamper = "SCAMPER"
     const val TrendyFriendy = "Trendy Friendy"
     const val BackToSteps = "Обратно к шагам"
+    const val BackToIdeaGeneration = "Попробовать другие техники"
 
     const val TrendyFriendyDescription = "Trendy Friendy"
     const val TrendyFriendyOpen = "Start"
     const val IdeasSpreadsheetName = "Идеация"
     const val IdeasSpreadsheetNumber = "№ п/п"
     const val IdeasSpreadsheetDescription = "Описание идеи"
-    const val IdeasSpreadsheetTechnical = "Идея технически реализуема (можно найти ресурсы для ее реализации в реальной жизни)"
+    const val IdeasSpreadsheetTechnical =
+        "Идея технически реализуема (можно найти ресурсы для ее реализации в реальной жизни)"
     const val IdeasSpreadsheetEconomical = "Идея экономически реализуема (можно найти потребителя и оценить экономику)"
+
+    const val StatisticSpreadsheetPhoneNumber = "Номер телефона"
+    const val StatisticSpreadsheetDuration = "Длительность прохождения, дни"
+    const val StatisticSpreadsheetExtraPoints = "Бонусы"
+    const val StatisticSpreadsheetOccupation = "Род занятий"
+
+    fun StatisticSpreadsheetStep(step: Step) = "Этап ${step.value}"
 
     fun MyRanking(numberOfMembers: Int, myPosition: Int, myBonuses: Long) =
         "Всего участников в системе: $numberOfMembers человек, ваше текущее место в рейтинге - $myPosition, накоплено бонусов - $myBonuses"
