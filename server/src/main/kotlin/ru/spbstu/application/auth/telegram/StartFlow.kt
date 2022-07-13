@@ -19,6 +19,8 @@ import org.koin.core.context.GlobalContext
 import ru.spbstu.application.auth.entities.PhoneNumber
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.repository.UserRepository
+import ru.spbstu.application.steps.entities.Step
+import ru.spbstu.application.steps.repository.CompletedStepRepository
 import ru.spbstu.application.steps.telegram.handleSteps
 import ru.spbstu.application.telegram.Strings
 import ru.spbstu.application.telegram.Strings.Avatars
@@ -37,8 +39,10 @@ import ru.spbstu.application.telegram.Strings.SuperIdea
 import ru.spbstu.application.telegram.Strings.UserHasAlreadyBeenRegistered
 import ru.spbstu.application.telegram.waitContactFrom
 import ru.spbstu.application.telegram.waitTextFrom
+import java.time.Instant
 
 private val userRepository: UserRepository by GlobalContext.get().inject()
+private val completedStepRepository: CompletedStepRepository by GlobalContext.get().inject()
 
 suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
     if (userRepository.contains(User.Id(message.chat.id.chatId))){
@@ -143,6 +147,7 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
 
     val user = User(User.Id(message.chat.id.chatId), phoneNumber, avatar, occupation, startLevel, 0)
     userRepository.add(user)
+    completedStepRepository.add(Step(0), user.id, Instant.now())
 
     handleSteps(message)
 }
