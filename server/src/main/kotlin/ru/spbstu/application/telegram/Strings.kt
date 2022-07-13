@@ -21,6 +21,8 @@ object Strings {
         "Работаю по найму" to Occupation.Employee
     )
 
+    val deOccupations = Occupations.map { it.value to it.key }.toMap()
+
     const val WelcomeRequirePhone =
         "Привет, меня зовут UniStart, и я буду с тобой на протяжении всего, надеюсь, увлекательного и успешного пути по развитию собственной идеи до реального бизнеса! Для начала давай ты укажешь свой номер, чтобы получить доступ"
     const val SendPhoneButton = "Отправить номер телефона"
@@ -65,6 +67,15 @@ object Strings {
     const val IdeasSpreadsheetDescription = "Описание идеи"
     const val IdeasSpreadsheetTechnical = "Идея технически реализуема (можно найти ресурсы для ее реализации в реальной жизни)"
     const val IdeasSpreadsheetEconomical = "Идея экономически реализуема (можно найти потребителя и оценить экономику)"
+
+    const val StatisticSpreadsheetPhoneNumber = "Номер телефона"
+    const val StatisticSpreadsheetDuration = "Длительность прохождения, дни"
+    const val StatisticSpreadsheetExtraPoints = "Бонусы"
+    const val StatisticSpreadsheetOccupation = "Род занятий"
+    const val StatisticSpreadsheetFirstStep = "Этап 1"
+    const val StatisticSpreadsheetSecondStep = "этап 2"
+    const val StatisticSpreadsheetThirdStep = "этап 3"
+    const val StatisticSpreadsheetFourthStep = "этап 4"
 
     fun MyRanking(numberOfMembers: Int, myPosition: Int, myBonuses: Long) =
         "Всего участников в системе: $numberOfMembers человек, ваше текущее место в рейтинге - $myPosition, накоплено бонусов - $myBonuses"
