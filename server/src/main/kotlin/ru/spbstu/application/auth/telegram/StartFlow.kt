@@ -21,7 +21,7 @@ import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.repository.UserRepository
 import ru.spbstu.application.steps.entities.Step
 import ru.spbstu.application.steps.repository.CompletedStepRepository
-import ru.spbstu.application.steps.telegram.steps
+import ru.spbstu.application.steps.telegram.handleSteps
 import ru.spbstu.application.telegram.Strings
 import ru.spbstu.application.telegram.Strings.AvatarByString
 import ru.spbstu.application.telegram.Strings.HaveIdeaQuestion
@@ -36,6 +36,7 @@ import ru.spbstu.application.telegram.Strings.StartWithFirstStep
 import ru.spbstu.application.telegram.Strings.StartWithSecondStep
 import ru.spbstu.application.telegram.Strings.Student
 import ru.spbstu.application.telegram.Strings.SuperIdea
+import ru.spbstu.application.telegram.Strings.UserHasAlreadyBeenRegistered
 import ru.spbstu.application.telegram.waitContactFrom
 import ru.spbstu.application.telegram.waitTextFrom
 import java.time.Instant
@@ -44,6 +45,11 @@ private val userRepository: UserRepository by GlobalContext.get().inject()
 private val completedStepRepository: CompletedStepRepository by GlobalContext.get().inject()
 
 suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
+    if (userRepository.contains(User.Id(message.chat.id.chatId))){
+        sendTextMessage(message.chat.id, UserHasAlreadyBeenRegistered)
+        handleSteps(message)
+        return
+    }
     val phoneNumber = waitContactFrom(
         message.chat,
         SendTextMessage(
@@ -143,5 +149,5 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
     userRepository.add(user)
     completedStepRepository.add(Step(0), user.id, Instant.now())
 
-    steps(message)
+    handleSteps(message)
 }
