@@ -1,6 +1,6 @@
 object Versions {
     const val kotlin = "1.7.0"
-    const val telegramBotApi = "2.1.0"
+    const val telegramBotApi = "2.2.0"
     const val serialization = "1.3.3"
     const val ktor = "2.0.3"
     const val kotlinxHtml = "0.7.2"

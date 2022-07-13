@@ -35,6 +35,10 @@ class UserRepositoryImpl(private val database: AppDatabase) : UserRepository {
         return database.userQueries.containsPhoneNumber(phoneNumber).executeAsOne() >= 1L
     }
 
+    override fun contains(id: User.Id): Boolean {
+        return database.userQueries.get(id, mapper).executeAsOneOrNull() != null
+    }
+
 
     override fun sortByAmountOfCoins(): List<User> {
         return database.userQueries.sortByAmountOfCoins(mapper).executeAsList()
