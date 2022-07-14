@@ -12,7 +12,7 @@ import ru.spbstu.application.telegram.Strings
 private val completedStepRepository: CompletedStepRepository by GlobalContext.get().inject()
 
 suspend fun BehaviourContext.statisticsSpreadsheetCommand() {
-    onAdminText(Strings.StatisticsSpreadsheetButton) { sendStatisticsSpreadsheet(it.chat) }
+    onAdminText(Strings.AdminPanel.Menu.StatisticsSpreadsheet) { sendStatisticsSpreadsheet(it.chat) }
 }
 
 private suspend fun BehaviourContext.sendStatisticsSpreadsheet(chat: Chat) {

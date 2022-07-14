@@ -12,8 +12,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import org.koin.core.context.GlobalContext
 import ru.spbstu.application.admin.Xlsx
+import ru.spbstu.application.admin.usecases.AddPhoneNumbersUseCase
 import ru.spbstu.application.auth.entities.PhoneNumber
 import ru.spbstu.application.telegram.Strings
+import ru.spbstu.application.telegram.Strings.AdminPanel.UploadPhoneNumbers
 import ru.spbstu.application.telegram.waitDocumentFrom
 import ru.spbstu.application.telegram.waitTextFrom
 import java.time.Duration
@@ -24,21 +26,26 @@ import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
 private val zoneId: ZoneId by GlobalContext.get().inject()
+private val addPhoneNumbers: AddPhoneNumbersUseCase by GlobalContext.get().inject()
 
 suspend fun BehaviourContext.uploadPhoneNumbersCommand() {
-    onAdminText(Strings.UploadPhoneNumbersButton) { uploadPhoneNumbers(it) }
+    onAdminText(Strings.AdminPanel.Menu.UploadPhoneNumbers) { uploadPhoneNumbers(it) }
 }
 
 private suspend fun BehaviourContext.uploadPhoneNumbers(message: CommonMessage<TextContent>) {
     val phoneNumbers = waitPhoneNumbers(message.chat)
     val startInstant = waitStartInstant(message.chat)
     val duration = waitDuration(message.chat)
-
-    TODO()
+    try {
+        val rowsAffected = addPhoneNumbers(phoneNumbers.toSet(), startInstant, duration)
+        sendTextMessage(message.chat, UploadPhoneNumbers.Added(rowsAffected.toLong()))
+    } catch (e: Exception) {
+        sendTextMessage(message.chat, Strings.DatabaseError)
+    }
 }
 
 private suspend fun BehaviourContext.waitDuration(chat: Chat): Duration {
-    return waitTextFrom(chat, SendTextMessage(chat.id, Strings.RequireDurationDays))
+    return waitTextFrom(chat, SendTextMessage(chat.id, UploadPhoneNumbers.RequireDurationDays))
         .map {
             try {
                 val days = it.text.toLong()
@@ -48,13 +55,13 @@ private suspend fun BehaviourContext.waitDuration(chat: Chat): Duration {
                 null
             }
         }
-        .onEach { if (it == null) sendTextMessage(chat, Strings.InvalidDurationDays) }
+        .onEach { if (it == null) sendTextMessage(chat, Strings.AdminPanel.InvalidDurationDays) }
         .firstNotNull()
 }
 
 private suspend fun BehaviourContext.waitStartInstant(chat: Chat): Instant {
     val dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.uuuu")
-    return waitTextFrom(chat, SendTextMessage(chat.id, Strings.RequireStartDate))
+    return waitTextFrom(chat, SendTextMessage(chat.id, UploadPhoneNumbers.RequireStartDate))
         .map {
             try {
                 val date = dateTimeFormatter.parse(it.text, LocalDate::from)
@@ -63,19 +70,19 @@ private suspend fun BehaviourContext.waitStartInstant(chat: Chat): Instant {
                 null
             }
         }
-        .onEach { if (it == null) sendTextMessage(chat, Strings.InvalidDate) }
+        .onEach { if (it == null) sendTextMessage(chat, UploadPhoneNumbers.InvalidDate) }
         .firstNotNull()
 }
 
 private suspend fun BehaviourContext.waitPhoneNumbers(chat: Chat): List<PhoneNumber> {
-    return waitDocumentFrom(chat, SendTextMessage(chat.id, Strings.RequirePhoneNumbersDocument))
+    return waitDocumentFrom(chat, SendTextMessage(chat.id, UploadPhoneNumbers.RequireDocument))
         .map {
             val result = downloadFile(it.media).inputStream().use { inputStream ->
                 Xlsx.parsePhoneNumbers(inputStream)
             }
             when (result) {
                 is Xlsx.Result.BadFormat -> {
-                    sendTextMessage(chat, Strings.InvalidSpreadsheet(result.errorRows))
+                    sendTextMessage(chat, UploadPhoneNumbers.InvalidSpreadsheet(result.errorRows))
                     null
                 }
                 is Xlsx.Result.OK -> result.value

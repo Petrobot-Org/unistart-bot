@@ -5,6 +5,7 @@ import ru.spbstu.application.auth.entities.User
 
 interface UserRepository {
     fun get(id: User.Id): User?
+    fun get(phoneNumber: PhoneNumber): User?
     fun add(user: User)
     fun contains(phoneNumber: PhoneNumber): Boolean
     fun contains(id: User.Id): Boolean

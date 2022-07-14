@@ -20,18 +20,18 @@ suspend fun BehaviourContext.adminCommands() {
 private suspend fun BehaviourContext.handleAdmin(chat: Chat) {
     sendTextMessage(
         chat = chat,
-        text = Strings.AdminControlPanel,
+        text = Strings.AdminPanel.Header,
         replyMarkup = replyKeyboard(
             resizeKeyboard = true
         ) {
             row {
-                simpleButton(Strings.StepDurationButton)
+                simpleButton(Strings.AdminPanel.Menu.StepDuration)
             }
             row {
-                simpleButton(Strings.UploadPhoneNumbersButton)
+                simpleButton(Strings.AdminPanel.Menu.UploadPhoneNumbers)
             }
             row {
-                simpleButton(Strings.StatisticsSpreadsheetButton)
+                simpleButton(Strings.AdminPanel.Menu.StatisticsSpreadsheet)
             }
         }
     )

@@ -21,20 +21,20 @@ import ru.spbstu.application.steps.entities.Step
 import ru.spbstu.application.steps.repository.StepDurationRepository
 import ru.spbstu.application.steps.usecases.GetStepDurationUseCase
 import ru.spbstu.application.telegram.Strings
+import ru.spbstu.application.telegram.Strings.AdminPanel.StepDuration
 import ru.spbstu.application.telegram.waitTextFrom
 import java.time.Duration
-import java.time.ZoneId
 
 private val getStepDuration: GetStepDurationUseCase by GlobalContext.get().inject()
 private val stepDurationRepository: StepDurationRepository by GlobalContext.get().inject()
 
 suspend fun BehaviourContext.stepDurationCommand() {
-    onAdminText(Strings.StepDurationButton) { showStepDurations(it) }
+    onAdminText(Strings.AdminPanel.Menu.StepDuration) { showStepDurations(it) }
     onAdminDataCallbackQuery(Regex("change_step_duration \\d")) { changeStepDuration(it) }
 }
 
 private suspend fun BehaviourContext.showStepDurations(message: CommonMessage<TextContent>) {
-    sendTextMessage(message.chat, Strings.StepDurationsHeader, replyMarkup = stepDurationKeyboard())
+    sendTextMessage(message.chat, StepDuration.Header, replyMarkup = stepDurationKeyboard())
 }
 
 @OptIn(PreviewFeature::class)
@@ -42,7 +42,7 @@ private suspend fun BehaviourContext.changeStepDuration(dataCallbackQuery: DataC
     val step = Step(dataCallbackQuery.data.split(' ')[1].toLong())
     val duration = waitTextFrom(
         dataCallbackQuery.from,
-        SendTextMessage(dataCallbackQuery.from.id, Strings.ChangeStepDuration(step))
+        SendTextMessage(dataCallbackQuery.from.id, StepDuration.Change(step))
     )
         .map {
             try {
@@ -53,7 +53,7 @@ private suspend fun BehaviourContext.changeStepDuration(dataCallbackQuery: DataC
                 null
             }
         }
-        .onEach { if (it == null) sendTextMessage(dataCallbackQuery.from, Strings.InvalidDurationDays) }
+        .onEach { if (it == null) sendTextMessage(dataCallbackQuery.from, Strings.AdminPanel.InvalidDurationDays) }
         .firstNotNull()
 
     stepDurationRepository.changeDuration(step, duration)
@@ -70,7 +70,7 @@ private fun stepDurationKeyboard(): InlineKeyboardMarkup {
     return inlineKeyboard {
         durations.forEach {
             row {
-                dataButton(Strings.StepDurationButton(it), "change_step_duration ${it.step.value}")
+                dataButton(StepDuration.Button(it), "change_step_duration ${it.step.value}")
             }
         }
     }

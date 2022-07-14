@@ -3,7 +3,6 @@ package ru.spbstu.application.telegram
 import ru.spbstu.application.auth.entities.Avatar
 import ru.spbstu.application.auth.entities.Occupation
 import ru.spbstu.application.steps.entities.Step
-import ru.spbstu.application.steps.entities.StepDuration
 
 object Strings {
     val Avatars = mapOf(
@@ -28,6 +27,7 @@ object Strings {
     val OccupationByString = Occupations.map { it.value to it.key }.toMap()
 
     const val NotSubscribed = "Подписка неактивна"
+    const val DatabaseError = "Ошибка базы данных"
 
     const val HelpCommands = "Список доступных команд:"
     const val StartDescription = "регистрация в боте"
@@ -67,16 +67,16 @@ object Strings {
     const val GetMyStats = "Получить статистику об успехах"
     const val ChooseIdeaGeneration = "Выбери технику генерации идей"
     const val Bisociation = "Бисоциации"
-    const val BisociationDescription  = "Это описание метода бисоциаций"//TODO: заменить на оксанино
+    const val BisociationDescription = "Это описание метода бисоциаций"//TODO: заменить на оксанино
     const val DelphiBrainstormMethod = "Метод Дельфи/брейншторм"
-    const val DelphiBrainstormMethodDescription  = "Это описание метод Дельфи/брейншторм"//TODO: заменить на оксанино
+    const val DelphiBrainstormMethodDescription = "Это описание метод Дельфи/брейншторм"//TODO: заменить на оксанино
     const val Scamper = "SCAMPER"
-    const val ScamperDescription  = "Это описание метода Scamper"//TODO: заменить на оксанино
+    const val ScamperDescription = "Это описание метода Scamper"//TODO: заменить на оксанино
     const val TrendyFriendy = "Trendy Friendy"
     const val BackToSteps = "Обратно к шагам"
     const val BackToIdeaGeneration = "Попробовать другие техники"
 
-     val IdeaGenerationWithDescription = mapOf(
+    val IdeaGenerationWithDescription = mapOf(
         Bisociation to BisociationDescription,
         DelphiBrainstormMethod to DelphiBrainstormMethodDescription,
         Scamper to ScamperDescription
@@ -92,16 +92,45 @@ object Strings {
     const val IdeasSpreadsheetEconomical = "Идея экономически реализуема (можно найти потребителя и оценить экономику)"
 
     const val UnauthorizedError = "Недостаточно прав для этой команды"
-    const val AdminControlPanel = "Панель администратора"
-    const val UploadPhoneNumbersButton = "Загрузить номера телефонов"
-    const val StepDurationButton = "Длительность шагов"
-    const val StatisticsSpreadsheetButton = "Получить сводку"
-    const val StepDurationsHeader = "Продолжительность шагов. Нажмите, чтобы изменить."
-    const val InvalidDurationDays = "Введите число дней"
-    const val RequirePhoneNumbersDocument = "Загрузите документ .xlsx с номерами"
-    const val RequireStartDate = "Дата начала подписки для этих номеров (дд.мм.гггг)"
-    const val InvalidDate = "Некорректная дата"
-    const val RequireDurationDays = "Продолжительность подписки в днях"
+
+    object AdminPanel {
+        const val Header = "Панель администратора"
+        const val InvalidDurationDays = "Введите число дней"
+
+        object Menu {
+            const val UploadPhoneNumbers = "Загрузить номера телефонов"
+            const val StepDuration = "Длительность шагов"
+            const val StatisticsSpreadsheet = "Получить сводку"
+        }
+
+        object StepDuration {
+            const val Header = "Продолжительность шагов. Нажмите, чтобы изменить."
+            fun Button(stepDuration: ru.spbstu.application.steps.entities.StepDuration): String {
+                val days = stepDuration.duration.toDays()
+                return "Этап ${stepDuration.step.value} – $days ${pluralize(days, "день", "дня", "дней")}"
+            }
+
+            fun Change(step: Step) =
+                "Укажите новую продолжительность для этапа ${step.value} в днях"
+        }
+
+        object UploadPhoneNumbers {
+            const val RequireDocument = "Загрузите документ .xlsx с номерами"
+            const val RequireStartDate = "Дата начала подписки для этих номеров (дд.мм.гггг)"
+            const val RequireDurationDays = "Продолжительность подписки в днях"
+            const val InvalidDate = "Некорректная дата"
+
+            fun InvalidSpreadsheet(rows: List<Int>) =
+                "Ошибки в таблице в строках ${rows.joinToString()}"
+
+            fun Added(count: Long) =
+                "${
+                    pluralize(count, "Добавлен", "Добавлено", "Добавлено")
+                } $count ${
+                    pluralize(count, "номер", "номера", "номеров")
+                }"
+        }
+    }
 
     const val StatisticsSpreadsheetName = "Сводка UniStart"
     const val StatisticsSpreadsheetPhoneNumber = "Номер телефона"
@@ -115,17 +144,6 @@ object Strings {
         "Всего участников в системе: $numberOfMembers ${
             pluralize(numberOfMembers.toLong(), "человек", "человека", "человек")
         }, ваше текущее место в рейтинге – $myPosition, накоплено бонусов – $myBonuses"
-
-    fun StepDurationButton(stepDuration: StepDuration): String {
-        val days = stepDuration.duration.toDays()
-        return "Этап ${stepDuration.step.value} – $days ${pluralize(days, "день", "дня", "дней")}"
-    }
-
-    fun ChangeStepDuration(step: Step) =
-        "Укажите новую продолжительность для этапа ${step.value} в днях"
-
-    fun InvalidSpreadsheet(rows: List<Int>) =
-        "Ошибки в таблице в строках ${rows.joinToString()}"
 }
 
 private fun pluralize(quantity: Long, one: String, few: String, many: String): String {
