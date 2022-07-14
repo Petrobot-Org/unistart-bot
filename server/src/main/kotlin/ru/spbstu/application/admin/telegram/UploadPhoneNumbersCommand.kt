@@ -41,6 +41,7 @@ private suspend fun BehaviourContext.uploadPhoneNumbers(message: CommonMessage<T
         sendTextMessage(message.chat, UploadPhoneNumbers.Added(rowsAffected.toLong()))
     } catch (e: Exception) {
         sendTextMessage(message.chat, Strings.DatabaseError)
+        throw e
     }
 }
 
