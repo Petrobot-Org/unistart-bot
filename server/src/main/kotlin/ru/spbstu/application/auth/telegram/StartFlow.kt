@@ -19,7 +19,6 @@ import org.koin.core.context.GlobalContext
 import ru.spbstu.application.auth.entities.PhoneNumber
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.repository.StartInfoRepository
-import ru.spbstu.application.auth.repository.SubscriptionRepository
 import ru.spbstu.application.auth.repository.UserRepository
 import ru.spbstu.application.auth.usecases.RegisterUserUseCase
 import ru.spbstu.application.steps.telegram.handleSteps
@@ -44,7 +43,7 @@ import java.time.Instant
 
 private val userRepository: UserRepository by GlobalContext.get().inject()
 private val startInfoRepository: StartInfoRepository by GlobalContext.get().inject()
-private val subscriptionRepository: SubscriptionRepository by GlobalContext.get().inject()
+//private val subscriptionRepository: SubscriptionRepository by GlobalContext.get().inject()
 private val registerUser: RegisterUserUseCase by GlobalContext.get().inject()
 
 suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
@@ -72,10 +71,7 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
         sendTextMessage(message.chat.id, PhoneNumberIsAlreadyInDatabase)
         return
     }
-    // проверить номер телефона
-    // else sendTextMessage(message.chat.id, Strings.NoPhoneInDataBase)
     // послать 3 картинки с аватарами и подписями
-
     val avatar = waitTextFrom(
         message.chat,
         SendTextMessage(
@@ -152,11 +148,6 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
     registerUser(User.Id(message.chat.id.chatId), phoneNumber, avatar, occupation, startLevel, Instant.now())
 
     sendTextMessage(message.chat.id, firstStepInfo)
-
-    val user = userRepository.get(User.Id(message.chat.id.chatId))
-    val startInfo = startInfoRepository.getByPhoneNumber(phoneNumber)
-
-    subscriptionRepository.add(startInfo!!.begin, startInfo.duration, user!!.id)
 
     handleSteps(message)
 }
