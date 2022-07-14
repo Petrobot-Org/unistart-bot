@@ -1,6 +1,7 @@
 package ru.spbstu.application.telegram
 
 import dev.inmo.tgbotapi.bot.ktor.telegramBot
+import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviourWithLongPolling
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onText
@@ -29,6 +30,7 @@ class TelegramBot(token: TelegramToken) {
                 onText({ it.content.text == Strings.GetMyStats }) { handleStats(it) }
                 onText({ it.content.text == Strings.BackToSteps }) { handleSteps(it) }
                 onText({ it.content.text == Strings.TrendyFriendy }) { sendTrendyFriendyApp(it.chat)}
+                onText ({it.content.text in Strings.IdeaGenerationWithDescription.keys}){sendTextMessage(it.chat.id,Strings.IdeaGenerationWithDescription[it.content.text]!! )}
             }.join()
         }
     }

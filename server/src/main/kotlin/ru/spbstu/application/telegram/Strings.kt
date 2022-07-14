@@ -26,6 +26,11 @@ object Strings {
 
     val OccupationByString = Occupations.map { it.value to it.key }.toMap()
 
+    const val HelpCommands = "Список доступных команд: \n"
+    const val StartDescription = "/start - регистрация в боте\n"
+    const val StatsDescription = "/stats - получение статистики о моих достижениях \n"
+    const val StepsClientDescription = "/steps - переход к меню выбора шага\n"
+
     const val WelcomeRequirePhone =
         "Привет, меня зовут UniStart, и я буду с тобой на протяжении всего, надеюсь, увлекательного и успешного пути по развитию собственной идеи до реального бизнеса! Для начала давай ты укажешь свой номер, чтобы получить доступ"
     const val SendPhoneButton = "Отправить номер телефона"
@@ -58,13 +63,22 @@ object Strings {
     const val GetMyStats = "Получить статистику об успехах"
     const val ChooseIdeaGeneration = "Выбери технику генерации идей"
     const val Bisociation = "Бисоциации"
+    const val BisociationDescription  = "Это описание метода бисоциаций"//TODO: заменить на оксанино
     const val DelphiBrainstormMethod = "Метод Дельфи/брейншторм"
+    const val DelphiBrainstormMethodDescription  = "Это описание метод Дельфи/брейншторм"//TODO: заменить на оксанино
     const val Scamper = "SCAMPER"
+    const val ScamperDescription  = "Это описание метода Scamper"//TODO: заменить на оксанино
     const val TrendyFriendy = "Trendy Friendy"
     const val BackToSteps = "Обратно к шагам"
     const val BackToIdeaGeneration = "Попробовать другие техники"
 
-    const val TrendyFriendyDescription = "Trendy Friendy"
+     val IdeaGenerationWithDescription = mapOf(
+        Bisociation to BisociationDescription,
+        DelphiBrainstormMethod to DelphiBrainstormMethodDescription,
+        Scamper to ScamperDescription
+    )
+
+    const val TrendyFriendyDescription = "Trendy Friendy"//TODO: заменить на оксанино
     const val TrendyFriendyOpen = "Start"
     const val IdeasSpreadsheetName = "Идеация"
     const val IdeasSpreadsheetNumber = "№ п/п"
