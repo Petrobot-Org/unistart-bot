@@ -43,7 +43,6 @@ import java.time.Instant
 
 private val userRepository: UserRepository by GlobalContext.get().inject()
 private val startInfoRepository: StartInfoRepository by GlobalContext.get().inject()
-//private val subscriptionRepository: SubscriptionRepository by GlobalContext.get().inject()
 private val registerUser: RegisterUserUseCase by GlobalContext.get().inject()
 
 suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
