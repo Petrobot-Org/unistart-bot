@@ -50,6 +50,10 @@ sqldelight {
     }
 }
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).all {
+    kotlinOptions.freeCompilerArgs = listOf("-Xcontext-receivers")
+}
+
 tasks.named<Jar>("jar") {
     dependsOn(":trendy-friendy-frontend:jsBrowserProductionWebpack")
     from("${rootProject.projectDir}/trendy-friendy-frontend/build/distributions/")

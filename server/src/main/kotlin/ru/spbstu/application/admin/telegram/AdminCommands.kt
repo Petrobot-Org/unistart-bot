@@ -6,10 +6,12 @@ import dev.inmo.tgbotapi.extensions.utils.types.buttons.replyKeyboard
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.row
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.simpleButton
 import dev.inmo.tgbotapi.types.chat.Chat
+import ru.spbstu.application.telegram.HelpContext
 import ru.spbstu.application.telegram.Strings
 
+context(HelpContext)
 suspend fun BehaviourContext.adminCommands() {
-    onAdminCommand("admin") { handleAdmin(it.chat) }
+    onAdminCommand("admin", Strings.AdminDescription) { handleAdmin(it.chat) }
     uploadPhoneNumbersCommand()
     stepDurationCommand()
     statisticsSpreadsheetCommand()

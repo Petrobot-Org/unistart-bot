@@ -26,17 +26,19 @@ class TelegramBot(token: TelegramToken) {
             bot.buildBehaviourWithLongPolling(
                 defaultExceptionsHandler = { it.printStackTrace() }
             ) {
-                onCommand("start") { handleStart(it) }
-                onSubscriberCommand("steps") { handleSteps(it) }
-                onSubscriberCommand("stats") { handleStats(it) }
-                onSubscriberText(Strings.Step1, Strings.BackToIdeaGeneration) { handleStep1(it) }
-                onSubscriberText(Strings.GetMyStats) { handleStats(it) }
-                onSubscriberText(Strings.BackToSteps) { handleSteps(it) }
-                onSubscriberText(Strings.TrendyFriendy) { sendTrendyFriendyApp(it.chat) }
-                onSubscriberText(*Strings.IdeaGenerationWithDescription.keys.toTypedArray()) {
-                    sendTextMessage(it.chat.id, Strings.IdeaGenerationWithDescription.getValue(it.content.text))
+                provideHelp {
+                    onCommandWithHelp("start", Strings.StartDescription) { handleStart(it) }
+                    onSubscriberCommand("steps", Strings.StepsClientDescription) { handleSteps(it) }
+                    onSubscriberCommand("stats", Strings.StatsDescription) { handleStats(it) }
+                    onSubscriberText(Strings.Step1, Strings.BackToIdeaGeneration) { handleStep1(it) }
+                    onSubscriberText(Strings.GetMyStats) { handleStats(it) }
+                    onSubscriberText(Strings.BackToSteps) { handleSteps(it) }
+                    onSubscriberText(Strings.TrendyFriendy) { sendTrendyFriendyApp(it.chat) }
+                    onSubscriberText(*Strings.IdeaGenerationWithDescription.keys.toTypedArray()) {
+                        sendTextMessage(it.chat.id, Strings.IdeaGenerationWithDescription.getValue(it.content.text))
+                    }
+                    adminCommands()
                 }
-                adminCommands()
             }.join()
         }
     }

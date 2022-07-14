@@ -26,6 +26,9 @@ import org.koin.core.context.GlobalContext
 import ru.spbstu.application.admin.usecases.IsAdminUseCase
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.telegram.requireSubscription
+import ru.spbstu.application.telegram.HelpContext
+import ru.spbstu.application.telegram.HelpEntry
+import ru.spbstu.application.telegram.Role
 import ru.spbstu.application.telegram.Strings
 
 private val isAdmin: IsAdminUseCase by GlobalContext.get().inject()
@@ -36,22 +39,27 @@ suspend fun BehaviourContext.requireAdmin(chat: Chat) {
     }
 }
 
+context(HelpContext)
 suspend fun <BC : BehaviourContext> BC.onAdminCommand(
     command: String,
+    description: String,
     requireOnlyCommandInMessage: Boolean = true,
     initialFilter: CommonMessageFilter<TextContent>? = CommonMessageFilterExcludeMediaGroups,
     subcontextUpdatesFilter: CustomBehaviourContextAndTwoTypesReceiver<BC, Boolean, CommonMessage<TextContent>, Update> = MessageFilterByChat,
     markerFactory: MarkerFactory<in CommonMessage<TextContent>, Any> = ByChatMessageMarkerFactory,
     scenarioReceiver: CustomBehaviourContextAndTypeReceiver<BC, Unit, CommonMessage<TextContent>>
-): Job = onCommand(
-    command,
-    requireOnlyCommandInMessage,
-    initialFilter,
-    subcontextUpdatesFilter,
-    markerFactory
-) {
-    requireAdmin(it.chat)
-    scenarioReceiver(this, it)
+): Job {
+    addHelpEntry(HelpEntry(command, description, Role.Admin))
+    return onCommand(
+        command,
+        requireOnlyCommandInMessage,
+        initialFilter,
+        subcontextUpdatesFilter,
+        markerFactory
+    ) {
+        requireAdmin(it.chat)
+        scenarioReceiver(this, it)
+    }
 }
 
 suspend fun <BC : BehaviourContext> BC.onAdminDataCallbackQuery(
