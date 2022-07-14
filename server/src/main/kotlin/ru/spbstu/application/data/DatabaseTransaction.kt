@@ -1,5 +1,9 @@
 package ru.spbstu.application.data
 
-fun interface DatabaseTransaction {
+interface DatabaseTransaction {
     operator fun invoke(body: () -> Unit)
+}
+
+interface DatabaseTransactionWithResult {
+    operator fun <R> invoke(body: () -> R): R
 }

@@ -11,7 +11,7 @@ CREATE TABLE StartInfo(
 );
 
 add:
-INSERT OR IGNORE INTO StartInfo(phoneNumber, begin, duration)
+INSERT OR REPLACE INTO StartInfo(phoneNumber, begin, duration)
 VALUES (:phoneNumber, :begin, :duration);
 
 containsPhoneNumber:

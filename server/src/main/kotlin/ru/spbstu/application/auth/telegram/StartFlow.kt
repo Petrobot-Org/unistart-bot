@@ -144,7 +144,12 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
         }
     }.firstNotNull()
 
-    registerUser(User.Id(message.chat.id.chatId), phoneNumber, avatar, occupation, startLevel, Instant.now())
+    try {
+        registerUser(User.Id(message.chat.id.chatId), phoneNumber, avatar, occupation, startLevel, Instant.now())
+    } catch (e: Exception) {
+        sendTextMessage(message.chat, Strings.DatabaseError)
+        throw e
+    }
 
     sendTextMessage(message.chat.id, firstStepInfo)
 

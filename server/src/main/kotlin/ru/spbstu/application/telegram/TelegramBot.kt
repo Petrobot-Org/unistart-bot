@@ -4,11 +4,14 @@ import dev.inmo.tgbotapi.bot.ktor.telegramBot
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviourWithLongPolling
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
-import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
+import ru.spbstu.application.admin.telegram.adminCommands
 import ru.spbstu.application.auth.telegram.handleStart
+import ru.spbstu.application.auth.telegram.onSubscriberCommand
+import ru.spbstu.application.auth.telegram.onSubscriberText
 import ru.spbstu.application.steps.telegram.handleStats
 import ru.spbstu.application.steps.telegram.handleStep1
 import ru.spbstu.application.steps.telegram.handleSteps
@@ -23,18 +26,24 @@ class TelegramBot(token: TelegramToken) {
             bot.buildBehaviourWithLongPolling(
                 defaultExceptionsHandler = { it.printStackTrace() }
             ) {
-                onCommand("start") { handleStart(it) }
-                onCommand("steps") { handleSteps(it) }
-                onCommand("stats") { handleStats(it) }
-                onText({ it.content.text in setOf(Strings.Step1, Strings.BackToIdeaGeneration) }) { handleStep1(it) }
-                onText({ it.content.text == Strings.GetMyStats }) { handleStats(it) }
-                onText({ it.content.text == Strings.BackToSteps }) { handleSteps(it) }
-                onText({ it.content.text == Strings.TrendyFriendy }) { sendTrendyFriendyApp(it.chat)}
-                onText ({it.content.text in Strings.IdeaGenerationWithDescription.keys}){sendTextMessage(it.chat.id,Strings.IdeaGenerationWithDescription[it.content.text]!! )}
+                provideHelp {
+                    onCommandWithHelp("start", Strings.Help.Start) { handleStart(it) }
+                    onSubscriberCommand("steps", Strings.Help.Steps) { handleSteps(it) }
+                    onSubscriberCommand("stats", Strings.Help.Stats) { handleStats(it) }
+                    onSubscriberText(Strings.Step1, Strings.BackToIdeaGeneration) { handleStep1(it) }
+                    onSubscriberText(Strings.GetMyStats) { handleStats(it) }
+                    onSubscriberText(Strings.BackToSteps) { handleSteps(it) }
+                    onSubscriberText(Strings.TrendyFriendy) { sendTrendyFriendyApp(it.chat) }
+                    onSubscriberText(*Strings.IdeaGenerationWithDescription.keys.toTypedArray()) {
+                        sendTextMessage(it.chat.id, Strings.IdeaGenerationWithDescription.getValue(it.content.text))
+                    }
+                    adminCommands()
+                }
             }.join()
         }
     }
 }
 
+@Serializable
 @JvmInline
 value class TelegramToken(val value: String)

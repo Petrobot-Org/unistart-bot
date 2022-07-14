@@ -10,6 +10,7 @@ import dev.inmo.tgbotapi.types.message.content.TextContent
 import org.koin.core.context.GlobalContext
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.repository.UserRepository
+import ru.spbstu.application.auth.telegram.requireSubscription
 import ru.spbstu.application.telegram.Strings
 import ru.spbstu.application.telegram.Strings.MyRanking
 

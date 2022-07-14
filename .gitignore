@@ -38,4 +38,5 @@ outTmp/
 /kotlin-native/dist
 kotlin-ide/
 /server/main.sqlite
+/server/application.yaml
 /server/src/test/stats.xlsx

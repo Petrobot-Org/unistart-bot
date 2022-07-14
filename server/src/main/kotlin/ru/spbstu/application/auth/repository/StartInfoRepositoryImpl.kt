@@ -7,7 +7,7 @@ import java.time.Duration
 import java.time.Instant
 
 private val mapper = { id: StartInfo.Id, number: PhoneNumber?, begin: Instant, duration: Duration ->
-    StartInfo(id, number!!, begin, duration)
+    StartInfo(number!!, begin, duration, id)
 }
 
 class StartInfoRepositoryImpl(private val database: AppDatabase) : StartInfoRepository {

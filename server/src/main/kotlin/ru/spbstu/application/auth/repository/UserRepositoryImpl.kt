@@ -20,6 +20,10 @@ class UserRepositoryImpl(private val database: AppDatabase) : UserRepository {
         return database.userQueries.get(id, mapper).executeAsOneOrNull()
     }
 
+    override fun get(phoneNumber: PhoneNumber): User? {
+        return database.userQueries.getByPhoneNumber(phoneNumber, mapper).executeAsOneOrNull()
+    }
+
     override fun add(user: User) {
         database.userQueries.add(
             user.id,

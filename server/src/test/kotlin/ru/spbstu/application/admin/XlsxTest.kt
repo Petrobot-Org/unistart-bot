@@ -61,7 +61,7 @@ internal class XlsxTest {
                 )
             )
         )
-        val res = Xlsx.createStatisticFile(list)
+        val res = Xlsx.createStatisticsSpreadsheet(list)
         FileOutputStream("src/test/stats.xlsx").write(res)
     }
 }

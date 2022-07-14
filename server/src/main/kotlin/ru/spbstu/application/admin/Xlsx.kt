@@ -39,7 +39,7 @@ object Xlsx {
         }
     }
 
-    fun createStatisticFile(info: List<UserWithCompletedSteps>): ByteArray {
+    fun createStatisticsSpreadsheet(info: List<UserWithCompletedSteps>): ByteArray {
         val workbook = XSSFWorkbook()
         workbook.createSheet().apply {
             val style = workbook.createCellStyle().apply {
@@ -50,8 +50,8 @@ object Xlsx {
             }
             createRow(0).apply {
                 listOf(
-                    Strings.StatisticSpreadsheetPhoneNumber,
-                    Strings.StatisticSpreadsheetDuration
+                    Strings.StatisticsSpreadsheetPhoneNumber,
+                    Strings.StatisticsSpreadsheetDuration
                 ).forEachIndexed { index, s ->
                     createCell(index).apply {
                         setCellValue(s)
@@ -59,18 +59,18 @@ object Xlsx {
                     }
                 }
                 createCell(5).apply {
-                    setCellValue(Strings.StatisticSpreadsheetExtraPoints)
+                    setCellValue(Strings.StatisticsSpreadsheetExtraPoints)
                     cellStyle = style
                 }
                 createCell(6).apply {
-                    setCellValue(Strings.StatisticSpreadsheetOccupation)
+                    setCellValue(Strings.StatisticsSpreadsheetOccupation)
                     cellStyle = style
                 }
             }
             createRow(1).apply {
                 (1..4).forEach { index ->
                     createCell(index).apply {
-                        setCellValue(Strings.StatisticSpreadsheetStep(Step(index.toLong())))
+                        setCellValue(Strings.StatisticsSpreadsheetStep(Step(index.toLong())))
                         cellStyle = style
                     }
                 }
@@ -81,7 +81,7 @@ object Xlsx {
             addMergedRegion(CellRangeAddress(0, 1, 6, 6))
             info.forEachIndexed { index, userWithCompletedSteps ->
                 createRow(index + 2).apply {
-                    createCell(0).setCellValue(userWithCompletedSteps.user.phoneNumber.value)
+                    createCell(0).setCellValue("+" + userWithCompletedSteps.user.phoneNumber.value)
                     userWithCompletedSteps.completedSteps.sortedBy { t -> t.step.value }
                         .zipWithNext { st1, st2 ->
                             ChronoUnit.DAYS.between(st1.endTime, st2.endTime).toDouble()

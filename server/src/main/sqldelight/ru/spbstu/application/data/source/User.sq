@@ -16,6 +16,10 @@ get:
 SELECT * FROM User
 WHERE id = :id;
 
+getByPhoneNumber:
+SELECT * FROM User
+WHERE phoneNumber = :phoneNumber;
+
 add:
 INSERT INTO User(id, phoneNumber, avatar, occupation, availableStepsCount, amountOfCoins)
 VALUES (:id, :phoneNumber, :avatar, :occupation, :availableStepsCount, :amountOfCoins);

@@ -10,7 +10,6 @@ get:
 SELECT * FROM StepDuration
 WHERE step = :step;
 
-updateDuration:
-UPDATE StepDuration
-SET duration = :duration
-WHERE step = :step;
+replace:
+INSERT OR REPLACE INTO StepDuration
+VALUES (:step, :duration);

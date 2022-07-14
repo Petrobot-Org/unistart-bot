@@ -1,5 +1,8 @@
 package ru.spbstu.application.steps.entities
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 @JvmInline
 value class Step(val value: Long) {
     init {

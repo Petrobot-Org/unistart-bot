@@ -4,7 +4,6 @@ import ru.spbstu.application.data.source.AppDatabase
 import ru.spbstu.application.steps.entities.Step
 import ru.spbstu.application.steps.entities.StepDuration
 import java.time.Duration
-import java.time.Instant
 
 class StepDurationRepositoryImpl(private val database: AppDatabase) : StepDurationRepository {
     private val mapper = { step: Step, duration: Duration ->
@@ -16,6 +15,6 @@ class StepDurationRepositoryImpl(private val database: AppDatabase) : StepDurati
     }
 
     override fun changeDuration(step: Step, duration: Duration) {
-        database.stepDurationQueries.updateDuration(duration, step)
+        database.stepDurationQueries.replace(step, duration)
     }
 }

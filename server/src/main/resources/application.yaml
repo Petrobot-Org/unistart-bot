@@ -1,0 +1,9 @@
+timezone: Europe/Moscow
+jdbc: "jdbc:sqlite:main.sqlite"
+public_hostname: "https://127.0.0.1"
+root_admin_user_ids: []
+default_step_durations_seconds:
+  1: 604800
+  2: 604800
+  3: 604800
+  4: 604800

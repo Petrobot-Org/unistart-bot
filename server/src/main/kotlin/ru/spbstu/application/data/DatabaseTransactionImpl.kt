@@ -7,3 +7,9 @@ class DatabaseTransactionImpl(private val appDatabase: AppDatabase) : DatabaseTr
         appDatabase.transaction { body() }
     }
 }
+
+class DatabaseTransactionWithResultImpl(private val appDatabase: AppDatabase) : DatabaseTransactionWithResult {
+    override fun <R> invoke(body: () -> R): R {
+        return appDatabase.transactionWithResult { body() }
+    }
+}
