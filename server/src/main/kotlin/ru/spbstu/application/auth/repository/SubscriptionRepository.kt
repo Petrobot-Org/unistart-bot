@@ -2,8 +2,10 @@ package ru.spbstu.application.auth.repository
 
 import ru.spbstu.application.auth.entities.Subscription
 import ru.spbstu.application.auth.entities.User
+import java.time.Duration
+import java.time.Instant
 
 interface SubscriptionRepository {
-    fun add(subscription: Subscription)
+    fun add(start: Instant, duration: Duration, userId: User.Id)
     fun get(userId: User.Id): List<Subscription>
 }
