@@ -50,7 +50,7 @@ private suspend fun BehaviourContext.handleHelp(chat: Chat, helpEntries: List<He
     val userId = User.Id(chat.id.chatId)
     val now = Instant.now()
     sendTextMessage(chat, buildEntities {
-        regularln(Strings.HelpCommands)
+        regularln(Strings.Help.Header)
         helpEntries.forEach {
             val isAvailable = when (it.role) {
                 Role.Admin -> isAdmin(userId)

@@ -27,9 +27,9 @@ class TelegramBot(token: TelegramToken) {
                 defaultExceptionsHandler = { it.printStackTrace() }
             ) {
                 provideHelp {
-                    onCommandWithHelp("start", Strings.StartDescription) { handleStart(it) }
-                    onSubscriberCommand("steps", Strings.StepsClientDescription) { handleSteps(it) }
-                    onSubscriberCommand("stats", Strings.StatsDescription) { handleStats(it) }
+                    onCommandWithHelp("start", Strings.Help.Start) { handleStart(it) }
+                    onSubscriberCommand("steps", Strings.Help.Steps) { handleSteps(it) }
+                    onSubscriberCommand("stats", Strings.Help.Stats) { handleStats(it) }
                     onSubscriberText(Strings.Step1, Strings.BackToIdeaGeneration) { handleStep1(it) }
                     onSubscriberText(Strings.GetMyStats) { handleStats(it) }
                     onSubscriberText(Strings.BackToSteps) { handleSteps(it) }

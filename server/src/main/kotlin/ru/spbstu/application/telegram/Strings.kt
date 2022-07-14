@@ -29,11 +29,13 @@ object Strings {
     const val NotSubscribed = "Подписка неактивна"
     const val DatabaseError = "Ошибка базы данных"
 
-    const val HelpCommands = "Список доступных команд:"
-    const val StartDescription = "регистрация в боте"
-    const val StatsDescription = "получение статистики о моих достижениях"
-    const val StepsClientDescription = "переход к меню выбора шага"
-    const val AdminDescription = "панель администратора"
+    object Help {
+        const val Header = "Список доступных команд:"
+        const val Start = "регистрация в боте"
+        const val Stats = "получение статистики о моих достижениях"
+        const val Steps = "переход к меню выбора шага"
+        const val Admin = "панель администратора"
+    }
 
     const val WelcomeRequirePhone =
         "Привет, меня зовут UniStart, и я буду с тобой на протяжении всего, надеюсь, увлекательного и успешного пути по развитию собственной идеи до реального бизнеса! Для начала давай ты укажешь свой номер, чтобы получить доступ"

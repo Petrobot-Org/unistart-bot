@@ -11,7 +11,7 @@ import ru.spbstu.application.telegram.Strings
 
 context(HelpContext)
 suspend fun BehaviourContext.adminCommands() {
-    onAdminCommand("admin", Strings.AdminDescription) { handleAdmin(it.chat) }
+    onAdminCommand("admin", Strings.Help.Admin) { handleAdmin(it.chat) }
     uploadPhoneNumbersCommand()
     stepDurationCommand()
     statisticsSpreadsheetCommand()
