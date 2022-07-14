@@ -1,6 +1,7 @@
 package ru.spbstu.application.telegram
 
 import dev.inmo.tgbotapi.bot.ktor.telegramBot
+import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviourWithLongPolling
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
 import kotlinx.coroutines.CoroutineScope
@@ -30,6 +31,9 @@ class TelegramBot(token: TelegramToken) {
                 onSubscriberText(Strings.GetMyStats) { handleStats(it) }
                 onSubscriberText(Strings.BackToSteps) { handleSteps(it) }
                 onSubscriberText(Strings.TrendyFriendy) { sendTrendyFriendyApp(it.chat) }
+                onSubscriberText(*Strings.IdeaGenerationWithDescription.keys.toTypedArray()) {
+                    sendTextMessage(it.chat.id, Strings.IdeaGenerationWithDescription.getValue(it.content.text))
+                }
             }.join()
         }
     }

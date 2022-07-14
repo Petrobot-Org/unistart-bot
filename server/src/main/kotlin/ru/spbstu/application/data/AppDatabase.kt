@@ -30,6 +30,12 @@ fun createAppDatabase(jdbcString: String): AppDatabase {
             durationAdapter = DurationAdapter,
             user_idAdapter = UserIdAdapter
         ),
+        StartInfoAdapter = StartInfo.Adapter(
+            idAdapter = StartInfoIdAdapter,
+            phoneNumberAdapter = UserPhoneNumberAdapter,
+            beginAdapter = InstantAdapter,
+            durationAdapter = DurationAdapter
+        ),
         UserAdapter = User.Adapter(
             idAdapter = UserIdAdapter,
             phoneNumberAdapter = UserPhoneNumberAdapter,
