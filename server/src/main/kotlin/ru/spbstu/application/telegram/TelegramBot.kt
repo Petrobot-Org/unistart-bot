@@ -12,6 +12,7 @@ import ru.spbstu.application.admin.telegram.adminCommands
 import ru.spbstu.application.auth.telegram.handleStart
 import ru.spbstu.application.auth.telegram.onSubscriberCommand
 import ru.spbstu.application.auth.telegram.onSubscriberText
+import ru.spbstu.application.steps.telegram.handleIdeaGenerationMethods
 import ru.spbstu.application.steps.telegram.handleStats
 import ru.spbstu.application.steps.telegram.handleStep1
 import ru.spbstu.application.steps.telegram.handleSteps
@@ -34,9 +35,7 @@ class TelegramBot(token: TelegramToken) {
                     onSubscriberText(Strings.GetMyStats) { handleStats(it) }
                     onSubscriberText(Strings.BackToSteps) { handleSteps(it) }
                     onSubscriberText(Strings.TrendyFriendy) { sendTrendyFriendyApp(it.chat) }
-                    onSubscriberText(*Strings.IdeaGenerationWithDescription.keys.toTypedArray()) {
-                        sendTextMessage(it.chat.id, Strings.IdeaGenerationWithDescription.getValue(it.content.text))
-                    }
+                    onSubscriberText(*Strings.IdeaGenerationWithDescription.keys.toTypedArray()) { handleIdeaGenerationMethods(it) }
                     adminCommands()
                 }
             }.join()

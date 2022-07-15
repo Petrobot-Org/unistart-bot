@@ -1,6 +1,7 @@
 package ru.spbstu.application.auth.telegram
 
 import dev.inmo.micro_utils.coroutines.firstNotNull
+import dev.inmo.tgbotapi.extensions.api.send.media.sendDocument
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.ReplyKeyboardMarkup
@@ -70,6 +71,7 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
         sendTextMessage(message.chat.id, PhoneNumberIsAlreadyInDatabase)
         return
     }
+    //sendDocument (message.chat.id, )
     // послать 3 картинки с аватарами и подписями
     val avatar = waitTextFrom(
         message.chat,
