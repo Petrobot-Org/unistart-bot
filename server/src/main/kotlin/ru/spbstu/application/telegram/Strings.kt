@@ -2,6 +2,7 @@ package ru.spbstu.application.telegram
 
 import ru.spbstu.application.auth.entities.Avatar
 import ru.spbstu.application.auth.entities.Occupation
+import ru.spbstu.application.steps.entities.IdeaGenerationInfo
 import ru.spbstu.application.steps.entities.Step
 
 object Strings {
@@ -67,6 +68,9 @@ object Strings {
     const val Step3 = "3. Рынок"
     const val Step4 = "4. Бизнес-модель"
     const val GetMyStats = "Получить статистику об успехах"
+
+    /////fun IdeaGenerationMethodsPath(method: String) = "src/main/resources/static/ideaGeneration/${method::class.memberProperties.map{it.name}}.png"
+    const val IdeaGenerationMethodsPath = "src/main/resources/static/ideaGeneration/"
     const val ChooseIdeaGeneration = "Выбери технику генерации идей"
     const val Bisociation = "Бисоциации"
     const val BisociationDescription = "Бисоциация – это комбинация из двух идей, взятых из разных контекстов, ранее казавшихся несовместимыми." +
@@ -85,6 +89,7 @@ object Strings {
             "ТРЮКИ (иногда в результате получается идея, которая не имеет ничего общего с самой продукцией, но дает новый рекламный трюк);\n" +
             "\n" +
             "ДРУГОЕ (часто появляются идеи, которые вовсе не являются решениями данной проблемы дизайна. Тем не менее они могут стать новаторскими для решения проблем, находящихся за пределами исследования, и разработаны для других клиентов)."
+    const val BisociationPath = IdeaGenerationMethodsPath+"Bisociation.png"
     const val DelphiMethod = "Метод Дельфи"
     const val DelphiMethodDescription = "Метод Дельфи – это метод быстрого поиска решений, основанный на их генерации в процессе «мозговой атаки», проводимой группой специалистов, и отбора лучшего решения, исходя из экспертных оценок."
     const val HowDoesDelphiMethodWork = "Метод Дельфи позволяет проводить экспертное оценивание, главными его особенностями является анонимность, заочность и многоуровневость. при помощи определенных приемов, таких как мозговые штурмы, опросы или интервью, удается отыскать способ для определения правильного решения. То есть группа независимых друг от друга экспертов может гораздо лучше дать оценку той или иной ситуации, нежели структурированная группа людей. Поскольку участники могут даже не знать о существовании друг друга, – это полностью исключает столкновение их интересов и мнений.\n" +
@@ -102,6 +107,7 @@ object Strings {
             "3) Аналитический этап\n" +
             "На третьем этапе проверяется согласованность мнений каждого отдельно взятого эксперта. Анализируются полученные результаты и разрабатываются окончательные рекомендации."
 
+    const val DelphiMethodPath = IdeaGenerationMethodsPath+"DelphiMethod.png"
     const val BrainstormMethod = "Метод брейншторм"
     const val BrainstormMethodDescription = "Brainstorm (брейншторм, брейншторминг)  – это метод мозгового штурма для решения конкретной задачи, где участники высказывают свои любые идеи, вплоть до самых сумасшедших и утопических. После этого все идеи анализируются и лучшие могут быть использованы на практике. \n"
     const val HowDoesBrainstormMethodWork = "6 важных правил проведения мозгового штурма\n" +
@@ -125,6 +131,7 @@ object Strings {
             "     2. То, что никому не интересно и не поддерживается командой\n" +
             "     3. То, что в корне противоречит вашей концепции\n" +
             "Дальше останется ТОП мыслей, из которых уже и будет выбрана та самая идеальная и гениальная идея, которую вы будете развивать и реализовывать."
+    const val BrainstormMethodPath = IdeaGenerationMethodsPath+"BrainstormMethod.png"
     const val Scamper = "SCAMPER"
     const val ScamperDescription = "«SCAMPER» — это схема постановки определённых вопросов, которые стимулируют генерацию новых идей:\n" +
             "S — Substitute (замещение)\n" +
@@ -211,20 +218,16 @@ object Strings {
             "Что будет, если я буду действовать от обратного?\n" +
             "Слова для ассоциаций: удалить, переделать, повернуть, перевернуть, заменить, поменять, переставить, реорганизовать, изменить концепцию, поменять порядок, инвертировать, вернуть, прервать, переместить, изменить.\n" +
             "Как можно заметить, методика «SCAMPER» довольно проста в применении, хотя на первый взгляд может показаться иначе. Важно понять, что во многом она подразумевает разрыв шаблона и поиск новых способов решения проблем и генерации идей, основывающийся на уже существующих решениях и идеях. Но в гораздо большей степени здесь важна именно практика, т.к. без неё методика не принесёт никакого результата. Следуйте технике «SCAMPER» и новые идеи, а также интересные способы решения проблем не заставят себя долго ждать."
+    const val ScamperPath = IdeaGenerationMethodsPath+"SCAMPER.png"
     const val TrendyFriendy = "Trendy Friendy"
     const val BackToSteps = "Обратно к шагам"
     const val BackToIdeaGeneration = "Попробовать другие техники"
     const val HowDoesItWork = "Как это работает?"
 
-    val IdeaGenerationWithDescription = mapOf(
-        Bisociation to listOf(BisociationDescription, HowDoesBisociationWork),
-        DelphiMethod to listOf(DelphiMethodDescription, HowDoesDelphiMethodWork ),
-        BrainstormMethod to listOf(BrainstormMethodDescription, HowDoesBrainstormMethodWork),
-        Scamper to listOf(ScamperDescription, HowDoesScamperWork)
-    )
-
     const val TrendyFriendyDescription = "Это игра по генерации идей на основе анализа и комбинации трендов - собственная разработка автора, сочетающая в себе подходы Babson college of Entrepreneurship по генерации ассоциаций в формате Idea Lab, Ideation от Cambridge Judge Business School, а также собственный опыт автора в рамках сотрудничества с Высшей школой технологического предпринимательства СПбПУ Петра Великого. Комбинация вышеперечисленных подходов была заложена в основу игры \n"
     const val HowDoesTrendyFriendyWork = "Игра основывается на базе знаний - наборе разных трендов из актуальных источников, занимающихся анализом трендов и их формированием на ежегодной основе. База знаний дает всегда самую свежую информацию по текущей ситуации в области трендов.  Участники игры должны за отведенное время в течение нескольких раундов на основе изученных трендов сгенерить идеи.Количество раундов не ограничено, завершается игра путем генерации итогового пула идей для дальнейшего анализа и формирования итоговой идеи продукта для перехода на следующий шаг."
+    const val TrendyFriendyPath = IdeaGenerationMethodsPath+"TrendyFriendy.jpg"
+    const val TrendyFriendyStart = "Нажми на кнопку, чтобы начать игру"
     const val TrendyFriendyOpen = "Start"
     const val IdeasSpreadsheetName = "Идеация"
     const val IdeasSpreadsheetNumber = "№ п/п"
@@ -232,6 +235,15 @@ object Strings {
     const val IdeasSpreadsheetTechnical =
         "Идея технически реализуема (можно найти ресурсы для ее реализации в реальной жизни)"
     const val IdeasSpreadsheetEconomical = "Идея экономически реализуема (можно найти потребителя и оценить экономику)"
+
+    val IdeaGenerationWithDescription = mapOf(
+        Bisociation to IdeaGenerationInfo(BisociationDescription, HowDoesBisociationWork, BisociationPath),
+        DelphiMethod to IdeaGenerationInfo(DelphiMethodDescription, HowDoesDelphiMethodWork, DelphiMethodPath),
+        BrainstormMethod to IdeaGenerationInfo(BrainstormMethodDescription, HowDoesBrainstormMethodWork, BrainstormMethodPath),
+        Scamper to IdeaGenerationInfo(ScamperDescription, HowDoesScamperWork, ScamperPath),
+        TrendyFriendy to IdeaGenerationInfo(TrendyFriendyDescription, HowDoesTrendyFriendyWork, TrendyFriendyPath
+        )
+    )
 
     const val UnauthorizedError = "Недостаточно прав для этой команды"
 

@@ -21,7 +21,7 @@ private val appConfig: AppConfig by GlobalContext.get().inject()
 suspend fun BehaviourContext.sendTrendyFriendyApp(chat: Chat) {
     sendTextMessage(
         chat,
-        Strings.TrendyFriendyDescription,
+        Strings.TrendyFriendyStart,
         replyMarkup = inlineKeyboard {
             row {
                 webAppButton(Strings.TrendyFriendyOpen, WebAppInfo("${appConfig.publicHostname}/trendy-friendy"))

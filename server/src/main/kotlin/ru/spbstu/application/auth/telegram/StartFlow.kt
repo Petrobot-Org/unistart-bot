@@ -11,6 +11,7 @@ import dev.inmo.tgbotapi.extensions.utils.types.buttons.simpleButton
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.types.buttons.RequestContactKeyboardButton
 import dev.inmo.tgbotapi.types.buttons.SimpleKeyboardButton
+import dev.inmo.tgbotapi.types.files.DocumentFile
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
 import dev.inmo.tgbotapi.types.message.content.TextContent
 import kotlinx.coroutines.flow.first
@@ -71,7 +72,7 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
         sendTextMessage(message.chat.id, PhoneNumberIsAlreadyInDatabase)
         return
     }
-    //sendDocument (message.chat.id, )
+    ///sendDocument (message.chat.id, )
     // послать 3 картинки с аватарами и подписями
     val avatar = waitTextFrom(
         message.chat,
