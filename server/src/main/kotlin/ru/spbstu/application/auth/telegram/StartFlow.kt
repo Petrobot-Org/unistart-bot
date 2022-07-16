@@ -72,19 +72,20 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
         return
     }
 
-    bot.sendPhotoResource(message.chat, Strings.StartAvatars, Strings.ChooseAvatar)
+    bot.sendPhotoResource(
+        chat = message.chat,
+        resourcePath = Strings.StartAvatars, Strings.ChooseAvatar,
+        replyMarkup = ReplyKeyboardMarkup(
+            buttons = AvatarByString.keys.map { SimpleKeyboardButton(it) }.toTypedArray(),
+            resizeKeyboard = true,
+            oneTimeKeyboard = true
+        )
+    )
 
     val avatar = waitTextFrom(
-        message.chat,
-        SendTextMessage(
-            message.chat.id, Strings.YourAvatar,
-            replyMarkup = ReplyKeyboardMarkup(
-                buttons = AvatarByString.keys.map { SimpleKeyboardButton(it) }.toTypedArray(),
-                resizeKeyboard = true,
-                oneTimeKeyboard = true
-            )
-        )
-    ).map { AvatarByString[it.text] }
+        message.chat
+    )
+        .map { AvatarByString[it.text] }
         .onEach { if (it == null) sendTextMessage(message.chat.id, InvalidAvatar) }
         .firstNotNull()
 
