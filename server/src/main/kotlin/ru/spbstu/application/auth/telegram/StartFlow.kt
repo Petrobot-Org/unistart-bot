@@ -1,7 +1,6 @@
 package ru.spbstu.application.auth.telegram
 
 import dev.inmo.micro_utils.coroutines.firstNotNull
-import dev.inmo.tgbotapi.extensions.api.send.media.sendDocument
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.ReplyKeyboardMarkup
@@ -11,7 +10,6 @@ import dev.inmo.tgbotapi.extensions.utils.types.buttons.simpleButton
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.types.buttons.RequestContactKeyboardButton
 import dev.inmo.tgbotapi.types.buttons.SimpleKeyboardButton
-import dev.inmo.tgbotapi.types.files.DocumentFile
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
 import dev.inmo.tgbotapi.types.message.content.TextContent
 import kotlinx.coroutines.flow.first
@@ -39,6 +37,7 @@ import ru.spbstu.application.telegram.Strings.StartWithSecondStep
 import ru.spbstu.application.telegram.Strings.Student
 import ru.spbstu.application.telegram.Strings.SuperIdea
 import ru.spbstu.application.telegram.Strings.UserHasAlreadyBeenRegistered
+import ru.spbstu.application.telegram.sendPhotoResource
 import ru.spbstu.application.telegram.waitContactFrom
 import ru.spbstu.application.telegram.waitTextFrom
 import java.time.Instant
@@ -72,12 +71,13 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
         sendTextMessage(message.chat.id, PhoneNumberIsAlreadyInDatabase)
         return
     }
-    ///sendDocument (message.chat.id, )
-    // послать 3 картинки с аватарами и подписями
+
+    bot.sendPhotoResource(message.chat, Strings.StartAvatars, Strings.ChooseAvatar)
+
     val avatar = waitTextFrom(
         message.chat,
         SendTextMessage(
-            message.chat.id, Strings.ChooseAvatar,
+            message.chat.id, Strings.YourAvatar,
             replyMarkup = ReplyKeyboardMarkup(
                 buttons = AvatarByString.keys.map { SimpleKeyboardButton(it) }.toTypedArray(),
                 resizeKeyboard = true,

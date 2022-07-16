@@ -14,6 +14,9 @@ object Strings {
 
     val AvatarByString = Avatars.map { it.value to it.key }.toMap()
 
+    const val AvatarsPath = "/static/avatars/"
+    const val StartAvatars = AvatarsPath+"avatars.png"
+
     val Occupations = mapOf(
         Occupation.BachelorYear1 to "Бакалавриат 1 курс",
         Occupation.BachelorYear2 to "Бакалавриат 2 курс",
@@ -44,6 +47,7 @@ object Strings {
     const val NoPhoneInDatabase =
         "Упс, что-то пошло не так, твоего номера нет в системе, пожалуйста обратись к администратору"
     const val ChooseAvatar = "Отлично, мы в деле! Давай теперь ты выберешь мне аватар"
+    const val YourAvatar = "Твой выбор: "
     const val ChooseOccupation = "Теперь давай познакомимся. Для начала, ты сейчас:"
     const val ChooseCourse = "Круто! Это отличное время для старта! А на каком курсе ты учишься?"
     const val HaveIdeaQuestion = "У тебя уже есть своя идея?"
@@ -69,8 +73,7 @@ object Strings {
     const val Step4 = "4. Бизнес-модель"
     const val GetMyStats = "Получить статистику об успехах"
 
-    /////fun IdeaGenerationMethodsPath(method: String) = "src/main/resources/static/ideaGeneration/${method::class.memberProperties.map{it.name}}.png"
-    const val IdeaGenerationMethodsPath = "src/main/resources/static/ideaGeneration/"
+    const val IdeaGenerationMethodsPath = "/static/ideaGeneration/"
     const val ChooseIdeaGeneration = "Выбери технику генерации идей"
     const val Bisociation = "Бисоциации"
     const val BisociationDescription = "Бисоциация – это комбинация из двух идей, взятых из разных контекстов, ранее казавшихся несовместимыми." +
