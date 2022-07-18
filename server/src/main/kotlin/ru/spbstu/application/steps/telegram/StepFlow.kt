@@ -97,17 +97,17 @@ suspend fun BehaviourContext.handleIdeaGenerationMethods(message: CommonMessage<
                 message.chat,
                 IdeaGenerationStrings.IdeaGenerationWithDescription.getValue(message.content.text).pathToIllustration
             )
-            checkAndUpdateBonusAccounting(
-                User.Id(message.chat.id.chatId),
-                Strings.BonusTypesByString[method]!!,
-                Step(1),
-                Instant.now()
-            )
         }
     }.firstNotNull()
     if (method == IdeaGenerationStrings.TrendyFriendy) {
         sendTrendyFriendyApp(message.chat)
     } else {
+        checkAndUpdateBonusAccounting(
+            User.Id(message.chat.id.chatId),
+            Strings.BonusTypesByString[method]!!,
+            Step(1),
+            Instant.now()
+        )
         handleStep1(message)
     }
 }
