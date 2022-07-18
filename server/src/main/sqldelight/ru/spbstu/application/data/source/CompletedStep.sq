@@ -19,3 +19,8 @@ SELECT *
 FROM CompletedStep
 INNER JOIN User
 ON User.id = CompletedStep.userId;
+
+joinThisUser:
+SELECT *
+FROM CompletedStep
+WHERE userId = :userId;

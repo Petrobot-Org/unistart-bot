@@ -7,8 +7,8 @@ data class User(
     val phoneNumber: PhoneNumber,
     val avatar: Avatar,
     val occupation: Occupation,
-    val availableStepsCount: Long,
-    val amountOfCoins: Long
+    var availableStepsCount: Long,
+    var amountOfCoins: Long
 ) {
     @Serializable
     @JvmInline
