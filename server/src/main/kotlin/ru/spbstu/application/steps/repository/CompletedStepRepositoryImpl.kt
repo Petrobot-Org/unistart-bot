@@ -18,6 +18,10 @@ class CompletedStepRepositoryImpl(private val database: AppDatabase) : Completed
         database.completedStepQueries.add(step, userId, endTime)
     }
 
+    override fun get(userId: User.Id, step: Step): CompletedStep? {
+        return database.completedStepQueries.get(userId, step, mapper).executeAsOneOrNull()
+    }
+
     override fun getUsersWithCompletedSteps(): List<UserWithCompletedSteps> {
         return database.completedStepQueries.joinUser().executeAsList().groupBy(
             { t -> User(t.id, t.phoneNumber!!, t.avatar, t.occupation, t.availableStepsCount!!, t.amountOfCoins!!) },
@@ -28,6 +32,6 @@ class CompletedStepRepositoryImpl(private val database: AppDatabase) : Completed
     }
 
     override fun getCompletedStepsByUser(user: User): List<CompletedStep> {
-       return database.completedStepQueries.joinThisUser(user.id, mapper).executeAsList()
+       return database.completedStepQueries.getByUserId(user.id, mapper).executeAsList()
     }
 }

@@ -12,8 +12,7 @@ import dev.inmo.tgbotapi.types.webapps.WebAppInfo
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.koin.core.context.GlobalContext
 import ru.spbstu.application.AppConfig
-import ru.spbstu.application.telegram.Strings
-import trendyfriendy.Idea
+import ru.spbstu.application.telegram.IdeaGenerationStrings
 import java.io.ByteArrayOutputStream
 
 private val appConfig: AppConfig by GlobalContext.get().inject()
@@ -21,18 +20,18 @@ private val appConfig: AppConfig by GlobalContext.get().inject()
 suspend fun BehaviourContext.sendTrendyFriendyApp(chat: Chat) {
     sendTextMessage(
         chat,
-        Strings.TrendyFriendyStart,
+        IdeaGenerationStrings.TrendyFriendyStart,
         replyMarkup = inlineKeyboard {
             row {
-                webAppButton(Strings.TrendyFriendyOpen, WebAppInfo("${appConfig.publicHostname}/trendy-friendy"))
+                webAppButton(IdeaGenerationStrings.TrendyFriendyOpen, WebAppInfo("${appConfig.publicHostname}/trendy-friendy"))
             }
         }
     )
 }
 
 suspend fun sendTrendyFriendyIdeas(bot: TelegramBot, userId: Long, ideas: List<Idea>) {
-    val document = createIdeasXlsx(ideas).asMultipartFile(Strings.IdeasSpreadsheetName + ".xlsx")
-    bot.sendDocument(userId.toChatId(), document, replyMarkup = flatReplyKeyboard { simpleButton(Strings.BackToIdeaGeneration) })
+    val document = createIdeasXlsx(ideas).asMultipartFile(IdeaGenerationStrings.IdeasSpreadsheetName + ".xlsx")
+    bot.sendDocument(userId.toChatId(), document, replyMarkup = flatReplyKeyboard { simpleButton(IdeaGenerationStrings.BackToIdeaGeneration) })
 }
 
 private fun createIdeasXlsx(ideas: List<Idea>): ByteArray {
@@ -47,10 +46,10 @@ private fun createIdeasXlsx(ideas: List<Idea>): ByteArray {
                 heightInPoints = 3 * defaultRowHeightInPoints
             }
             listOf(
-                Strings.IdeasSpreadsheetNumber,
-                Strings.IdeasSpreadsheetDescription,
-                Strings.IdeasSpreadsheetTechnical,
-                Strings.IdeasSpreadsheetEconomical
+                IdeaGenerationStrings.IdeasSpreadsheetNumber,
+                IdeaGenerationStrings.IdeasSpreadsheetDescription,
+                IdeaGenerationStrings.IdeasSpreadsheetTechnical,
+                IdeaGenerationStrings.IdeasSpreadsheetEconomical
             ).forEachIndexed { index, s ->
                 createCell(index).apply {
                     setCellValue(s)

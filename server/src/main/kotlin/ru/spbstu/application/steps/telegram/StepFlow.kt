@@ -15,9 +15,9 @@ import kotlinx.coroutines.flow.onEach
 import org.koin.core.context.GlobalContext
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.repository.UserRepository
-import ru.spbstu.application.steps.entities.BonusType
 import ru.spbstu.application.steps.entities.Step
 import ru.spbstu.application.steps.usecases.CheckAndUpdateBonusAccountingUseCase
+import ru.spbstu.application.telegram.IdeaGenerationStrings
 import ru.spbstu.application.telegram.Strings
 import ru.spbstu.application.telegram.Strings.MyRanking
 import ru.spbstu.application.telegram.sendPhotoResource
@@ -29,12 +29,12 @@ private val userRepository: UserRepository by GlobalContext.get().inject()
 private val checkAndUpdateBonusAccounting: CheckAndUpdateBonusAccountingUseCase by GlobalContext.get().inject()
 private val steps = listOf(Strings.Step1, Strings.Step2, Strings.Step3, Strings.Step4)
 private val ideaGenerationMethods = listOf(
-    Strings.Bisociation,
-    Strings.DelphiMethod,
-    Strings.BrainstormMethod,
-    Strings.Scamper,
-    Strings.TrendyFriendy,
-    Strings.BackToSteps
+    IdeaGenerationStrings.Bisociation,
+    IdeaGenerationStrings.DelphiMethod,
+    IdeaGenerationStrings.BrainstormMethod,
+    IdeaGenerationStrings.Scamper,
+    IdeaGenerationStrings.TrendyFriendy,
+    IdeaGenerationStrings.BackToSteps
 )
 
 suspend fun BehaviourContext.handleSteps(message: CommonMessage<TextContent>) {
@@ -60,7 +60,7 @@ suspend fun BehaviourContext.handleSteps(message: CommonMessage<TextContent>) {
 suspend fun BehaviourContext.handleStep1(message: CommonMessage<TextContent>) {
     sendTextMessage(
         message.chat.id,
-        Strings.ChooseIdeaGeneration,
+        IdeaGenerationStrings.ChooseIdeaGeneration,
         replyMarkup = replyKeyboard(
             resizeKeyboard = true,
             oneTimeKeyboard = true
@@ -80,32 +80,32 @@ suspend fun BehaviourContext.handleIdeaGenerationMethods(message: CommonMessage<
         message.chat,
         SendTextMessage(
             message.chat.id,
-            Strings.IdeaGenerationWithDescription.getValue(message.content.text).description,
+            IdeaGenerationStrings.IdeaGenerationWithDescription.getValue(message.content.text).description,
             replyMarkup = ReplyKeyboardMarkup(
-                buttons = listOf(SimpleKeyboardButton(Strings.HowDoesItWork)).toTypedArray(),
+                buttons = listOf(SimpleKeyboardButton(IdeaGenerationStrings.HowDoesItWork)).toTypedArray(),
                 resizeKeyboard = true,
                 oneTimeKeyboard = true
             )
         )
     ).onEach {
-        if (it.text == Strings.HowDoesItWork) {
+        if (it.text == IdeaGenerationStrings.HowDoesItWork) {
             sendTextMessage(
                 message.chat.id,
-                Strings.IdeaGenerationWithDescription.getValue(message.content.text).howToUse
+                IdeaGenerationStrings.IdeaGenerationWithDescription.getValue(message.content.text).howToUse
             )
             bot.sendPhotoResource(
                 message.chat,
-                Strings.IdeaGenerationWithDescription.getValue(message.content.text).pathToIllustration
+                IdeaGenerationStrings.IdeaGenerationWithDescription.getValue(message.content.text).pathToIllustration
             )
             checkAndUpdateBonusAccounting(
                 User.Id(message.chat.id.chatId),
-                BonusType.valueOf(method),
+                Strings.BonusTypesByString[method]!!,
                 Step(1),
                 Instant.now()
             )
         }
     }.firstNotNull()
-    if (method == Strings.TrendyFriendy) {
+    if (method == IdeaGenerationStrings.TrendyFriendy) {
         sendTrendyFriendyApp(message.chat)
     } else {
         handleStep1(message)

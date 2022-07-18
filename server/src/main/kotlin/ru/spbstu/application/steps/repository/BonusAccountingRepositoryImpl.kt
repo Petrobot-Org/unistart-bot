@@ -6,8 +6,8 @@ import ru.spbstu.application.steps.entities.BonusAccounting
 import ru.spbstu.application.steps.entities.BonusType
 
 class BonusAccountingRepositoryImpl(private val database: AppDatabase): BonusAccountingRepository{
-    private val mapper = { id: BonusAccounting.Id, userId: User.Id, bonusType: BonusType->
-        BonusAccounting(id, userId, bonusType)
+    private val mapper = { userId: User.Id, bonusType: BonusType->
+        BonusAccounting( userId, bonusType)
     }
     override fun add(bonusAccounting: BonusAccounting) {
         database.bonusAccountingQueries.add(

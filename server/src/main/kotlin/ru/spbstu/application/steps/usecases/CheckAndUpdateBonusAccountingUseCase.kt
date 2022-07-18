@@ -21,49 +21,46 @@ class CheckAndUpdateBonusAccountingUseCase(
             BonusType.Bisociation,
             BonusType.DelphiMethod,
             BonusType.BrainstormMethod,
-            BonusType.BrainstormMethod,
+            BonusType.Scamper,
             BonusType.TrendyFriendy
         )
+    ),
+    private val bonusTypeWithBonusValue: Map<BonusType, Long> = mapOf(
+        BonusType.Bisociation to 1L,
+        BonusType.DelphiMethod to 1L,
+        BonusType.BrainstormMethod to 1L,
+        BonusType.Scamper to 1L,
+        BonusType.TrendyFriendy to 5L
     )
-
 ) {
     operator fun invoke(
-        userId: User.Id,
-        bonusType: BonusType,
-        step: Step,
-        at: Instant
+        userId: User.Id, bonusType: BonusType, step: Step, at: Instant
     ) = transaction {
         val user = userRepository.get(userId)///выбрасывать исключение, если null?
-        var oldAmountOfCoins = user!!.amountOfCoins
-        var valueOfBonusType = 0
 
         if (bonusAccountingRepository.get(userId, bonusType) == null)//этап пройден в первый раз
         {
-            valueOfBonusType = 1
-            if (bonusType == BonusType.TrendyFriendy) valueOfBonusType = 5
-            user.amountOfCoins = oldAmountOfCoins + valueOfBonusType
+            userRepository.setAmountOfCoins(userId, user!!.amountOfCoins + bonusTypeWithBonusValue[bonusType]!!)
             bonusAccountingRepository.add(BonusAccounting(userId = userId, bonusType = bonusType))
         }
-        if (stepsWithBonusType[step] == bonusAccountingRepository.getByUsedId(userId))//шаг полностью пройден
+        if ((stepsWithBonusType[step]!!.toTypedArray()) contentEquals bonusAccountingRepository.getByUsedId(userId)
+                .toTypedArray()
+        )//шаг полностью пройден
         {
-            oldAmountOfCoins = user.amountOfCoins
-            val stepStartedAt = completedStepRepository.getCompletedStepsByUser(user).last().endTime
+            if (completedStepRepository.get(userId, step) != null) {
+                return@transaction
+            }
+            val stepStartedAt = completedStepRepository.getCompletedStepsByUser(user!!).last().endTime
             val durationOfStep = Duration.between(stepStartedAt, at)
-            if (durationOfStep < Duration.ofDays(14))
-            {
-                valueOfBonusType = 3
+            val valueOfBonusType = when {
+                durationOfStep < Duration.ofHours(72) -> 8
+                durationOfStep < Duration.ofDays(7) -> 5
+                durationOfStep < Duration.ofDays(14) -> 3
+                else -> 0
             }
-            if (durationOfStep < Duration.ofDays(7))
-            {
-                valueOfBonusType = 5
-            }
-            if (durationOfStep < Duration.ofHours(72)){
-                valueOfBonusType = 8
-            }
-            user.amountOfCoins = oldAmountOfCoins + valueOfBonusType
+            userRepository.setAmountOfCoins(userId, user.amountOfCoins + valueOfBonusType)
             completedStepRepository.add(step, userId, at)
-            val newAvailableStepsCount = user.availableStepsCount + 1
-            user.availableStepsCount=newAvailableStepsCount
+            userRepository.setAvailableStepsCount(userId, user.availableStepsCount + 1)
         }
     }
 }
