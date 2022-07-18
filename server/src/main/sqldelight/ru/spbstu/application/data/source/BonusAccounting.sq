@@ -20,3 +20,7 @@ WHERE userId = :userId AND bonusType = :bonusType;
 getByUserId:
 SELECT * FROM BonusAccounting
 WHERE userId = :userId;
+
+getBonusesByUserId:
+SELECT bonusType FROM BonusAccounting
+WHERE userId = :userId;

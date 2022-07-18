@@ -13,6 +13,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.koin.core.context.GlobalContext
 import ru.spbstu.application.AppConfig
 import ru.spbstu.application.telegram.IdeaGenerationStrings
+import trendyfriendy.Idea
 import java.io.ByteArrayOutputStream
 
 private val appConfig: AppConfig by GlobalContext.get().inject()

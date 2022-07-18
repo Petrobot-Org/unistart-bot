@@ -36,16 +36,14 @@ class CheckAndUpdateBonusAccountingUseCase(
     operator fun invoke(
         userId: User.Id, bonusType: BonusType, step: Step, at: Instant
     ) = transaction {
-        val user = userRepository.get(userId)///выбрасывать исключение, если null?
+        val user = userRepository.get(userId)
 
         if (bonusAccountingRepository.get(userId, bonusType) == null)//этап пройден в первый раз
         {
             userRepository.setAmountOfCoins(userId, user!!.amountOfCoins + bonusTypeWithBonusValue[bonusType]!!)
             bonusAccountingRepository.add(BonusAccounting(userId = userId, bonusType = bonusType))
         }
-        val allBonuses = hashSetOf(stepsWithBonusType[step])
-        val earnedBonuses = hashSetOf(bonusAccountingRepository.getByUsedId(userId))
-        if (allBonuses == earnedBonuses)//шаг полностью пройден
+        if ( bonusAccountingRepository.getBonusesByUsedId(userId).containsAll(stepsWithBonusType[step]!!))//шаг полностью пройде
         {
             if (completedStepRepository.get(userId, step) != null) {
                 return@transaction
