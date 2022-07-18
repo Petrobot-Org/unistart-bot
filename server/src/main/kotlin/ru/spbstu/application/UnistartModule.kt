@@ -13,7 +13,10 @@ import ru.spbstu.application.steps.repository.CompletedStepRepository
 import ru.spbstu.application.steps.repository.CompletedStepRepositoryImpl
 import ru.spbstu.application.steps.repository.StepDurationRepository
 import ru.spbstu.application.steps.repository.StepDurationRepositoryImpl
+import ru.spbstu.application.steps.repository.BonusAccountingRepository
+import ru.spbstu.application.steps.repository.BonusAccountingRepositoryImpl
 import ru.spbstu.application.steps.usecases.GetStepDurationUseCase
+
 import ru.spbstu.application.telegram.TelegramBot
 import ru.spbstu.application.trendyfriendy.trendyFriendyModule
 import java.time.ZoneId
@@ -33,6 +36,7 @@ val unistartModule = module(createdAtStart = true) {
     singleOf(::SubscriptionRepositoryImpl) bind SubscriptionRepository::class
     singleOf(::CompletedStepRepositoryImpl) bind CompletedStepRepository::class
     singleOf(::StartInfoRepositoryImpl) bind StartInfoRepository::class
+    singleOf(::BonusAccountingRepositoryImpl) bind BonusAccountingRepository::class
     singleOf(::IsAdminUseCase)
     singleOf(::GetStepDurationUseCase)
     singleOf(::AddPhoneNumbersUseCase)

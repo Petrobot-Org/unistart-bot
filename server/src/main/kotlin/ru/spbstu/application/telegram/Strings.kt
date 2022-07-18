@@ -47,7 +47,6 @@ object Strings {
     const val NoPhoneInDatabase =
         "Упс, что-то пошло не так, твоего номера нет в системе, пожалуйста обратись к администратору"
     const val ChooseAvatar = "Отлично, мы в деле! Давай теперь ты выберешь мне аватар"
-    const val YourAvatar = "Твой выбор: "
     const val ChooseOccupation = "Теперь давай познакомимся. Для начала, ты сейчас:"
     const val ChooseCourse = "Круто! Это отличное время для старта! А на каком курсе ты учишься?"
     const val HaveIdeaQuestion = "У тебя уже есть своя идея?"
