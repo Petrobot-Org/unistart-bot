@@ -43,9 +43,9 @@ class CheckAndUpdateBonusAccountingUseCase(
             userRepository.setAmountOfCoins(userId, user!!.amountOfCoins + bonusTypeWithBonusValue[bonusType]!!)
             bonusAccountingRepository.add(BonusAccounting(userId = userId, bonusType = bonusType))
         }
-        if ((stepsWithBonusType[step]!!.toTypedArray()) contentEquals bonusAccountingRepository.getByUsedId(userId)
-                .toTypedArray()
-        )//шаг полностью пройден
+        val allBonuses = hashSetOf(stepsWithBonusType[step])
+        val earnedBonuses = hashSetOf(bonusAccountingRepository.getByUsedId(userId))
+        if (allBonuses == earnedBonuses)//шаг полностью пройден
         {
             if (completedStepRepository.get(userId, step) != null) {
                 return@transaction
