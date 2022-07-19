@@ -86,10 +86,18 @@ object Strings {
         const val Header = "Панель администратора"
         const val InvalidDurationDays = "Введите число дней"
 
+        fun InvalidSpreadsheet(rows: List<Int>) =
+            "Ошибки в таблице в строках ${rows.joinToString()}"
+
         object Menu {
             const val UploadPhoneNumbers = "Загрузить номера телефонов"
             const val StepDuration = "Длительность шагов"
             const val StatisticsSpreadsheet = "Получить сводку"
+            const val UploadTrends = "Обновить базу трендов"
+        }
+
+        object UploadTrends {
+            const val RequireDocument = "Загрузите zip-архив с картинками"
         }
 
         object StepDuration {
@@ -108,9 +116,6 @@ object Strings {
             const val RequireStartDate = "Дата начала подписки для этих номеров (дд.мм.гггг)"
             const val RequireDurationDays = "Продолжительность подписки в днях"
             const val InvalidDate = "Некорректная дата"
-
-            fun InvalidSpreadsheet(rows: List<Int>) =
-                "Ошибки в таблице в строках ${rows.joinToString()}"
 
             fun Added(count: Long) =
                 "${

@@ -8,6 +8,7 @@ import ru.spbstu.application.auth.entities.PhoneNumber
 import ru.spbstu.application.steps.entities.Step
 import ru.spbstu.application.steps.entities.UserWithCompletedSteps
 import ru.spbstu.application.telegram.Strings
+import trendyfriendy.TrendCard
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.time.temporal.ChronoUnit
@@ -19,11 +20,13 @@ object Xlsx {
     }
 
     fun parsePhoneNumbers(inputStream: InputStream): Result<List<PhoneNumber>> {
-        val phoneNumbers = XSSFWorkbook(inputStream).getSheetAt(0).map { row ->
-            try {
-                row.getCell(0).stringCellValue
-            } catch (ignore: IllegalStateException) {
-                String()
+        val phoneNumbers = XSSFWorkbook(inputStream).use { workbook ->
+            workbook.getSheetAt(0).map { row ->
+                try {
+                    row.getCell(0).stringCellValue
+                } catch (ignore: IllegalStateException) {
+                    String()
+                }
             }
         }.dropLastWhile { it.isEmpty() }.map { PhoneNumber.valueOf(it.removePrefix("+")) }
         return if (!phoneNumbers.contains(null)) {
@@ -37,6 +40,31 @@ object Xlsx {
                 }
             })
         }
+    }
+
+    fun parseTrends(inputStream: InputStream, urlPrefix: String): Result<Map<String, List<TrendCard>>> {
+        val cards = XSSFWorkbook(inputStream).use { workbook ->
+            workbook.getSheetAt(0).map { row ->
+                try {
+                    val trendSetName = row.getCell(0).stringCellValue
+                    val card = TrendCard(
+                        name = row.getCell(1).stringCellValue,
+                        description = row.getCell(2).stringCellValue,
+                        url = urlPrefix + row.getCell(3).stringCellValue
+                    )
+                    trendSetName to card
+                } catch (e: Exception) {
+                    null
+                }
+            }
+        }
+        if (cards.contains(null)) {
+            return Result.BadFormat(cards.mapIndexedNotNull { index, value -> if (value == null) index else null })
+        }
+        val sets = cards
+            .filterNotNull()
+            .groupBy(keySelector = { it.first }, valueTransform = { it.second })
+        return Result.OK(sets)
     }
 
     fun createStatisticsSpreadsheet(info: List<UserWithCompletedSteps>): ByteArray {

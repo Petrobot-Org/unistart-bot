@@ -10,6 +10,7 @@ import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.steps.entities.CompletedStep
 import ru.spbstu.application.steps.entities.Step
 import ru.spbstu.application.steps.entities.UserWithCompletedSteps
+import trendyfriendy.TrendCard
 import java.io.File
 import java.io.FileOutputStream
 import java.time.Instant
@@ -24,6 +25,34 @@ internal class XlsxTest {
                     val expected =
                         listOf("000", "111", "222", "333", "444", "555", "666", "777", "888", "999", "111")
                             .map { PhoneNumber.valueOf(it) }
+                    assertEquals(expected, result.value)
+                }
+                is Xlsx.Result.BadFormat -> {
+                    fail("Bad format in rows ${result.errorRows}")
+                }
+            }
+        }
+    }
+
+    @Test
+    fun parseTrends() {
+        val prefix = "/static/trends/"
+        val expected = mapOf(
+            "Gartner" to listOf(
+                TrendCard("Тренд 1", "Описание", prefix + "pic1.jpeg"),
+                TrendCard("Тренд 2", "Описание", prefix + "pic1.jpeg"),
+                TrendCard("Тренд 3", "Описание", prefix + "pic1.jpeg"),
+            ),
+            "Skolkovo" to listOf(
+                TrendCard("Тренд 4", "Описание", prefix + "pic1.jpeg"),
+                TrendCard("Тренд 5", "Описание", prefix + "pic1.jpeg"),
+                TrendCard("Тренд 6", "Описание", prefix + "pic1.jpeg"),
+                TrendCard("Тренд 7", "Описание", prefix + "pic1.jpeg"),
+            )
+        )
+        File("src/test/trends.xlsx").inputStream().use { inputStream ->
+            when (val result = Xlsx.parseTrends(inputStream, prefix)) {
+                is Xlsx.Result.OK -> {
                     assertEquals(expected, result.value)
                 }
                 is Xlsx.Result.BadFormat -> {
