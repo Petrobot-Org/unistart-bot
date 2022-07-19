@@ -25,7 +25,6 @@ import kotlinx.coroutines.Job
 import org.koin.core.context.GlobalContext
 import ru.spbstu.application.admin.usecases.IsAdminUseCase
 import ru.spbstu.application.auth.entities.User
-import ru.spbstu.application.auth.telegram.requireSubscription
 import ru.spbstu.application.telegram.HelpContext
 import ru.spbstu.application.telegram.HelpEntry
 import ru.spbstu.application.telegram.Role

@@ -19,3 +19,12 @@ SELECT *
 FROM CompletedStep
 INNER JOIN User
 ON User.id = CompletedStep.userId;
+
+get:
+SELECT * FROM CompletedStep
+WHERE userId = :userId AND step = :step;
+
+getByUserId:
+SELECT *
+FROM CompletedStep
+WHERE userId = :userId;

@@ -6,11 +6,11 @@ import ru.spbstu.application.data.source.AppDatabase
 import java.time.Duration
 import java.time.Instant
 
-private val mapper = { id: StartInfo.Id, number: PhoneNumber?, begin: Instant, duration: Duration ->
-    StartInfo(number!!, begin, duration, id)
-}
-
 class StartInfoRepositoryImpl(private val database: AppDatabase) : StartInfoRepository {
+    private val mapper = { id: StartInfo.Id, number: PhoneNumber?, begin: Instant, duration: Duration ->
+        StartInfo(number!!, begin, duration, id)
+    }
+
     override fun add(startInfo: StartInfo) {
         database.startInfoQueries.add(
             startInfo.phoneNumber,

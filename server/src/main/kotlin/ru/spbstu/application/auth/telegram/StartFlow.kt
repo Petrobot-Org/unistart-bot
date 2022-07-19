@@ -37,6 +37,7 @@ import ru.spbstu.application.telegram.Strings.StartWithSecondStep
 import ru.spbstu.application.telegram.Strings.Student
 import ru.spbstu.application.telegram.Strings.SuperIdea
 import ru.spbstu.application.telegram.Strings.UserHasAlreadyBeenRegistered
+import ru.spbstu.application.telegram.sendPhotoResource
 import ru.spbstu.application.telegram.waitContactFrom
 import ru.spbstu.application.telegram.waitTextFrom
 import java.time.Instant
@@ -70,18 +71,21 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
         sendTextMessage(message.chat.id, PhoneNumberIsAlreadyInDatabase)
         return
     }
-    // послать 3 картинки с аватарами и подписями
-    val avatar = waitTextFrom(
-        message.chat,
-        SendTextMessage(
-            message.chat.id, Strings.ChooseAvatar,
-            replyMarkup = ReplyKeyboardMarkup(
-                buttons = AvatarByString.keys.map { SimpleKeyboardButton(it) }.toTypedArray(),
-                resizeKeyboard = true,
-                oneTimeKeyboard = true
-            )
+
+    bot.sendPhotoResource(
+        chat = message.chat,
+        resourcePath = Strings.StartAvatars, Strings.ChooseAvatar,
+        replyMarkup = ReplyKeyboardMarkup(
+            buttons = AvatarByString.keys.map { SimpleKeyboardButton(it) }.toTypedArray(),
+            resizeKeyboard = true,
+            oneTimeKeyboard = true
         )
-    ).map { AvatarByString[it.text] }
+    )
+
+    val avatar = waitTextFrom(
+        message.chat
+    )
+        .map { AvatarByString[it.text] }
         .onEach { if (it == null) sendTextMessage(message.chat.id, InvalidAvatar) }
         .firstNotNull()
 

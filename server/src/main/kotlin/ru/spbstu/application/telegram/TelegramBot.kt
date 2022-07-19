@@ -1,9 +1,7 @@
 package ru.spbstu.application.telegram
 
 import dev.inmo.tgbotapi.bot.ktor.telegramBot
-import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviourWithLongPolling
-import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -12,10 +10,10 @@ import ru.spbstu.application.admin.telegram.adminCommands
 import ru.spbstu.application.auth.telegram.handleStart
 import ru.spbstu.application.auth.telegram.onSubscriberCommand
 import ru.spbstu.application.auth.telegram.onSubscriberText
+import ru.spbstu.application.steps.telegram.handleIdeaGenerationMethods
 import ru.spbstu.application.steps.telegram.handleStats
 import ru.spbstu.application.steps.telegram.handleStep1
 import ru.spbstu.application.steps.telegram.handleSteps
-import ru.spbstu.application.trendyfriendy.sendTrendyFriendyApp
 
 class TelegramBot(token: TelegramToken) {
     val bot = telegramBot(token.value)
@@ -30,13 +28,10 @@ class TelegramBot(token: TelegramToken) {
                     onCommandWithHelp("start", Strings.Help.Start) { handleStart(it) }
                     onSubscriberCommand("steps", Strings.Help.Steps) { handleSteps(it) }
                     onSubscriberCommand("stats", Strings.Help.Stats) { handleStats(it) }
-                    onSubscriberText(Strings.Step1, Strings.BackToIdeaGeneration) { handleStep1(it) }
+                    onSubscriberText(Strings.Step1, IdeaGenerationStrings.BackToIdeaGeneration) { handleStep1(it) }
                     onSubscriberText(Strings.GetMyStats) { handleStats(it) }
-                    onSubscriberText(Strings.BackToSteps) { handleSteps(it) }
-                    onSubscriberText(Strings.TrendyFriendy) { sendTrendyFriendyApp(it.chat) }
-                    onSubscriberText(*Strings.IdeaGenerationWithDescription.keys.toTypedArray()) {
-                        sendTextMessage(it.chat.id, Strings.IdeaGenerationWithDescription.getValue(it.content.text))
-                    }
+                    onSubscriberText(IdeaGenerationStrings.BackToSteps) { handleSteps(it) }
+                    onSubscriberText(*IdeaGenerationStrings.IdeaGenerationWithDescription.keys.toTypedArray()) { handleIdeaGenerationMethods(it) }
                     adminCommands()
                 }
             }.join()

@@ -10,4 +10,6 @@ interface UserRepository {
     fun contains(phoneNumber: PhoneNumber): Boolean
     fun contains(id: User.Id): Boolean
     fun sortByAmountOfCoins(): List<User>
+    fun setAmountOfCoins(id: User.Id, newAmountOfCoins: Long)
+    fun setAvailableStepsCount(id: User.Id, newAvailableStepsCount: Long)
 }

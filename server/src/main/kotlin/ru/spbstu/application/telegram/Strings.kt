@@ -2,6 +2,7 @@ package ru.spbstu.application.telegram
 
 import ru.spbstu.application.auth.entities.Avatar
 import ru.spbstu.application.auth.entities.Occupation
+import ru.spbstu.application.steps.entities.BonusType
 import ru.spbstu.application.steps.entities.Step
 
 object Strings {
@@ -13,6 +14,9 @@ object Strings {
 
     val AvatarByString = Avatars.map { it.value to it.key }.toMap()
 
+    const val AvatarsPath = "/static/avatars/"
+    const val StartAvatars = AvatarsPath + "avatars.png"
+
     val Occupations = mapOf(
         Occupation.BachelorYear1 to "Бакалавриат 1 курс",
         Occupation.BachelorYear2 to "Бакалавриат 2 курс",
@@ -23,6 +27,14 @@ object Strings {
         Occupation.Businessman to "У меня уже есть свой бизнес!",
         Occupation.Employee to "Работаю по найму"
     )
+    val BonusTypes = mapOf(
+        BonusType.Bisociation to IdeaGenerationStrings.Bisociation,
+        BonusType.DelphiMethod to IdeaGenerationStrings.DelphiMethod,
+        BonusType.BrainstormMethod to IdeaGenerationStrings.BrainstormMethod,
+        BonusType.Scamper to IdeaGenerationStrings.Scamper,
+        BonusType.TrendyFriendy to IdeaGenerationStrings.TrendyFriendy
+    )
+    val BonusTypesByString = BonusTypes.map { it.value to it.key }.toMap()
 
     val OccupationByString = Occupations.map { it.value to it.key }.toMap()
 
@@ -67,31 +79,6 @@ object Strings {
     const val Step3 = "3. Рынок"
     const val Step4 = "4. Бизнес-модель"
     const val GetMyStats = "Получить статистику об успехах"
-    const val ChooseIdeaGeneration = "Выбери технику генерации идей"
-    const val Bisociation = "Бисоциации"
-    const val BisociationDescription = "Это описание метода бисоциаций"//TODO: заменить на оксанино
-    const val DelphiBrainstormMethod = "Метод Дельфи/брейншторм"
-    const val DelphiBrainstormMethodDescription = "Это описание метод Дельфи/брейншторм"//TODO: заменить на оксанино
-    const val Scamper = "SCAMPER"
-    const val ScamperDescription = "Это описание метода Scamper"//TODO: заменить на оксанино
-    const val TrendyFriendy = "Trendy Friendy"
-    const val BackToSteps = "Обратно к шагам"
-    const val BackToIdeaGeneration = "Попробовать другие техники"
-
-    val IdeaGenerationWithDescription = mapOf(
-        Bisociation to BisociationDescription,
-        DelphiBrainstormMethod to DelphiBrainstormMethodDescription,
-        Scamper to ScamperDescription
-    )
-
-    const val TrendyFriendyDescription = "Trendy Friendy"//TODO: заменить на оксанино
-    const val TrendyFriendyOpen = "Start"
-    const val IdeasSpreadsheetName = "Идеация"
-    const val IdeasSpreadsheetNumber = "№ п/п"
-    const val IdeasSpreadsheetDescription = "Описание идеи"
-    const val IdeasSpreadsheetTechnical =
-        "Идея технически реализуема (можно найти ресурсы для ее реализации в реальной жизни)"
-    const val IdeasSpreadsheetEconomical = "Идея экономически реализуема (можно найти потребителя и оценить экономику)"
 
     const val UnauthorizedError = "Недостаточно прав для этой команды"
 
@@ -146,6 +133,17 @@ object Strings {
         "Всего участников в системе: $numberOfMembers ${
             pluralize(numberOfMembers.toLong(), "человек", "человека", "человек")
         }, ваше текущее место в рейтинге – $myPosition, накоплено бонусов – $myBonuses"
+
+    fun NewBonusForStage(bonusValue: Long) = "Поздравляю, тебе ${
+        pluralize(bonusValue, "зачислен", "зачислено", "зачислено")
+    } $bonusValue ${
+        pluralize(bonusValue, "бонус", "бонуса", "бонусов")
+    } \uD83C\uDF1F"
+
+    fun NewBonusForStep(bonusValue: Long, step: Step) = "Этап ${step.value} пройден \uD83C\uDFC6\n" +
+            "Твоё вознаграждение за скорость прохождения составляет $bonusValue ${
+                pluralize(bonusValue, "бонус", "бонуса", "бонусов")
+            } \uD83C\uDF1F"
 }
 
 private fun pluralize(quantity: Long, one: String, few: String, many: String): String {

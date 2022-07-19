@@ -7,7 +7,6 @@ import kotlinx.serialization.Serializable
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.steps.entities.Step
 import ru.spbstu.application.telegram.TelegramToken
-import java.io.File
 import java.io.FileInputStream
 
 class Secrets(

@@ -31,3 +31,14 @@ WHERE phoneNumber = :phoneNumber;
 sortByAmountOfCoins:
 SELECT * FROM User
 ORDER BY amountOfCoins DESC;
+
+updateAmountOfCoins:
+UPDATE User
+SET amountOfCoins = :newAmountOfCoins
+WHERE id = :id;
+
+updateAvailableStepsCount:
+UPDATE User
+SET availableStepsCount = :newAvailableStepsCount
+WHERE id = :id;
+

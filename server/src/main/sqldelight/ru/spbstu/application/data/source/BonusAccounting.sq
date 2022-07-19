@@ -1,0 +1,25 @@
+import ru.spbstu.application.auth.entities.User;
+import ru.spbstu.application.steps.entities.BonusType;
+
+CREATE TABLE BonusAccounting (
+    userId INTEGER AS User.Id NOT NULL,
+    bonusType TEXT AS BonusType NOT NULL,
+    FOREIGN KEY (userId) REFERENCES User(id),
+    PRIMARY KEY (userId, bonusType)
+);
+
+add:
+INSERT INTO BonusAccounting(userId, bonusType)
+VALUES (:userId, :bonusType);
+
+get:
+SELECT * FROM BonusAccounting
+WHERE userId = :userId AND bonusType = :bonusType;
+
+getByUserId:
+SELECT * FROM BonusAccounting
+WHERE userId = :userId;
+
+getBonusesByUserId:
+SELECT bonusType FROM BonusAccounting
+WHERE userId = :userId;

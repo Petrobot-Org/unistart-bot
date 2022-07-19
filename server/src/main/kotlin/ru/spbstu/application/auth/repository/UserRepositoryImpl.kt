@@ -47,4 +47,13 @@ class UserRepositoryImpl(private val database: AppDatabase) : UserRepository {
     override fun sortByAmountOfCoins(): List<User> {
         return database.userQueries.sortByAmountOfCoins(mapper).executeAsList()
     }
+
+    override fun setAmountOfCoins(id: User.Id, newAmountOfCoins: Long) {
+        database.userQueries.updateAmountOfCoins(newAmountOfCoins, id)
+    }
+
+    override fun setAvailableStepsCount(id: User.Id, newAvailableStepsCount: Long) {
+        database.userQueries.updateAvailableStepsCount(newAvailableStepsCount, id)
+    }
+
 }
