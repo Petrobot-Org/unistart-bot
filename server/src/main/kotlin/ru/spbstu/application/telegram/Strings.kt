@@ -133,6 +133,9 @@ object Strings {
         "Всего участников в системе: $numberOfMembers ${
             pluralize(numberOfMembers.toLong(), "человек", "человека", "человек")
         }, ваше текущее место в рейтинге – $myPosition, накоплено бонусов – $myBonuses"
+    fun NewBonusForStage(bonusValue: Long)="Поздравляю, тебе зачислен новый бонус в размере $bonusValue монеток \uD83E\uDE99"
+    fun NewBonusForStep(bonusValue: Long, step: Step)="Этап ${step.value} пройден \uD83C\uDFC6\n" +
+            "Твоё вознаграждение за скорость прохождения составляет $bonusValue монеток"
 }
 
 private fun pluralize(quantity: Long, one: String, few: String, many: String): String {

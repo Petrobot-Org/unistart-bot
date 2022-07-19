@@ -103,6 +103,7 @@ suspend fun BehaviourContext.handleIdeaGenerationMethods(message: CommonMessage<
         sendTrendyFriendyApp(message.chat)
     } else {
         checkAndUpdateBonusAccounting(
+            message.chat.id,
             User.Id(message.chat.id.chatId),
             Strings.BonusTypesByString[method]!!,
             Step(1),

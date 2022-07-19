@@ -1,5 +1,6 @@
 package ru.spbstu.application.trendyfriendy
 
+import dev.inmo.tgbotapi.types.toChatId
 import org.koin.core.context.GlobalContext
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.steps.entities.BonusType
@@ -48,6 +49,7 @@ class TrendyFriendyService(
     suspend fun finish(userId: Long) {
         sendTrendyFriendyIdeas(telegramBot.bot, userId, ideas[userId] ?: emptyList())
         checkAndUpdateBonusAccounting(
+            userId.toChatId(),
             User.Id(userId),
             BonusType.TrendyFriendy,
             Step(1),
