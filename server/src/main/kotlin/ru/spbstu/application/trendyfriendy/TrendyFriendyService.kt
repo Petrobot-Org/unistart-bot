@@ -1,18 +1,9 @@
 package ru.spbstu.application.trendyfriendy
 
-import dev.inmo.tgbotapi.types.toChatId
-import org.koin.core.context.GlobalContext
-import ru.spbstu.application.auth.entities.User
-import ru.spbstu.application.steps.entities.BonusType
-import ru.spbstu.application.steps.entities.Step
-import ru.spbstu.application.steps.usecases.CheckAndUpdateBonusAccountingUseCase
 import ru.spbstu.application.telegram.TelegramBot
 import trendyfriendy.Idea
 import trendyfriendy.TrendCard
-import java.time.Instant
 import java.util.concurrent.ConcurrentHashMap
-
-private val checkAndUpdateBonusAccounting: CheckAndUpdateBonusAccountingUseCase by GlobalContext.get().inject()
 
 class TrendyFriendyService(
     private val telegramBot: TelegramBot,
@@ -48,13 +39,6 @@ class TrendyFriendyService(
 
     suspend fun finish(userId: Long) {
         sendTrendyFriendyIdeas(telegramBot.bot, userId, ideas[userId] ?: emptyList())
-        checkAndUpdateBonusAccounting(
-            userId.toChatId(),
-            User.Id(userId),
-            BonusType.TrendyFriendy,
-            Step(1),
-            Instant.now()
-        )
         ideas.remove(userId)
         cards.remove(userId)
     }

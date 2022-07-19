@@ -16,7 +16,6 @@ import org.koin.core.context.GlobalContext
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.repository.UserRepository
 import ru.spbstu.application.steps.entities.Step
-import ru.spbstu.application.steps.usecases.CheckAndUpdateBonusAccountingUseCase
 import ru.spbstu.application.telegram.IdeaGenerationStrings
 import ru.spbstu.application.telegram.Strings
 import ru.spbstu.application.telegram.Strings.MyRanking
@@ -26,7 +25,6 @@ import ru.spbstu.application.trendyfriendy.sendTrendyFriendyApp
 import java.time.Instant
 
 private val userRepository: UserRepository by GlobalContext.get().inject()
-private val checkAndUpdateBonusAccounting: CheckAndUpdateBonusAccountingUseCase by GlobalContext.get().inject()
 private val steps = listOf(Strings.Step1, Strings.Step2, Strings.Step3, Strings.Step4)
 private val ideaGenerationMethods = listOf(
     IdeaGenerationStrings.Bisociation,
@@ -102,12 +100,10 @@ suspend fun BehaviourContext.handleIdeaGenerationMethods(message: CommonMessage<
     if (method == IdeaGenerationStrings.TrendyFriendy) {
         sendTrendyFriendyApp(message.chat)
     } else {
-        checkAndUpdateBonusAccounting(
+        giveAndSendBonus(
             message.chat.id,
-            User.Id(message.chat.id.chatId),
             Strings.BonusTypesByString[method]!!,
-            Step(1),
-            Instant.now()
+            Step(1)
         )
         handleStep1(message)
     }
