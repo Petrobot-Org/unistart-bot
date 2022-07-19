@@ -56,7 +56,7 @@ class CheckAndUpdateBonusAccountingUseCase(
                 durationOfStep < Duration.ofDays(14) -> 3
                 else -> 0
             }
-            userRepository.setAmountOfCoins(userId, user.amountOfCoins + valueOfBonusType)
+            userRepository.setAmountOfCoins(userId, user.amountOfCoins + bonusTypeWithBonusValue[bonusType]!!+valueOfBonusType)
             completedStepRepository.add(step, userId, at)
             userRepository.setAvailableStepsCount(userId, user.availableStepsCount + 1)
         }

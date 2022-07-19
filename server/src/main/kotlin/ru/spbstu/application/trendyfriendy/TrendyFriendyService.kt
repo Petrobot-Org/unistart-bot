@@ -2,10 +2,9 @@ package ru.spbstu.application.trendyfriendy
 
 import org.koin.core.context.GlobalContext
 import ru.spbstu.application.auth.entities.User
+import ru.spbstu.application.steps.entities.BonusType
 import ru.spbstu.application.steps.entities.Step
 import ru.spbstu.application.steps.usecases.CheckAndUpdateBonusAccountingUseCase
-import ru.spbstu.application.telegram.IdeaGenerationStrings
-import ru.spbstu.application.telegram.Strings
 import ru.spbstu.application.telegram.TelegramBot
 import trendyfriendy.Idea
 import trendyfriendy.TrendCard
@@ -50,7 +49,7 @@ class TrendyFriendyService(
         sendTrendyFriendyIdeas(telegramBot.bot, userId, ideas[userId] ?: emptyList())
         checkAndUpdateBonusAccounting(
             User.Id(userId),
-            Strings.BonusTypesByString[IdeaGenerationStrings.TrendyFriendy]!!,
+            BonusType.TrendyFriendy,
             Step(1),
             Instant.now()
         )
