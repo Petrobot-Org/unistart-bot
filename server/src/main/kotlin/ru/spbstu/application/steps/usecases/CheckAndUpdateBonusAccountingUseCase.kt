@@ -1,13 +1,16 @@
 package ru.spbstu.application.steps.usecases
 
+import dev.inmo.tgbotapi.requests.send.SendTextMessage
+import dev.inmo.tgbotapi.types.ChatIdentifier
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.repository.UserRepository
 import ru.spbstu.application.data.DatabaseTransaction
-import ru.spbstu.application.steps.entities.BonusAccounting
 import ru.spbstu.application.steps.entities.BonusType
 import ru.spbstu.application.steps.entities.Step
 import ru.spbstu.application.steps.repository.BonusAccountingRepository
 import ru.spbstu.application.steps.repository.CompletedStepRepository
+import ru.spbstu.application.telegram.Strings.NewBonusForStage
+import ru.spbstu.application.telegram.Strings.NewBonusForStep
 import java.time.Duration
 import java.time.Instant
 
@@ -41,14 +44,10 @@ class CheckAndUpdateBonusAccountingUseCase(
         val user = userRepository.get(userId)
         val stageBonus = bonusTypeWithBonusValue[bonusType]!!
 
-        if (bonusAccountingRepository.get(userId, bonusType) == null)//этап пройден в первый раз
-        {
+        if (bonusAccountingRepository.get(userId, bonusType) == null) {
             userRepository.setAmountOfCoins(userId, user!!.amountOfCoins + stageBonus)
-        if (bonusAccountingRepository.get(userId, bonusType) == null) { // этап пройден в первый раз
-            userRepository.setAmountOfCoins(userId, user!!.amountOfCoins + bonusTypeWithBonusValue[bonusType]!!)
-            bonusAccountingRepository.add(BonusAccounting(userId = userId, bonusType = bonusType))
+            SendTextMessage(chatId, NewBonusForStage(stageBonus))
         }
-        // шаг полностью пройден
         if (bonusAccountingRepository.getBonusesByUsedId(userId).containsAll(stepsWithBonusType[step]!!)) {
             if (completedStepRepository.get(userId, step) != null) {
                 return@transaction
@@ -63,9 +62,8 @@ class CheckAndUpdateBonusAccountingUseCase(
             }
             userRepository.setAmountOfCoins(
                 userId,
-                user.amountOfCoins + bonusTypeWithBonusValue[bonusType]!! + valueOfBonusType
+                user.amountOfCoins + stageBonus + stepBonus
             )
-            userRepository.setAmountOfCoins(userId, user.amountOfCoins + stageBonus + stepBonus)
             completedStepRepository.add(step, userId, at)
             userRepository.setAvailableStepsCount(userId, user.availableStepsCount + 1)
             SendTextMessage(chatId, NewBonusForStep(stepBonus, step))
