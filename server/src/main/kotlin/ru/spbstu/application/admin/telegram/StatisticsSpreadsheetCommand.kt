@@ -8,7 +8,6 @@ import org.koin.core.context.GlobalContext
 import ru.spbstu.application.admin.Xlsx
 import ru.spbstu.application.steps.repository.CompletedStepRepository
 import ru.spbstu.application.telegram.Strings
-import java.time.DateTimeException
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter

@@ -24,7 +24,10 @@ suspend fun BehaviourContext.sendTrendyFriendyApp(chat: Chat) {
         IdeaGenerationStrings.TrendyFriendyStart,
         replyMarkup = inlineKeyboard {
             row {
-                webAppButton(IdeaGenerationStrings.TrendyFriendyOpen, WebAppInfo("${appConfig.publicHostname}/trendy-friendy"))
+                webAppButton(
+                    IdeaGenerationStrings.TrendyFriendyOpen,
+                    WebAppInfo("${appConfig.publicHostname}/trendy-friendy")
+                )
             }
         }
     )
@@ -32,7 +35,11 @@ suspend fun BehaviourContext.sendTrendyFriendyApp(chat: Chat) {
 
 suspend fun sendTrendyFriendyIdeas(bot: TelegramBot, userId: Long, ideas: List<Idea>) {
     val document = createIdeasXlsx(ideas).asMultipartFile(IdeaGenerationStrings.IdeasSpreadsheetName + ".xlsx")
-    bot.sendDocument(userId.toChatId(), document, replyMarkup = flatReplyKeyboard { simpleButton(IdeaGenerationStrings.BackToIdeaGeneration) })
+    bot.sendDocument(
+        userId.toChatId(),
+        document,
+        replyMarkup = flatReplyKeyboard { simpleButton(IdeaGenerationStrings.BackToIdeaGeneration) }
+    )
 }
 
 private fun createIdeasXlsx(ideas: List<Idea>): ByteArray {

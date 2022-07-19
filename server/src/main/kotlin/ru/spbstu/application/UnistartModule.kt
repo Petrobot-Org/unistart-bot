@@ -9,14 +9,8 @@ import ru.spbstu.application.auth.repository.*
 import ru.spbstu.application.auth.usecases.IsSubscribedUseCase
 import ru.spbstu.application.auth.usecases.RegisterUserUseCase
 import ru.spbstu.application.data.*
-import ru.spbstu.application.steps.repository.CompletedStepRepository
-import ru.spbstu.application.steps.repository.CompletedStepRepositoryImpl
-import ru.spbstu.application.steps.repository.StepDurationRepository
-import ru.spbstu.application.steps.repository.StepDurationRepositoryImpl
-import ru.spbstu.application.steps.repository.BonusAccountingRepository
-import ru.spbstu.application.steps.repository.BonusAccountingRepositoryImpl
-import ru.spbstu.application.steps.usecases.GetStepDurationUseCase
-
+import ru.spbstu.application.steps.repository.*
+import ru.spbstu.application.steps.usecases.*
 import ru.spbstu.application.telegram.TelegramBot
 import ru.spbstu.application.trendyfriendy.trendyFriendyModule
 import java.time.ZoneId
@@ -42,5 +36,6 @@ val unistartModule = module(createdAtStart = true) {
     singleOf(::AddPhoneNumbersUseCase)
     singleOf(::RegisterUserUseCase)
     singleOf(::IsSubscribedUseCase)
+    singleOf(::CheckAndUpdateBonusAccountingUseCase)
     singleOf(::TelegramBot)
 }

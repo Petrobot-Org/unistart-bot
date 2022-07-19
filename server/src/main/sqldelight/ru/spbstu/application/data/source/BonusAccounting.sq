@@ -1,6 +1,5 @@
 import ru.spbstu.application.auth.entities.User;
 import ru.spbstu.application.steps.entities.BonusType;
-import ru.spbstu.application.steps.entities.BonusAccounting;
 
 CREATE TABLE BonusAccounting (
     userId INTEGER AS User.Id NOT NULL,

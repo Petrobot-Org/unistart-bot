@@ -30,7 +30,7 @@ class TelegramBot(token: TelegramToken) {
                     onSubscriberCommand("stats", Strings.Help.Stats) { handleStats(it) }
                     onSubscriberText(Strings.Step1, IdeaGenerationStrings.BackToIdeaGeneration) { handleStep1(it) }
                     onSubscriberText(Strings.GetMyStats) { handleStats(it) }
-                    onSubscriberText(  IdeaGenerationStrings.BackToSteps) { handleSteps(it) }
+                    onSubscriberText(IdeaGenerationStrings.BackToSteps) { handleSteps(it) }
                     onSubscriberText(*IdeaGenerationStrings.IdeaGenerationWithDescription.keys.toTypedArray()) { handleIdeaGenerationMethods(it) }
                     adminCommands()
                 }
