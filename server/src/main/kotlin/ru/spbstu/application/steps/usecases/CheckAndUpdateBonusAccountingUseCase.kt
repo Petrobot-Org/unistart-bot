@@ -1,7 +1,5 @@
 package ru.spbstu.application.steps.usecases
 
-import dev.inmo.tgbotapi.requests.send.SendTextMessage
-import dev.inmo.tgbotapi.types.ChatIdentifier
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.repository.UserRepository
 import ru.spbstu.application.data.DatabaseTransaction
@@ -10,32 +8,32 @@ import ru.spbstu.application.steps.entities.BonusType
 import ru.spbstu.application.steps.entities.Step
 import ru.spbstu.application.steps.repository.BonusAccountingRepository
 import ru.spbstu.application.steps.repository.CompletedStepRepository
-import ru.spbstu.application.telegram.Strings.NewBonusForStage
-import ru.spbstu.application.telegram.Strings.NewBonusForStep
 import java.time.Duration
 import java.time.Instant
+
+private val stepsWithBonusType: Map<Step, List<BonusType>> = mapOf(
+    Step(1) to listOf(
+        BonusType.Bisociation,
+        BonusType.DelphiMethod,
+        BonusType.BrainstormMethod,
+        BonusType.Scamper,
+        BonusType.TrendyFriendy
+    )
+)
+
+private val bonusTypeWithBonusValue: Map<BonusType, Long> = mapOf(
+    BonusType.Bisociation to 1L,
+    BonusType.DelphiMethod to 1L,
+    BonusType.BrainstormMethod to 1L,
+    BonusType.Scamper to 1L,
+    BonusType.TrendyFriendy to 5L
+)
 
 class CheckAndUpdateBonusAccountingUseCase(
     private val userRepository: UserRepository,
     private val bonusAccountingRepository: BonusAccountingRepository,
     private val completedStepRepository: CompletedStepRepository,
-    private val transaction: DatabaseTransaction,
-    private val stepsWithBonusType: Map<Step, List<BonusType>> = mapOf(
-        Step(1) to listOf(
-            BonusType.Bisociation,
-            BonusType.DelphiMethod,
-            BonusType.BrainstormMethod,
-            BonusType.Scamper,
-            BonusType.TrendyFriendy
-        )
-    ),
-    private val bonusTypeWithBonusValue: Map<BonusType, Long> = mapOf(
-        BonusType.Bisociation to 1L,
-        BonusType.DelphiMethod to 1L,
-        BonusType.BrainstormMethod to 1L,
-        BonusType.Scamper to 1L,
-        BonusType.TrendyFriendy to 5L
-    )
+    private val transaction: DatabaseTransaction
 ) {
     operator fun invoke(
         chatId: ChatIdentifier, userId: User.Id, bonusType: BonusType, step: Step, at: Instant
@@ -46,13 +44,12 @@ class CheckAndUpdateBonusAccountingUseCase(
         if (bonusAccountingRepository.get(userId, bonusType) == null)//этап пройден в первый раз
         {
             userRepository.setAmountOfCoins(userId, user!!.amountOfCoins + stageBonus)
+        if (bonusAccountingRepository.get(userId, bonusType) == null) { // этап пройден в первый раз
+            userRepository.setAmountOfCoins(userId, user!!.amountOfCoins + bonusTypeWithBonusValue[bonusType]!!)
             bonusAccountingRepository.add(BonusAccounting(userId = userId, bonusType = bonusType))
-            SendTextMessage(chatId, NewBonusForStage(stageBonus))
         }
-        if (bonusAccountingRepository.getBonusesByUsedId(userId)
-                .containsAll(stepsWithBonusType[step]!!)
-        )//шаг полностью пройде
-        {
+        // шаг полностью пройден
+        if (bonusAccountingRepository.getBonusesByUsedId(userId).containsAll(stepsWithBonusType[step]!!)) {
             if (completedStepRepository.get(userId, step) != null) {
                 return@transaction
             }
@@ -64,6 +61,10 @@ class CheckAndUpdateBonusAccountingUseCase(
                 durationOfStep < Duration.ofDays(14) -> 3L
                 else -> 0L
             }
+            userRepository.setAmountOfCoins(
+                userId,
+                user.amountOfCoins + bonusTypeWithBonusValue[bonusType]!! + valueOfBonusType
+            )
             userRepository.setAmountOfCoins(userId, user.amountOfCoins + stageBonus + stepBonus)
             completedStepRepository.add(step, userId, at)
             userRepository.setAvailableStepsCount(userId, user.availableStepsCount + 1)

@@ -15,7 +15,7 @@ object Strings {
     val AvatarByString = Avatars.map { it.value to it.key }.toMap()
 
     const val AvatarsPath = "/static/avatars/"
-    const val StartAvatars = AvatarsPath+"avatars.png"
+    const val StartAvatars = AvatarsPath + "avatars.png"
 
     val Occupations = mapOf(
         Occupation.BachelorYear1 to "Бакалавриат 1 курс",
@@ -30,8 +30,8 @@ object Strings {
     val BonusTypes = mapOf(
         BonusType.Bisociation to IdeaGenerationStrings.Bisociation,
         BonusType.DelphiMethod to IdeaGenerationStrings.DelphiMethod,
-        BonusType.BrainstormMethod to IdeaGenerationStrings.BrainstormMethod ,
-        BonusType.Scamper to IdeaGenerationStrings.Scamper ,
+        BonusType.BrainstormMethod to IdeaGenerationStrings.BrainstormMethod,
+        BonusType.Scamper to IdeaGenerationStrings.Scamper,
         BonusType.TrendyFriendy to IdeaGenerationStrings.TrendyFriendy
     )
     val BonusTypesByString = BonusTypes.map { it.value to it.key }.toMap()

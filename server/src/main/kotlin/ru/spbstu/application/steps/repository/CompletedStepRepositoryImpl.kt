@@ -32,6 +32,6 @@ class CompletedStepRepositoryImpl(private val database: AppDatabase) : Completed
     }
 
     override fun getCompletedStepsByUser(user: User): List<CompletedStep> {
-       return database.completedStepQueries.getByUserId(user.id, mapper).executeAsList()
+        return database.completedStepQueries.getByUserId(user.id, mapper).executeAsList()
     }
 }
