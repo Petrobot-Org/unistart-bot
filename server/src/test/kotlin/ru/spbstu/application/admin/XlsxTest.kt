@@ -27,37 +27,32 @@ internal class XlsxTest {
                             .map { PhoneNumber.valueOf(it) }
                     assertEquals(expected, result.value)
                 }
-                is Xlsx.Result.BadFormat -> {
-                    fail("Bad format in rows ${result.errorRows}")
-                }
+                is Xlsx.Result.BadFormat -> fail("Bad format in rows ${result.errorRows}")
+                is Xlsx.Result.InvalidFile -> fail("Invalid file")
             }
         }
     }
 
     @Test
     fun parseTrends() {
-        val prefix = "/static/trends/"
         val expected = mapOf(
             "Gartner" to listOf(
-                TrendCard("Тренд 1", "Описание", prefix + "pic1.jpeg"),
-                TrendCard("Тренд 2", "Описание", prefix + "pic1.jpeg"),
-                TrendCard("Тренд 3", "Описание", prefix + "pic1.jpeg"),
+                TrendCard("Тренд 1", "Описание", "pic1.jpeg"),
+                TrendCard("Тренд 2", "Описание", "pic1.jpeg"),
+                TrendCard("Тренд 3", "Описание", "pic1.jpeg"),
             ),
             "Skolkovo" to listOf(
-                TrendCard("Тренд 4", "Описание", prefix + "pic1.jpeg"),
-                TrendCard("Тренд 5", "Описание", prefix + "pic1.jpeg"),
-                TrendCard("Тренд 6", "Описание", prefix + "pic1.jpeg"),
-                TrendCard("Тренд 7", "Описание", prefix + "pic1.jpeg"),
+                TrendCard("Тренд 4", "Описание", "pic1.jpeg"),
+                TrendCard("Тренд 5", "Описание", "pic1.jpeg"),
+                TrendCard("Тренд 6", "Описание", "pic1.jpeg"),
+                TrendCard("Тренд 7", "Описание", "pic1.jpeg"),
             )
         )
         File("src/test/trends.xlsx").inputStream().use { inputStream ->
-            when (val result = Xlsx.parseTrends(inputStream, prefix)) {
-                is Xlsx.Result.OK -> {
-                    assertEquals(expected, result.value)
-                }
-                is Xlsx.Result.BadFormat -> {
-                    fail("Bad format in rows ${result.errorRows}")
-                }
+            when (val result = Xlsx.parseTrends(inputStream)) {
+                is Xlsx.Result.OK -> assertEquals(expected, result.value)
+                is Xlsx.Result.BadFormat -> fail("Bad format in rows ${result.errorRows}")
+                is Xlsx.Result.InvalidFile -> fail("Invalid file")
             }
         }
     }

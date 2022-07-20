@@ -82,6 +82,10 @@ private suspend fun BehaviourContext.waitPhoneNumbers(chat: Chat): List<PhoneNum
                 Xlsx.parsePhoneNumbers(inputStream)
             }
             when (result) {
+                is Xlsx.Result.InvalidFile -> {
+                    sendTextMessage(chat, Strings.AdminPanel.InvalidXlsx)
+                    null
+                }
                 is Xlsx.Result.BadFormat -> {
                     sendTextMessage(chat, Strings.AdminPanel.InvalidSpreadsheet(result.errorRows))
                     null
