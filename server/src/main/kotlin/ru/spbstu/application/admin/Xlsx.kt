@@ -56,7 +56,7 @@ object Xlsx {
                         val card = TrendCard(
                             name = row.getCell(1).stringCellValue,
                             description = row.getCell(2).stringCellValue,
-                            url = row.getCell(3).stringCellValue
+                            filename = row.getCell(3).stringCellValue
                         )
                         trendSetName to card
                     } catch (e: Exception) {

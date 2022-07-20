@@ -100,8 +100,14 @@ object Strings {
         }
 
         object UploadTrends {
-            const val RequireDocument = "Загрузите документ .xlsx с трендами в формате категория, название тренда, описание, название картинки"
-            const val RequirePictures = "Загрузите zip-архив с картинками"
+            val RequireDocumentPair = """Загрузите архив:
+                |1. Документ .xlsx с трендами в формате категория, название тренда, описание, имя картинки
+                |2. Zip-архив с картинками""".trimMargin()
+
+            const val NoXlsxInArchive = "В архиве не найден .xlsx файл"
+            const val Success = "База трендов обновлена!"
+
+            fun WriteError(message: String) = "Не удалось записать данные на диск:\n$message"
 
             fun MissingPictures(filenames: Collection<String>) =
                 "В архиве не хватает следующих картинок: ${filenames.joinToString()}. Обновите архив и загрузите ещё раз."

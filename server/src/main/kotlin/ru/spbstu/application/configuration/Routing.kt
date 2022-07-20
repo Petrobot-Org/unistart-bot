@@ -12,6 +12,9 @@ fun Application.configureRouting() {
                 resources("/static")
             }
         }
+        static("/trends") {
+            files("trends")
+        }
         trendyFriendyApi()
     }
 }

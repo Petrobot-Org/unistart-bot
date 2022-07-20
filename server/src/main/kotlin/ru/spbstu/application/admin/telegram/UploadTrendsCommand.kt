@@ -1,60 +1,39 @@
 package ru.spbstu.application.admin.telegram
 
-import dev.inmo.micro_utils.coroutines.firstNotNull
 import dev.inmo.tgbotapi.extensions.api.files.downloadFile
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
-import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.types.chat.Chat
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
-import ru.spbstu.application.admin.Xlsx
-import ru.spbstu.application.admin.Zip
+import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
+import dev.inmo.tgbotapi.types.message.content.DocumentContent
+import org.koin.core.context.GlobalContext
+import ru.spbstu.application.admin.TrendsZip
 import ru.spbstu.application.telegram.Strings
 import ru.spbstu.application.telegram.Strings.AdminPanel.UploadTrends
-import ru.spbstu.application.telegram.waitDocumentFrom
+
+private val trendsZip: TrendsZip by GlobalContext.get().inject()
 
 suspend fun BehaviourContext.uploadTrendsCommand() {
-    onAdminText(Strings.AdminPanel.Menu.UploadTrends) { uploadTrends(it.chat) }
+    onAdminText(Strings.AdminPanel.Menu.UploadTrends) { sendHelpMessage(it.chat) }
+    onAdminDocument(initialFilter = { it.content.media.fileName?.endsWith(".zip", ignoreCase = true) == true }) {
+        onTrendsUploaded(it)
+    }
 }
 
-private suspend fun BehaviourContext.uploadTrends(chat: Chat) {
-    val sets = waitDocumentFrom(chat, SendTextMessage(chat.id, UploadTrends.RequireDocument))
-        .map {
-            val result = downloadFile(it.media).inputStream().use { inputStream ->
-                Xlsx.parseTrends(inputStream)
-            }
-            when (result) {
-                is Xlsx.Result.InvalidFile -> {
-                    sendTextMessage(chat, Strings.AdminPanel.InvalidXlsx)
-                    null
-                }
-                is Xlsx.Result.BadFormat -> {
-                    sendTextMessage(chat, Strings.AdminPanel.InvalidSpreadsheet(result.errorRows))
-                    null
-                }
-                is Xlsx.Result.OK -> result.value
-            }
-        }
-        .firstNotNull()
+private suspend fun BehaviourContext.sendHelpMessage(chat: Chat) {
+    sendTextMessage(chat, UploadTrends.RequireDocumentPair)
+}
 
-    val zippedPictures = waitDocumentFrom(chat, SendTextMessage(chat.id, UploadTrends.RequirePictures))
-        .map { downloadFile(it.media) }
-        .first { file ->
-            val filenames = Zip.filenames(file.inputStream()) ?: run {
-                sendTextMessage(chat, Strings.AdminPanel.InvalidZip)
-                return@first false
-            }
-            val expectedFilenames = sets.values.flatten().map { it.url }
-            val missingFilenames = expectedFilenames.toSet() - filenames.toSet()
-            if (missingFilenames.isNotEmpty()) {
-                sendTextMessage(chat, UploadTrends.MissingPictures(missingFilenames))
-                return@first false
-            }
-            true
-        }
-
-    Zip.extract(zippedPictures.inputStream(), "trends/")
-
-    sendTextMessage(chat, sets.toString())
+private suspend fun BehaviourContext.onTrendsUploaded(message: CommonMessage<DocumentContent>) {
+    val file = downloadFile(message.content.media)
+    val text = when (val result = trendsZip.apply(file)) {
+        TrendsZip.Result.InvalidZip -> Strings.AdminPanel.InvalidZip
+        TrendsZip.Result.NoXlsx -> UploadTrends.NoXlsxInArchive
+        TrendsZip.Result.InvalidXlsx -> Strings.AdminPanel.InvalidXlsx
+        is TrendsZip.Result.WriteError -> UploadTrends.WriteError(result.e.message.toString())
+        is TrendsZip.Result.BadFormat -> Strings.AdminPanel.InvalidSpreadsheet(result.errorRows)
+        is TrendsZip.Result.MissingPictures -> UploadTrends.MissingPictures(result.filenames)
+        TrendsZip.Result.OK -> UploadTrends.Success
+    }
+    sendTextMessage(message.chat, text)
 }

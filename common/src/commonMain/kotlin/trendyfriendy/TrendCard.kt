@@ -6,5 +6,7 @@ import kotlinx.serialization.Serializable
 data class TrendCard(
     val name: String,
     val description: String,
-    val url: String
+    val filename: String
 )
+
+val TrendCard.url get() = "/trends/$filename"

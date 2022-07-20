@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import org.w3c.dom.Image
 import trendyfriendy.Idea
 import trendyfriendy.TrendCard
+import trendyfriendy.url
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
