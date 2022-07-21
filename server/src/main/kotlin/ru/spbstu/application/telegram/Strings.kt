@@ -100,9 +100,9 @@ object Strings {
         }
 
         object UploadTrends {
-            val RequireDocumentPair = """Загрузите архив:
-                |1. Документ .xlsx с трендами в формате категория, название тренда, описание, имя картинки
-                |2. Zip-архив с картинками""".trimMargin()
+            val RequireDocumentPair = """Загрузите zip-архив с таким содержанием:
+                |1. Документ .xlsx с трендами в формате: категория, название тренда, описание, имя картинки
+                |2. Сами картинки""".trimMargin()
 
             const val NoXlsxInArchive = "В архиве не найден .xlsx файл"
             const val Success = "База трендов обновлена!"
