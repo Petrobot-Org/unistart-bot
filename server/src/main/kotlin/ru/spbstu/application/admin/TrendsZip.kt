@@ -3,6 +3,7 @@ package ru.spbstu.application.admin
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.encodeToStream
 import ru.spbstu.application.trendyfriendy.TrendyFriendyConfig
+import trendyfriendy.TrendCard
 import java.io.FileOutputStream
 
 class TrendsZip(
@@ -33,14 +34,22 @@ class TrendsZip(
             return Result.MissingPictures(missingFilenames)
         }
         return try {
-            Zip.extractFlat(archive.inputStream(), "trends/") { it in expectedFilenames }
-            FileOutputStream(trendyFriendyConfigLoader.configPath, false).use {
-                Yaml.default.encodeToStream(TrendyFriendyConfig(sets = trendCardSets), it)
-            }
-            trendyFriendyConfigLoader.reload()
+            write(archive, expectedFilenames, trendCardSets)
             Result.OK
         } catch (e: Exception) {
             Result.WriteError(e)
         }
+    }
+
+    private fun write(
+        archive: ByteArray,
+        expectedFilenames: Set<String>,
+        trendCardSets: Map<String, List<TrendCard>>
+    ) {
+        Zip.extractFlat(archive.inputStream(), "trends/") { it in expectedFilenames }
+        FileOutputStream(trendyFriendyConfigLoader.configPath, false).use {
+            Yaml.default.encodeToStream(TrendyFriendyConfig(sets = trendCardSets), it)
+        }
+        trendyFriendyConfigLoader.reload()
     }
 }
