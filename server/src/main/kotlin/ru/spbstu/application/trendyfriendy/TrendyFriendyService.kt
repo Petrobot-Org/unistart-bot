@@ -5,12 +5,15 @@ import trendyfriendy.Idea
 import trendyfriendy.TrendCard
 import java.util.concurrent.ConcurrentHashMap
 
+class ConfigNotLoaded : Exception("Trendy Friendy config not loaded")
+
 class TrendyFriendyService(
     private val telegramBot: TelegramBot,
-    private val config: TrendyFriendyConfig
+    private val configLoader: HotReloader
 ) {
     private val ideas = ConcurrentHashMap<Long, List<Idea>>()
     private val cards = ConcurrentHashMap<Long, List<TrendCard>>()
+    private val config get() = configLoader.config ?: throw ConfigNotLoaded()
 
     fun addIdea(userId: Long, idea: Idea): Int {
         val newIdeas = (ideas[userId] ?: listOf()) + idea

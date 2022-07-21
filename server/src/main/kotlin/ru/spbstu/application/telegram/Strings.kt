@@ -4,6 +4,7 @@ import ru.spbstu.application.auth.entities.Avatar
 import ru.spbstu.application.auth.entities.Occupation
 import ru.spbstu.application.steps.entities.BonusType
 import ru.spbstu.application.steps.entities.Step
+import kotlin.math.min
 
 object Strings {
     val Avatars = mapOf(
@@ -86,10 +87,35 @@ object Strings {
         const val Header = "Панель администратора"
         const val InvalidDurationDays = "Введите число дней"
 
+        const val InvalidXlsx = "Некорректный файл .xlsx. Загрузите другой файл."
+        const val InvalidZip = "Некорректный zip-архив. Загрузите другой файл."
+
+        fun InvalidSpreadsheet(rows: List<Int>) =
+            "Ошибки в таблице в строках ${rows.joinToString()}. Исправьте их и загрузите файл ещё раз."
+
         object Menu {
             const val UploadPhoneNumbers = "Загрузить номера телефонов"
             const val StepDuration = "Длительность шагов"
             const val StatisticsSpreadsheet = "Получить сводку"
+            const val UploadTrends = "Обновить базу трендов"
+        }
+
+        object UploadTrends {
+            val RequireDocumentPair = """Загрузите zip-архив. Он должен содержать:
+                |1. Документ .xlsx с трендами в формате: категория, название тренда, описание, имя картинки
+                |2. Сами картинки""".trimMargin()
+
+            const val NoXlsxInArchive = "В архиве не найден .xlsx файл"
+            const val Success = "База трендов обновлена!"
+
+            fun TooFewTrends(minimum: Int) = "В каждой категории должно быть как минимум $minimum ${
+                pluralize(minimum.toLong(), "тренд", "тренда", "трендов")
+            }"
+
+            fun WriteError(message: String) = "Не удалось записать данные на диск:\n$message"
+
+            fun MissingPictures(filenames: Collection<String>) =
+                "В архиве не хватает следующих картинок: ${filenames.joinToString()}. Обновите архив и загрузите ещё раз."
         }
 
         object StepDuration {
@@ -107,10 +133,7 @@ object Strings {
             const val RequireDocument = "Загрузите документ .xlsx с номерами"
             const val RequireStartDate = "Дата начала подписки для этих номеров (дд.мм.гггг)"
             const val RequireDurationDays = "Продолжительность подписки в днях"
-            const val InvalidDate = "Некорректная дата"
-
-            fun InvalidSpreadsheet(rows: List<Int>) =
-                "Ошибки в таблице в строках ${rows.joinToString()}"
+            const val InvalidDate = "Некорректная дата. Попробуйте ещё раз."
 
             fun Added(count: Long) =
                 "${

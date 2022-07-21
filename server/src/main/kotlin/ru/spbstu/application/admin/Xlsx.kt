@@ -8,6 +8,7 @@ import ru.spbstu.application.auth.entities.PhoneNumber
 import ru.spbstu.application.steps.entities.Step
 import ru.spbstu.application.steps.entities.UserWithCompletedSteps
 import ru.spbstu.application.telegram.Strings
+import trendyfriendy.TrendCard
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.time.temporal.ChronoUnit
@@ -16,26 +17,62 @@ object Xlsx {
     sealed interface Result<T> {
         class OK<T>(val value: T) : Result<T>
         class BadFormat<T>(val errorRows: List<Int>) : Result<T>
+        class InvalidFile<T> : Result<T>
     }
 
     fun parsePhoneNumbers(inputStream: InputStream): Result<List<PhoneNumber>> {
-        val phoneNumbers = XSSFWorkbook(inputStream).getSheetAt(0).map { row ->
-            try {
-                row.getCell(0).stringCellValue
-            } catch (ignore: IllegalStateException) {
-                String()
-            }
-        }.dropLastWhile { it.isEmpty() }.map { PhoneNumber.valueOf(it.removePrefix("+")) }
-        return if (!phoneNumbers.contains(null)) {
-            Result.OK(phoneNumbers.filterNotNull())
-        } else {
-            Result.BadFormat(phoneNumbers.mapIndexedNotNull { index, phoneNumber ->
-                if (phoneNumber == null) {
-                    index
-                } else {
-                    null
+        try {
+            val phoneNumbers = XSSFWorkbook(inputStream).use { workbook ->
+                workbook.getSheetAt(0).map { row ->
+                    try {
+                        row.getCell(0).stringCellValue
+                    } catch (ignore: IllegalStateException) {
+                        String()
+                    }
                 }
-            })
+            }.dropLastWhile { it.isEmpty() }.map { PhoneNumber.valueOf(it.removePrefix("+")) }
+            return if (!phoneNumbers.contains(null)) {
+                Result.OK(phoneNumbers.filterNotNull())
+            } else {
+                Result.BadFormat(phoneNumbers.mapIndexedNotNull { index, phoneNumber ->
+                    if (phoneNumber == null) {
+                        index
+                    } else {
+                        null
+                    }
+                })
+            }
+        } catch (e: Exception) {
+            return Result.InvalidFile()
+        }
+    }
+
+    fun parseTrends(inputStream: InputStream): Result<Map<String, List<TrendCard>>> {
+        try {
+            val cards = XSSFWorkbook(inputStream).use { workbook ->
+                workbook.getSheetAt(0).map { row ->
+                    try {
+                        val trendSetName = row.getCell(0).stringCellValue
+                        val card = TrendCard(
+                            name = row.getCell(1).stringCellValue,
+                            description = row.getCell(2).stringCellValue,
+                            filename = row.getCell(3).stringCellValue
+                        )
+                        trendSetName to card
+                    } catch (e: Exception) {
+                        null
+                    }
+                }
+            }
+            if (cards.contains(null)) {
+                return Result.BadFormat(cards.mapIndexedNotNull { index, value -> if (value == null) index else null })
+            }
+            val sets = cards
+                .filterNotNull()
+                .groupBy(keySelector = { it.first }, valueTransform = { it.second })
+            return Result.OK(sets)
+        } catch (e: Exception) {
+            return Result.InvalidFile()
         }
     }
 

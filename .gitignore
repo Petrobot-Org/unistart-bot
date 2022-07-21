@@ -40,3 +40,5 @@ kotlin-ide/
 /server/main.sqlite
 /server/application.yaml
 /server/src/test/stats.xlsx
+/server/trends.yaml
+/server/trends/

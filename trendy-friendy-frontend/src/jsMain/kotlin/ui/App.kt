@@ -13,6 +13,7 @@ import org.jetbrains.compose.web.attributes.placeholder
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import trendyfriendy.TrendCard
+import trendyfriendy.url
 
 @Composable
 fun App(screenModel: ScreenModel) {

@@ -15,6 +15,7 @@ suspend fun BehaviourContext.adminCommands() {
     uploadPhoneNumbersCommand()
     stepDurationCommand()
     statisticsSpreadsheetCommand()
+    uploadTrendsCommand()
 }
 
 private suspend fun BehaviourContext.handleAdmin(chat: Chat) {
@@ -32,6 +33,9 @@ private suspend fun BehaviourContext.handleAdmin(chat: Chat) {
             }
             row {
                 simpleButton(Strings.AdminPanel.Menu.StatisticsSpreadsheet)
+            }
+            row {
+                simpleButton(Strings.AdminPanel.Menu.UploadTrends)
             }
         }
     )

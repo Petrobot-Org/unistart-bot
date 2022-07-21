@@ -7,17 +7,20 @@ import dev.inmo.tgbotapi.extensions.behaviour_builder.CustomBehaviourContextAndT
 import dev.inmo.tgbotapi.extensions.behaviour_builder.filters.CallbackQueryFilterByUser
 import dev.inmo.tgbotapi.extensions.behaviour_builder.filters.CommonMessageFilterExcludeMediaGroups
 import dev.inmo.tgbotapi.extensions.behaviour_builder.filters.MessageFilterByChat
-import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.CommonMessageFilter
-import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
-import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onDataCallbackQuery
-import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onText
+import dev.inmo.tgbotapi.extensions.behaviour_builder.filters.MessagesFilterByChat
+import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.*
 import dev.inmo.tgbotapi.extensions.behaviour_builder.utils.SimpleFilter
+import dev.inmo.tgbotapi.extensions.behaviour_builder.utils.marker_factories.ByChatMediaGroupMarkerFactory
 import dev.inmo.tgbotapi.extensions.behaviour_builder.utils.marker_factories.ByChatMessageMarkerFactory
 import dev.inmo.tgbotapi.extensions.behaviour_builder.utils.marker_factories.ByUserCallbackQueryMarkerFactory
 import dev.inmo.tgbotapi.extensions.behaviour_builder.utils.marker_factories.MarkerFactory
 import dev.inmo.tgbotapi.extensions.behaviour_builder.utils.plus
+import dev.inmo.tgbotapi.extensions.behaviour_builder.utils.times
 import dev.inmo.tgbotapi.types.chat.Chat
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
+import dev.inmo.tgbotapi.types.message.abstracts.MediaGroupMessage
+import dev.inmo.tgbotapi.types.message.content.DocumentContent
+import dev.inmo.tgbotapi.types.message.content.DocumentMediaGroupContent
 import dev.inmo.tgbotapi.types.message.content.TextContent
 import dev.inmo.tgbotapi.types.queries.callback.DataCallbackQuery
 import dev.inmo.tgbotapi.types.update.abstracts.Update
@@ -68,9 +71,7 @@ suspend fun <BC : BehaviourContext> BC.onAdminDataCallbackQuery(
     markerFactory: MarkerFactory<in DataCallbackQuery, Any> = ByUserCallbackQueryMarkerFactory,
     scenarioReceiver: CustomBehaviourContextAndTypeReceiver<BC, Unit, DataCallbackQuery>
 ) = onDataCallbackQuery(
-    initialFilter = initialFilter + {
-        it.data.matches(dataRegex)
-    },
+    initialFilter = initialFilter * { it.data.matches(dataRegex) },
     subcontextUpdatesFilter,
     markerFactory
 ) {
@@ -91,3 +92,15 @@ suspend fun <BC : BehaviourContext> BC.onAdminText(
     requireAdmin(it.chat)
     scenarioReceiver(this, it)
 }
+
+suspend fun <BC : BehaviourContext> BC.onAdminDocument(
+    initialFilter: CommonMessageFilter<DocumentContent>? = null,
+    subcontextUpdatesFilter: CustomBehaviourContextAndTwoTypesReceiver<BC, Boolean, CommonMessage<DocumentContent>, Update> = MessageFilterByChat,
+    markerFactory: MarkerFactory<in CommonMessage<DocumentContent>, Any> = ByChatMessageMarkerFactory,
+    scenarioReceiver: CustomBehaviourContextAndTypeReceiver<BC, Unit, CommonMessage<DocumentContent>>
+) = onDocument(
+    initialFilter * { isAdmin(User.Id(it.chat.id.chatId)) },
+    subcontextUpdatesFilter,
+    markerFactory,
+    scenarioReceiver
+)
