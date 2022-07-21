@@ -3,7 +3,6 @@ package ru.spbstu.application.admin
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.encodeToStream
 import ru.spbstu.application.trendyfriendy.TrendyFriendyConfig
-import trendyfriendy.TrendCard
 import java.io.FileOutputStream
 
 class TrendsZip(
@@ -17,6 +16,7 @@ class TrendsZip(
         data class WriteError(val e: Throwable) : Result
         data class BadFormat(val errorRows: List<Int>) : Result
         data class MissingPictures(val filenames: Collection<String>) : Result
+        data class TooFewTrends(val minimum: Int) : Result
     }
 
     fun apply(archive: ByteArray): Result {
@@ -28,13 +28,17 @@ class TrendsZip(
             is Xlsx.Result.InvalidFile -> return Result.InvalidXlsx
             is Xlsx.Result.OK -> result.value
         }
+        val config = when (val result = TrendyFriendyConfig.of(sets = trendCardSets)) {
+            is TrendyFriendyConfig.Companion.Result.OK -> result.value
+            is TrendyFriendyConfig.Companion.Result.TooFewTrends -> return Result.TooFewTrends(result.minimum)
+        }
         val expectedFilenames = trendCardSets.values.flatten().map { it.filename }.toSet()
         val missingFilenames = expectedFilenames - filenames.toSet()
         if (missingFilenames.isNotEmpty()) {
             return Result.MissingPictures(missingFilenames)
         }
         return try {
-            write(archive, expectedFilenames, trendCardSets)
+            write(archive, expectedFilenames, config)
             Result.OK
         } catch (e: Exception) {
             Result.WriteError(e)
@@ -44,11 +48,11 @@ class TrendsZip(
     private fun write(
         archive: ByteArray,
         expectedFilenames: Set<String>,
-        trendCardSets: Map<String, List<TrendCard>>
+        config: TrendyFriendyConfig
     ) {
         Zip.extractFlat(archive.inputStream(), "trends/") { it in expectedFilenames }
         FileOutputStream(trendyFriendyConfigLoader.configPath, false).use {
-            Yaml.default.encodeToStream(TrendyFriendyConfig(sets = trendCardSets), it)
+            Yaml.default.encodeToStream(config, it)
         }
         trendyFriendyConfigLoader.reload()
     }

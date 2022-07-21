@@ -4,6 +4,7 @@ import ru.spbstu.application.auth.entities.Avatar
 import ru.spbstu.application.auth.entities.Occupation
 import ru.spbstu.application.steps.entities.BonusType
 import ru.spbstu.application.steps.entities.Step
+import kotlin.math.min
 
 object Strings {
     val Avatars = mapOf(
@@ -100,12 +101,16 @@ object Strings {
         }
 
         object UploadTrends {
-            val RequireDocumentPair = """Загрузите zip-архив с таким содержанием:
+            val RequireDocumentPair = """Загрузите zip-архив. Он должен содержать:
                 |1. Документ .xlsx с трендами в формате: категория, название тренда, описание, имя картинки
                 |2. Сами картинки""".trimMargin()
 
             const val NoXlsxInArchive = "В архиве не найден .xlsx файл"
             const val Success = "База трендов обновлена!"
+
+            fun TooFewTrends(minimum: Int) = "В каждой категории должно быть как минимум $minimum ${
+                pluralize(minimum.toLong(), "тренд", "тренда", "трендов")
+            }"
 
             fun WriteError(message: String) = "Не удалось записать данные на диск:\n$message"
 

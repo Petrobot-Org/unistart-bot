@@ -33,6 +33,7 @@ private suspend fun BehaviourContext.onTrendsUploaded(message: CommonMessage<Doc
         is TrendsZip.Result.WriteError -> UploadTrends.WriteError(result.e.message.toString())
         is TrendsZip.Result.BadFormat -> Strings.AdminPanel.InvalidSpreadsheet(result.errorRows)
         is TrendsZip.Result.MissingPictures -> UploadTrends.MissingPictures(result.filenames)
+        is TrendsZip.Result.TooFewTrends -> UploadTrends.TooFewTrends(result.minimum)
         TrendsZip.Result.OK -> UploadTrends.Success
     }
     sendTextMessage(message.chat, text)
