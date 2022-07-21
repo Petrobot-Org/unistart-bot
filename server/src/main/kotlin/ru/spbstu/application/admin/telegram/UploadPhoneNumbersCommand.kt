@@ -7,16 +7,15 @@ import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.types.chat.Chat
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
+import dev.inmo.tgbotapi.types.message.content.DocumentContent
 import dev.inmo.tgbotapi.types.message.content.TextContent
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import org.koin.core.context.GlobalContext
 import ru.spbstu.application.admin.Xlsx
 import ru.spbstu.application.admin.usecases.AddPhoneNumbersUseCase
-import ru.spbstu.application.auth.entities.PhoneNumber
 import ru.spbstu.application.telegram.Strings
 import ru.spbstu.application.telegram.Strings.AdminPanel.UploadPhoneNumbers
-import ru.spbstu.application.telegram.waitDocumentFrom
 import ru.spbstu.application.telegram.waitTextFrom
 import java.time.Duration
 import java.time.Instant
@@ -29,11 +28,26 @@ private val zoneId: ZoneId by GlobalContext.get().inject()
 private val addPhoneNumbers: AddPhoneNumbersUseCase by GlobalContext.get().inject()
 
 suspend fun BehaviourContext.uploadPhoneNumbersCommand() {
-    onAdminText(Strings.AdminPanel.Menu.UploadPhoneNumbers) { uploadPhoneNumbers(it) }
+    onAdminText(Strings.AdminPanel.Menu.UploadPhoneNumbers) { sendHelpMessage(it) }
+    onAdminDocument(initialFilter = { it.content.media.fileName?.endsWith(".xlsx") == true }) { onPhoneNumbersUploaded(it) }
 }
 
-private suspend fun BehaviourContext.uploadPhoneNumbers(message: CommonMessage<TextContent>) {
-    val phoneNumbers = waitPhoneNumbers(message.chat)
+private suspend fun BehaviourContext.sendHelpMessage(message: CommonMessage<TextContent>) {
+    sendTextMessage(message.chat, UploadPhoneNumbers.RequireDocument)
+}
+
+private suspend fun BehaviourContext.onPhoneNumbersUploaded(message: CommonMessage<DocumentContent>) {
+    val phoneNumbers = when (val result = Xlsx.parsePhoneNumbers(downloadFile(message.content.media).inputStream())) {
+        is Xlsx.Result.InvalidFile -> {
+            sendTextMessage(message.chat, Strings.AdminPanel.InvalidXlsx)
+            return
+        }
+        is Xlsx.Result.BadFormat -> {
+            sendTextMessage(message.chat, Strings.AdminPanel.InvalidSpreadsheet(result.errorRows))
+            return
+        }
+        is Xlsx.Result.OK -> result.value
+    }
     val startInstant = waitStartInstant(message.chat)
     val duration = waitDuration(message.chat)
     try {
@@ -72,26 +86,5 @@ private suspend fun BehaviourContext.waitStartInstant(chat: Chat): Instant {
             }
         }
         .onEach { if (it == null) sendTextMessage(chat, UploadPhoneNumbers.InvalidDate) }
-        .firstNotNull()
-}
-
-private suspend fun BehaviourContext.waitPhoneNumbers(chat: Chat): List<PhoneNumber> {
-    return waitDocumentFrom(chat, SendTextMessage(chat.id, UploadPhoneNumbers.RequireDocument))
-        .map {
-            val result = downloadFile(it.media).inputStream().use { inputStream ->
-                Xlsx.parsePhoneNumbers(inputStream)
-            }
-            when (result) {
-                is Xlsx.Result.InvalidFile -> {
-                    sendTextMessage(chat, Strings.AdminPanel.InvalidXlsx)
-                    null
-                }
-                is Xlsx.Result.BadFormat -> {
-                    sendTextMessage(chat, Strings.AdminPanel.InvalidSpreadsheet(result.errorRows))
-                    null
-                }
-                is Xlsx.Result.OK -> result.value
-            }
-        }
         .firstNotNull()
 }

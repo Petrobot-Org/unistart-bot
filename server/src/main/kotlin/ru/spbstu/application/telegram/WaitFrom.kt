@@ -35,10 +35,3 @@ suspend fun BehaviourContext.waitTextFrom(
     initRequest: Request<*>? = null,
     errorFactory: NullableRequestBuilder<*> = { null }
 ) = waitFrom<TextContent>(chat, initRequest, false, errorFactory)
-
-suspend fun BehaviourContext.waitDocumentFrom(
-    chat: Chat,
-    initRequest: Request<*>? = null,
-    errorFactory: NullableRequestBuilder<*> = { null },
-    includeMediaGroups: Boolean = false
-) = waitFrom<DocumentContent>(chat, initRequest, includeMediaGroups, errorFactory)
