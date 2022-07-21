@@ -1,11 +1,8 @@
 package ru.spbstu.application.trendyfriendy
 
-import com.charleskorn.kaml.Yaml
-import com.charleskorn.kaml.decodeFromStream
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import trendyfriendy.TrendCard
-import java.io.FileInputStream
 
 @Serializable
 class TrendyFriendyConfig private constructor(
@@ -31,21 +28,4 @@ class TrendyFriendyConfig private constructor(
         }
     }
 
-    class HotReloader(val configPath: String) {
-        var config = load()
-
-        fun reload() {
-            config = load()
-        }
-
-        private fun load(): TrendyFriendyConfig? {
-            return FileInputStream(configPath).use {
-                try {
-                    Yaml.default.decodeFromStream(it)
-                } catch (e: Exception) {
-                    null
-                }
-            }
-        }
-    }
 }

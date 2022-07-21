@@ -2,11 +2,12 @@ package ru.spbstu.application.admin
 
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.encodeToStream
+import ru.spbstu.application.trendyfriendy.HotReloader
 import ru.spbstu.application.trendyfriendy.TrendyFriendyConfig
 import java.io.FileOutputStream
 
 class TrendsZip(
-    private val trendyFriendyConfigLoader: TrendyFriendyConfig.HotReloader
+    private val trendyFriendyConfigLoader: HotReloader
 ) {
     sealed interface Result {
         object OK : Result
