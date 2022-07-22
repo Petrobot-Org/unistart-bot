@@ -1,12 +1,13 @@
 package ru.spbstu.application.admin.usecases
 
-import ru.spbstu.application.AppConfig
 import ru.spbstu.application.auth.entities.User
+import ru.spbstu.application.auth.repository.AdminRepository
 
 class IsAdminUseCase(
-    private val appConfig: AppConfig
+    private val isRootAdmin: IsRootAdminUseCase,
+    private val adminRepository: AdminRepository
 ) {
     operator fun invoke(userId: User.Id): Boolean {
-        return userId in appConfig.rootAdminUserIds
+        return isRootAdmin(userId) || adminRepository.contains(userId)
     }
 }

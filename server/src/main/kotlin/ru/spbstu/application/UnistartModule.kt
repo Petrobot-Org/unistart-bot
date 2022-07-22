@@ -9,6 +9,7 @@ import ru.spbstu.application.admin.usecases.IsAdminUseCase
 import ru.spbstu.application.auth.repository.*
 import ru.spbstu.application.auth.usecases.IsSubscribedUseCase
 import ru.spbstu.application.auth.usecases.RegisterUserUseCase
+import ru.spbstu.application.admin.usecases.IsRootAdminUseCase
 import ru.spbstu.application.data.*
 import ru.spbstu.application.steps.repository.*
 import ru.spbstu.application.steps.usecases.*
@@ -31,7 +32,9 @@ val unistartModule = module(createdAtStart = true) {
     singleOf(::SubscriptionRepositoryImpl) bind SubscriptionRepository::class
     singleOf(::CompletedStepRepositoryImpl) bind CompletedStepRepository::class
     singleOf(::StartInfoRepositoryImpl) bind StartInfoRepository::class
+    singleOf(::AdminRepositoryImpl) bind AdminRepository::class
     singleOf(::BonusAccountingRepositoryImpl) bind BonusAccountingRepository::class
+    singleOf(::IsRootAdminUseCase)
     singleOf(::IsAdminUseCase)
     singleOf(::GetStepDurationUseCase)
     singleOf(::AddPhoneNumbersUseCase)

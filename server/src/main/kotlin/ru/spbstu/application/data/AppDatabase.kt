@@ -47,6 +47,9 @@ fun createAppDatabase(jdbcString: String): AppDatabase {
             stepAdapter = StepAdapter,
             endTimeAdapter = InstantAdapter
         ),
+        AdminAdapter = Admin.Adapter(
+            idAdapter = UserIdAdapter
+        ),
         BonusAccountingAdapter = BonusAccounting.Adapter(
             userIdAdapter = UserIdAdapter,
             bonusTypeAdapter = EnumColumnAdapter()

@@ -1,5 +1,6 @@
 package ru.spbstu.application.telegram
 
+import dev.inmo.tgbotapi.types.chat.PrivateChat
 import ru.spbstu.application.auth.entities.Avatar
 import ru.spbstu.application.auth.entities.Occupation
 import ru.spbstu.application.steps.entities.BonusType
@@ -97,6 +98,7 @@ object Strings {
             const val UploadPhoneNumbers = "Загрузить номера телефонов"
             const val StepDuration = "Длительность шагов"
             const val StatisticsSpreadsheet = "Получить сводку"
+            const val ListOfAdmins = "Список администраторов"
             const val UploadTrends = "Обновить базу трендов"
         }
 
@@ -141,6 +143,23 @@ object Strings {
                 } $count ${
                     pluralize(count, "номер", "номера", "номеров")
                 }"
+        }
+
+        object ListOfAdmins {
+            const val Yes = "Да"
+            const val No = "Нет"
+            const val Header = "Список администраторов. Нажмите, чтобы удалить."
+            const val AddAdmin = "Добавить"
+            const val SendContact = "Отправьте контакт нового администратора"
+            const val ErrorNoTelegram = "Это пользователь не имеет телеграмма"
+            const val CantDeleteRootAdmin = "Нельзя удалить главного администратора"
+            fun ConfirmationOfDeletion(chat: PrivateChat) = "Вы хотите удалить ${NameOfAdmin(chat)} из администраторов?"
+
+            fun NameOfAdmin(chat: PrivateChat) =
+                "${chat.firstName} ${chat.lastName}"
+
+            fun NameOfRootAdmin(chat: PrivateChat) =
+                "${chat.firstName} ${chat.lastName} (главный)"
         }
     }
 

@@ -6,12 +6,14 @@ import dev.inmo.tgbotapi.requests.abstracts.asMultipartFile
 import dev.inmo.tgbotapi.types.chat.Chat
 import org.koin.core.context.GlobalContext
 import ru.spbstu.application.admin.Xlsx
+import ru.spbstu.application.admin.usecases.IsAdminUseCase
 import ru.spbstu.application.steps.repository.CompletedStepRepository
 import ru.spbstu.application.telegram.Strings
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
+private val isAdmin: IsAdminUseCase by GlobalContext.get().inject()
 private val completedStepRepository: CompletedStepRepository by GlobalContext.get().inject()
 private val zoneId: ZoneId by GlobalContext.get().inject()
 
@@ -21,6 +23,7 @@ suspend fun BehaviourContext.statisticsSpreadsheetCommand() {
 
 private suspend fun BehaviourContext.sendStatisticsSpreadsheet(chat: Chat) {
     val users = completedStepRepository.getUsersWithCompletedSteps()
+        .filterNot { isAdmin(it.user.id) }
     val spreadsheet = Xlsx.createStatisticsSpreadsheet(users)
     val dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE
     val timestamp = dateTimeFormatter.format(Instant.now().atZone(zoneId))

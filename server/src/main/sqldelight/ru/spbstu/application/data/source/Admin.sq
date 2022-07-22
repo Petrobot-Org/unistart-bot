@@ -1,0 +1,20 @@
+import ru.spbstu.application.auth.entities.User;
+
+CREATE TABLE Admin (
+    id INTEGER AS User.Id PRIMARY KEY NOT NULL
+);
+
+add:
+INSERT INTO Admin(id)
+VALUES (:id);
+
+delete:
+DELETE FROM Admin
+WHERE id = :id;
+
+contains:
+SELECT COUNT(1) FROM Admin
+WHERE id = :id;
+
+findAll:
+SELECT * FROM Admin;

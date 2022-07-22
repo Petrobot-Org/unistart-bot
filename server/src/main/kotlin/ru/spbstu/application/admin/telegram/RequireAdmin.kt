@@ -27,6 +27,7 @@ import dev.inmo.tgbotapi.types.update.abstracts.Update
 import kotlinx.coroutines.Job
 import org.koin.core.context.GlobalContext
 import ru.spbstu.application.admin.usecases.IsAdminUseCase
+import ru.spbstu.application.admin.usecases.IsRootAdminUseCase
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.telegram.HelpContext
 import ru.spbstu.application.telegram.HelpEntry
@@ -34,9 +35,16 @@ import ru.spbstu.application.telegram.Role
 import ru.spbstu.application.telegram.Strings
 
 private val isAdmin: IsAdminUseCase by GlobalContext.get().inject()
+private val isRootAdmin: IsRootAdminUseCase by GlobalContext.get().inject()
 
 suspend fun BehaviourContext.requireAdmin(chat: Chat) {
     require(isAdmin(User.Id(chat.id.chatId))) {
+        sendTextMessage(chat, Strings.UnauthorizedError)
+    }
+}
+
+suspend fun BehaviourContext.requireRootAdmin(chat: Chat) {
+    require(isRootAdmin(User.Id(chat.id.chatId))) {
         sendTextMessage(chat, Strings.UnauthorizedError)
     }
 }
@@ -91,6 +99,21 @@ suspend fun <BC : BehaviourContext> BC.onAdminText(
 ) {
     requireAdmin(it.chat)
     scenarioReceiver(this, it)
+}
+
+suspend fun <BC : BehaviourContext> BC.onRootAdminDataCallbackQuery(
+    dataRegex: Regex,
+    initialFilter: SimpleFilter<DataCallbackQuery>? = null,
+    subcontextUpdatesFilter: CustomBehaviourContextAndTwoTypesReceiver<BC, Boolean, DataCallbackQuery, Update>? = CallbackQueryFilterByUser,
+    markerFactory: MarkerFactory<in DataCallbackQuery, Any> = ByUserCallbackQueryMarkerFactory,
+    scenarioReceiver: CustomBehaviourContextAndTypeReceiver<BC, Unit, DataCallbackQuery>
+) = onDataCallbackQuery(
+    initialFilter = initialFilter * { it.data.matches(dataRegex) },
+    subcontextUpdatesFilter,
+    markerFactory
+) {
+    requireRootAdmin(it.from)
+    scenarioReceiver(it)
 }
 
 suspend fun <BC : BehaviourContext> BC.onAdminDocument(
