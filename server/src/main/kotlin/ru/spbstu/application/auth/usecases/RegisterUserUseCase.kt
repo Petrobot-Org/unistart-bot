@@ -1,5 +1,6 @@
 package ru.spbstu.application.auth.usecases
 
+import ru.spbstu.application.admin.usecases.IsAdminUseCase
 import ru.spbstu.application.auth.entities.Avatar
 import ru.spbstu.application.auth.entities.Occupation
 import ru.spbstu.application.auth.entities.PhoneNumber
@@ -17,7 +18,8 @@ class RegisterUserUseCase(
     private val completedStepRepository: CompletedStepRepository,
     private val transaction: DatabaseTransaction,
     private val subscriptionRepository: SubscriptionRepository,
-    private val startInfoRepository: StartInfoRepository
+    private val startInfoRepository: StartInfoRepository,
+    private val isAdmin: IsAdminUseCase
 ) {
     operator fun invoke(
         userId: User.Id,
@@ -31,7 +33,9 @@ class RegisterUserUseCase(
         (0 until startStep).forEach {
             completedStepRepository.add(Step(it), userId, at)
         }
-        val startInfo = startInfoRepository.getByPhoneNumber(phoneNumber)
-        subscriptionRepository.add(startInfo!!.begin, startInfo.duration, userId)
+        if (!isAdmin(userId)) {
+            val startInfo = startInfoRepository.getByPhoneNumber(phoneNumber)!!
+            subscriptionRepository.add(startInfo.begin, startInfo.duration, userId)
+        }
     }
 }

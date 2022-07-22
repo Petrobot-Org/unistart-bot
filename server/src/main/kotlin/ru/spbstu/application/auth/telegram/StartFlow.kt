@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import org.koin.core.context.GlobalContext
+import ru.spbstu.application.admin.usecases.IsAdminUseCase
 import ru.spbstu.application.auth.entities.PhoneNumber
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.repository.StartInfoRepository
@@ -42,6 +43,7 @@ import ru.spbstu.application.telegram.waitContactFrom
 import ru.spbstu.application.telegram.waitTextFrom
 import java.time.Instant
 
+private val isAdmin: IsAdminUseCase by GlobalContext.get().inject()
 private val userRepository: UserRepository by GlobalContext.get().inject()
 private val startInfoRepository: StartInfoRepository by GlobalContext.get().inject()
 private val registerUser: RegisterUserUseCase by GlobalContext.get().inject()
@@ -63,7 +65,7 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
             )
         )
     ).map { PhoneNumber.valueOf(it.contact.phoneNumber)!! }.first()
-    if (!startInfoRepository.contains(phoneNumber)) {
+    if (!startInfoRepository.contains(phoneNumber) && !isAdmin(User.Id(message.chat.id.chatId))) {
         sendTextMessage(message.chat.id, Strings.NoPhoneInDatabase)
         return
     }
