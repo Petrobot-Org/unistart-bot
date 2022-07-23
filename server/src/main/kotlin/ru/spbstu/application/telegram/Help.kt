@@ -1,5 +1,6 @@
 package ru.spbstu.application.telegram
 
+import dev.inmo.tgbotapi.extensions.api.bot.setMyCommands
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.CustomBehaviourContextAndTwoTypesReceiver
@@ -8,11 +9,14 @@ import dev.inmo.tgbotapi.extensions.behaviour_builder.filters.CommonMessageFilte
 import dev.inmo.tgbotapi.extensions.behaviour_builder.filters.MessageFilterByChat
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.CommonMessageFilter
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
+import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onContentMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.utils.marker_factories.ByChatMessageMarkerFactory
 import dev.inmo.tgbotapi.extensions.behaviour_builder.utils.marker_factories.MarkerFactory
 import dev.inmo.tgbotapi.extensions.utils.formatting.buildEntities
 import dev.inmo.tgbotapi.extensions.utils.formatting.regularln
+import dev.inmo.tgbotapi.types.BotCommand
 import dev.inmo.tgbotapi.types.chat.Chat
+import dev.inmo.tgbotapi.types.commands.BotCommandScope
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
 import dev.inmo.tgbotapi.types.message.content.TextContent
 import dev.inmo.tgbotapi.types.update.abstracts.Update
@@ -44,24 +48,35 @@ suspend fun BehaviourContext.provideHelp(block: suspend context(HelpContext) () 
     val helpEntries = mutableListOf<HelpEntry>()
     block { helpEntries.add(it) }
     onCommand("help") { handleHelp(it.chat, helpEntries) }
+    onContentMessage { setCommands(it.chat, helpEntries) }
+}
+
+private suspend fun BehaviourContext.setCommands(chat: Chat, helpEntries: List<HelpEntry>) {
+    setMyCommands(
+        commands = filterAvailable(chat, helpEntries).map { BotCommand(it.command, it.description) },
+        scope = BotCommandScope.Chat(chat.id)
+    )
 }
 
 private suspend fun BehaviourContext.handleHelp(chat: Chat, helpEntries: List<HelpEntry>) {
-    val userId = User.Id(chat.id.chatId)
-    val now = Instant.now()
     sendTextMessage(chat, buildEntities {
         regularln(Strings.Help.Header)
-        helpEntries.forEach {
-            val isAvailable = when (it.role) {
-                Role.Admin -> isAdmin(userId)
-                Role.Subscriber -> isSubscribed(userId, now)
-                Role.Everyone -> true
-            }
-            if (isAvailable) {
-                regularln("/${it.command} – ${it.description}")
-            }
+        filterAvailable(chat, helpEntries).forEach {
+            regularln("/${it.command} – ${it.description}")
         }
     })
+}
+
+private fun filterAvailable(chat: Chat, helpEntries: List<HelpEntry>): List<HelpEntry> {
+    val userId = User.Id(chat.id.chatId)
+    val now = Instant.now()
+    return helpEntries.filter {
+        when (it.role) {
+            Role.Admin -> isAdmin(userId)
+            Role.Subscriber -> isSubscribed(userId, now)
+            Role.Everyone -> true
+        }
+    }
 }
 
 context(HelpContext)
