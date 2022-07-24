@@ -8,6 +8,7 @@ import ru.spbstu.application.steps.entities.BonusType
 import ru.spbstu.application.steps.entities.Step
 import ru.spbstu.application.steps.repository.BonusAccountingRepository
 import ru.spbstu.application.steps.repository.CompletedStepRepository
+import java.lang.Long.max
 import java.time.Duration
 import java.time.Instant
 
@@ -36,8 +37,8 @@ class CheckAndUpdateBonusAccountingUseCase(
     private val transactionWithResult: DatabaseTransactionWithResult
 ) {
     data class Result(
-        val stageBonus: Long,
-        val stepBonus: Long
+        val stageBonus: Long?,
+        val stepBonus: Long?
     )
 
     operator fun invoke(userId: User.Id, bonusType: BonusType, step: Step, at: Instant) = transactionWithResult {
@@ -47,7 +48,7 @@ class CheckAndUpdateBonusAccountingUseCase(
             bonusAccountingRepository.add(BonusAccounting(userId, bonusType))
             bonusTypeWithBonusValue[bonusType]!!
         } else {
-            0L
+            null
         }
 
         val stepBonus = if (
@@ -55,7 +56,7 @@ class CheckAndUpdateBonusAccountingUseCase(
             completedStepRepository.get(userId, step) == null
         ) {
             completedStepRepository.add(step, userId, at)
-            userRepository.setAvailableStepsCount(userId, user.availableStepsCount + 1)
+            userRepository.setAvailableStepsCount(userId, max(user.availableStepsCount, step.value + 1))
 
             val stepStartedAt = completedStepRepository.getCompletedStepsByUser(user).maxOf { it.endTime }
             val durationOfStep = Duration.between(stepStartedAt, at)
@@ -66,10 +67,10 @@ class CheckAndUpdateBonusAccountingUseCase(
                 else -> 0L
             }
         } else {
-            0L
+            null
         }
 
-        userRepository.setAmountOfCoins(userId, user.amountOfCoins + stageBonus + stepBonus)
+        userRepository.setAmountOfCoins(userId, user.amountOfCoins + (stageBonus ?: 0) + (stepBonus ?: 0))
 
         Result(stageBonus = stageBonus, stepBonus = stepBonus)
     }

@@ -22,7 +22,6 @@ import ru.spbstu.application.telegram.Strings.MyRanking
 import ru.spbstu.application.telegram.sendPhotoResource
 import ru.spbstu.application.telegram.waitTextFrom
 import ru.spbstu.application.trendyfriendy.sendTrendyFriendyApp
-import java.time.Instant
 
 private val userRepository: UserRepository by GlobalContext.get().inject()
 private val steps = listOf(Strings.Step1, Strings.Step2, Strings.Step3, Strings.Step4)
@@ -100,7 +99,7 @@ suspend fun BehaviourContext.handleIdeaGenerationMethods(message: CommonMessage<
     if (method == IdeaGenerationStrings.TrendyFriendy) {
         sendTrendyFriendyApp(message.chat)
     } else {
-        giveAndSendBonus(
+        giveBonusWithMessage(
             message.chat.id,
             Strings.BonusTypesByString[method]!!,
             Step(1)

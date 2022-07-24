@@ -5,7 +5,6 @@ import ru.spbstu.application.auth.entities.Avatar
 import ru.spbstu.application.auth.entities.Occupation
 import ru.spbstu.application.steps.entities.BonusType
 import ru.spbstu.application.steps.entities.Step
-import kotlin.math.min
 
 object Strings {
     val Avatars = mapOf(
@@ -182,10 +181,16 @@ object Strings {
         pluralize(bonusValue, "бонус", "бонуса", "бонусов")
     } \uD83C\uDF1F"
 
-    fun NewBonusForStep(bonusValue: Long, step: Step) = "Этап ${step.value} пройден \uD83C\uDFC6\n" +
-            "Твоё вознаграждение за скорость прохождения составляет $bonusValue ${
-                pluralize(bonusValue, "бонус", "бонуса", "бонусов")
-            } \uD83C\uDF1F"
+    fun NewBonusForStep(bonusValue: Long, step: Step) = buildString {
+        appendLine("Этап ${step.value} пройден \uD83C\uDFC6")
+        if (bonusValue != 0L) {
+            append(
+                "Твоё вознаграждение за скорость прохождения составляет $bonusValue ${
+                    pluralize(bonusValue, "бонус", "бонуса", "бонусов")
+                } \uD83C\uDF1F"
+            )
+        }
+    }
 }
 
 private fun pluralize(quantity: Long, one: String, few: String, many: String): String {
