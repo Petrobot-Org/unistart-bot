@@ -17,4 +17,8 @@ default_step_durations_seconds: # Длительность шагов по ум�
   2: 604800
   3: 604800
   4: 604800
+notifications:
+  next_step:
+    after_days: 10
+    at: 19:00
 ```

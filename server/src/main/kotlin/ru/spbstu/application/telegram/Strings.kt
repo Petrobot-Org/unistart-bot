@@ -168,6 +168,11 @@ object Strings {
     const val StatisticsSpreadsheetExtraPoints = "Бонусы"
     const val StatisticsSpreadsheetOccupation = "Род занятий"
 
+    object Notifications {
+        fun NextStep(nextStep: Step) =
+            "Давно тебя не видно. Пора приниматься за этап ${nextStep.value}!"
+    }
+
     fun StatisticsSpreadsheetStep(step: Step) = "Этап ${step.value}"
 
     fun MyRanking(numberOfMembers: Int, myPosition: Int, myBonuses: Long) =

@@ -27,6 +27,7 @@ dependencies {
     implementation("io.insert-koin:koin-ktor:${Versions.koin}")
     implementation("io.insert-koin:koin-logger-slf4j:${Versions.koin}")
     implementation("org.slf4j:slf4j-simple:${Versions.slf4jSimple}")
+    implementation("io.github.microutils:kotlin-logging-jvm:${Versions.kotlinLogging}")
     implementation("com.squareup.sqldelight:sqlite-driver:${Versions.sqlDelight}")
     implementation("com.squareup.sqldelight:coroutines-extensions-jvm:${Versions.sqlDelight}")
     implementation("com.charleskorn.kaml:kaml:${Versions.kaml}")

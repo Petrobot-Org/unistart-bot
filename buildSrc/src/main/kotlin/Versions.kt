@@ -10,4 +10,5 @@ object Versions {
     const val sqlDelight = "1.5.3"
     const val kaml = "0.46.0"
     const val poi = "5.2.2"
+    const val kotlinLogging = "2.1.20"
 }

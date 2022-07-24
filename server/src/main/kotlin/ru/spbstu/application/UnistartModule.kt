@@ -23,6 +23,7 @@ val unistartModule = module(createdAtStart = true) {
     val appConfig = readAppConfig()
     val secrets = readSecrets()
     single { appConfig }
+    single { appConfig.notifications.nextStep }
     single { secrets.telegramToken }
     single { createAppDatabase(appConfig.jdbcString) }
     single { ZoneId.of(appConfig.timezone) }
@@ -43,6 +44,7 @@ val unistartModule = module(createdAtStart = true) {
     singleOf(::IsSubscribedUseCase)
     singleOf(::CheckAndUpdateBonusAccountingUseCase)
     singleOf(::TrendsZip)
-    singleOf(::Notifier)
+    singleOf(::NextStepNotifier)
+    singleOf(::ConfigureNotifiers)
     singleOf(::TelegramBot)
 }
