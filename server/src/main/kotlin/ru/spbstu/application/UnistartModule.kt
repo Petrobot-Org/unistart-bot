@@ -11,6 +11,7 @@ import ru.spbstu.application.auth.usecases.IsSubscribedUseCase
 import ru.spbstu.application.auth.usecases.RegisterUserUseCase
 import ru.spbstu.application.admin.usecases.IsRootAdminUseCase
 import ru.spbstu.application.data.*
+import ru.spbstu.application.notifications.*
 import ru.spbstu.application.steps.repository.*
 import ru.spbstu.application.steps.usecases.*
 import ru.spbstu.application.telegram.TelegramBot
@@ -42,5 +43,6 @@ val unistartModule = module(createdAtStart = true) {
     singleOf(::IsSubscribedUseCase)
     singleOf(::CheckAndUpdateBonusAccountingUseCase)
     singleOf(::TrendsZip)
+    singleOf(::Notifier)
     singleOf(::TelegramBot)
 }
