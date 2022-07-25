@@ -1,6 +1,5 @@
 package ru.spbstu.application.steps.telegram
 
-import dev.inmo.micro_utils.coroutines.firstNotNull
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.ReplyKeyboardMarkup
@@ -9,9 +8,10 @@ import dev.inmo.tgbotapi.extensions.utils.types.buttons.row
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.simpleButton
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.types.buttons.SimpleKeyboardButton
+import dev.inmo.tgbotapi.types.message.Markdown
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
 import dev.inmo.tgbotapi.types.message.content.TextContent
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.first
 import org.koin.core.context.GlobalContext
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.repository.UserRepository
@@ -22,7 +22,6 @@ import ru.spbstu.application.telegram.Strings.MyRanking
 import ru.spbstu.application.telegram.sendPhotoResource
 import ru.spbstu.application.telegram.waitTextFrom
 import ru.spbstu.application.trendyfriendy.sendTrendyFriendyApp
-import java.time.Instant
 
 private val userRepository: UserRepository by GlobalContext.get().inject()
 private val steps = listOf(Strings.Step1, Strings.Step2, Strings.Step3, Strings.Step4)
@@ -74,29 +73,26 @@ suspend fun BehaviourContext.handleStep1(message: CommonMessage<TextContent>) {
 
 suspend fun BehaviourContext.handleIdeaGenerationMethods(message: CommonMessage<TextContent>) {
     val method = message.content.text
-    waitTextFrom(
+
+    IdeaGenerationStrings.IdeaGenerationWithDescription.getValue(message.content.text).description.map {
+        waitTextFrom(
+            message.chat,
+            SendTextMessage(
+                chatId = message.chat.id,
+                text = it.key,
+                parseMode = Markdown,
+                replyMarkup = ReplyKeyboardMarkup(
+                    buttons = listOf(SimpleKeyboardButton(it.value)).toTypedArray(),
+                    resizeKeyboard = true,
+                    oneTimeKeyboard = true
+                )
+            )
+        ).first { IdeaGenerationStrings.IdeaGenerationWithDescription.getValue(method).description.containsValue(it.text) }
+    }
+    bot.sendPhotoResource(
         message.chat,
-        SendTextMessage(
-            message.chat.id,
-            IdeaGenerationStrings.IdeaGenerationWithDescription.getValue(message.content.text).description,
-            replyMarkup = ReplyKeyboardMarkup(
-                buttons = listOf(SimpleKeyboardButton(IdeaGenerationStrings.HowDoesItWork)).toTypedArray(),
-                resizeKeyboard = true,
-                oneTimeKeyboard = true
-            )
-        )
-    ).onEach {
-        if (it.text == IdeaGenerationStrings.HowDoesItWork) {
-            sendTextMessage(
-                message.chat.id,
-                IdeaGenerationStrings.IdeaGenerationWithDescription.getValue(message.content.text).howToUse
-            )
-            bot.sendPhotoResource(
-                message.chat,
-                IdeaGenerationStrings.IdeaGenerationWithDescription.getValue(message.content.text).pathToIllustration
-            )
-        }
-    }.firstNotNull()
+        IdeaGenerationStrings.IdeaGenerationWithDescription.getValue(method).pathToIllustration
+    )
     if (method == IdeaGenerationStrings.TrendyFriendy) {
         sendTrendyFriendyApp(message.chat)
     } else {

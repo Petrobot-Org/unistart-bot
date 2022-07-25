@@ -1,7 +1,6 @@
 package ru.spbstu.application.steps.entities
 
 class IdeaGenerationInfo(
-    val description: String,
-    val howToUse: String,
+    val description: Map<String, String>,
     val pathToIllustration: String
 )
