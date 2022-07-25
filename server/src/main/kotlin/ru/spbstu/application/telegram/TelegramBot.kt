@@ -33,9 +33,7 @@ class TelegramBot(token: TelegramToken, private val configureNotifiers: Configur
                     onSubscriberText(Strings.GetMyStats) { handleStats(it) }
                     onSubscriberText(IdeaGenerationStrings.BackToSteps) { handleSteps(it) }
                     onSubscriberText(*IdeaGenerationStrings.IdeaGenerationWithDescription.keys.toTypedArray()) {
-                        handleIdeaGenerationMethods(
-                            it
-                        )
+                        handleIdeaGenerationMethods(it)
                     }
                     adminCommands()
                 }
