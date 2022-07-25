@@ -1,9 +1,7 @@
 package ru.spbstu.application.telegram
 
 import dev.inmo.tgbotapi.bot.ktor.telegramBot
-import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviourWithLongPolling
-import dev.inmo.tgbotapi.types.toChatId
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -13,7 +11,6 @@ import ru.spbstu.application.auth.telegram.handleStart
 import ru.spbstu.application.auth.telegram.onSubscriberCommand
 import ru.spbstu.application.auth.telegram.onSubscriberText
 import ru.spbstu.application.notifications.ConfigureNotifiers
-import ru.spbstu.application.notifications.NextStepNotifier
 import ru.spbstu.application.steps.telegram.handleIdeaGenerationMethods
 import ru.spbstu.application.steps.telegram.handleStats
 import ru.spbstu.application.steps.telegram.handleStep1
@@ -35,7 +32,11 @@ class TelegramBot(token: TelegramToken, private val configureNotifiers: Configur
                     onSubscriberText(Strings.Step1, IdeaGenerationStrings.BackToIdeaGeneration) { handleStep1(it) }
                     onSubscriberText(Strings.GetMyStats) { handleStats(it) }
                     onSubscriberText(IdeaGenerationStrings.BackToSteps) { handleSteps(it) }
-                    onSubscriberText(*IdeaGenerationStrings.IdeaGenerationWithDescription.keys.toTypedArray()) { handleIdeaGenerationMethods(it) }
+                    onSubscriberText(*IdeaGenerationStrings.IdeaGenerationWithDescription.keys.toTypedArray()) {
+                        handleIdeaGenerationMethods(
+                            it
+                        )
+                    }
                     adminCommands()
                 }
                 configureNotifiers(scope)

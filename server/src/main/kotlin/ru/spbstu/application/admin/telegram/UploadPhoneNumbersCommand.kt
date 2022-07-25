@@ -29,7 +29,11 @@ private val addPhoneNumbers: AddPhoneNumbersUseCase by GlobalContext.get().injec
 
 suspend fun BehaviourContext.uploadPhoneNumbersCommand() {
     onAdminText(Strings.AdminPanel.Menu.UploadPhoneNumbers) { sendHelpMessage(it) }
-    onAdminDocument(initialFilter = { it.content.media.fileName?.endsWith(".xlsx") == true }) { onPhoneNumbersUploaded(it) }
+    onAdminDocument(initialFilter = { it.content.media.fileName?.endsWith(".xlsx") == true }) {
+        onPhoneNumbersUploaded(
+            it
+        )
+    }
 }
 
 private suspend fun BehaviourContext.sendHelpMessage(message: CommonMessage<TextContent>) {

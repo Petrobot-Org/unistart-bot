@@ -10,9 +10,8 @@ import ru.spbstu.application.notifications.NotificationsConfig
 import ru.spbstu.application.steps.entities.Step
 import ru.spbstu.application.telegram.TelegramToken
 import java.io.FileInputStream
-import kotlin.math.log
 
-private val logger = KotlinLogging.logger {  }
+private val logger = KotlinLogging.logger { }
 
 class Secrets(
     val telegramToken: TelegramToken
