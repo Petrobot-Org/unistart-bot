@@ -228,7 +228,7 @@ object IdeaGenerationStrings {
 
     val IdeaGenerationWithDescription = mapOf(
         Bisociation to IdeaGenerationInfo(
-            mapOf(
+            listOf(
                 Pair(BisociationDescription, HowDoesItWork),
                 Pair(HowDoesBisociationWork, HeadingOfSystematization),
                 Pair(HeadingOfSystematizationInBisociation, GetIllustration)
@@ -236,7 +236,7 @@ object IdeaGenerationStrings {
             BisociationPath
         ),
         DelphiMethod to IdeaGenerationInfo(
-            mapOf(
+            listOf(
                 Pair(DelphiMethodDescription, HowDoesItWork),
                 Pair(HowDoesDelphiMethodWork, GroupsOfPeople),
                 Pair(GroupsOfPeopleDelphiMethod, HowToStart),
@@ -246,7 +246,7 @@ object IdeaGenerationStrings {
             ), DelphiMethodPath
         ),
         BrainstormMethod to IdeaGenerationInfo(
-            mapOf(
+            listOf(
                 Pair(BrainstormMethodDescription, SixRules),
                 Pair(SixRulesOfBrainstorm, TechniquesOfCreativityStimulation),
                 Pair(TechniquesOfCreativityStimulationBrainstorm, HowToFindAGeniusIdea),
@@ -255,13 +255,13 @@ object IdeaGenerationStrings {
             BrainstormMethodPath
         ),
         Scamper to IdeaGenerationInfo(
-            mapOf(
+            listOf(
                 Pair(ScamperDescription, HowDoesItWork),
                 Pair(HowDoesScamperWork, GetIllustration)
             ), ScamperPath
         ),
         TrendyFriendy to IdeaGenerationInfo(
-            mapOf(
+            listOf(
                 Pair(TrendyFriendyDescription, HowDoesItWork),
                 Pair(HowDoesTrendyFriendyWork, GetIllustration)
             ), TrendyFriendyPath

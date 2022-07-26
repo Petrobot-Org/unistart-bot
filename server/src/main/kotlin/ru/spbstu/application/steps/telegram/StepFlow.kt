@@ -74,20 +74,20 @@ suspend fun BehaviourContext.handleStep1(message: CommonMessage<TextContent>) {
 suspend fun BehaviourContext.handleIdeaGenerationMethods(message: CommonMessage<TextContent>) {
     val method = message.content.text
 
-    IdeaGenerationStrings.IdeaGenerationWithDescription.getValue(message.content.text).description.map {
+    IdeaGenerationStrings.IdeaGenerationWithDescription.getValue(message.content.text).description.forEach() {
         waitTextFrom(
             message.chat,
             SendTextMessage(
                 chatId = message.chat.id,
-                text = it.key,
+                text = it.first,
                 parseMode = Markdown,
                 replyMarkup = ReplyKeyboardMarkup(
-                    buttons = listOf(SimpleKeyboardButton(it.value)).toTypedArray(),
+                    buttons = listOf(SimpleKeyboardButton(it.second)).toTypedArray(),
                     resizeKeyboard = true,
                     oneTimeKeyboard = true
                 )
             )
-        ).first { IdeaGenerationStrings.IdeaGenerationWithDescription.getValue(method).description.containsValue(it.text) }
+        ).first { content -> content.text == it.second }
     }
     bot.sendPhotoResource(
         message.chat,
