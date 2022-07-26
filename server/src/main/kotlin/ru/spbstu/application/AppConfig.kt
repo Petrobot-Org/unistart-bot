@@ -19,12 +19,17 @@ class Secrets(
 
 @Serializable
 class AppConfig(
-    val timezone: String,
-    @SerialName("jdbc") val jdbcString: String,
-    @SerialName("public_hostname") val publicHostname: String,
-    @SerialName("root_admin_user_ids") val rootAdminUserIds: Collection<User.Id>,
-    @SerialName("default_step_durations_seconds") val defaultStepDurationsSeconds: Map<Step, Long>,
-    @SerialName("notifications") val notifications: NotificationsConfig
+    val timezone: String = "Europe/Moscow",
+    @SerialName("jdbc") val jdbcString: String = "jdbc:sqlite:main.sqlite",
+    @SerialName("public_hostname") val publicHostname: String = "https://127.0.0.1",
+    @SerialName("root_admin_user_ids") val rootAdminUserIds: Collection<User.Id> = emptyList(),
+    @SerialName("default_step_durations_seconds") val defaultStepDurationsSeconds: Map<Step, Long> = mapOf(
+        Step(1L) to 604_800,
+        Step(2L) to 604_800,
+        Step(3L) to 604_800,
+        Step(4L) to 604_800
+    ),
+    @SerialName("notifications") val notifications: NotificationsConfig = NotificationsConfig()
 )
 
 fun readSecrets(): Secrets {
@@ -34,21 +39,15 @@ fun readSecrets(): Secrets {
 }
 
 fun readAppConfig(): AppConfig {
-    return readConfig("application.yaml")
+    return readConfig("application.yaml") { AppConfig() }
 }
 
-private inline fun <reified T> readConfig(path: String): T {
+private inline fun <reified T> readConfig(path: String, default: () -> T): T {
     return try {
         readCustomConfig(path)
     } catch (e: Exception) {
         logger.warn { "$path is malformed. Loading default config." }
-        readDefaultConfig(path)
-    }
-}
-
-private inline fun <reified T> readDefaultConfig(path: String): T {
-    return AppConfig::class.java.getResourceAsStream("/$path")!!.use { inputStream ->
-        Yaml.default.decodeFromStream(inputStream)
+        default()
     }
 }
 

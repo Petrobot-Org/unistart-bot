@@ -9,13 +9,13 @@ import java.time.Period
 
 @Serializable
 class NotificationsConfig(
-    @SerialName("next_step") val nextStep: NextStep
+    @SerialName("next_step") val nextStep: NextStep = NextStep()
 ) {
     @Serializable
     class NextStep(
         @Serializable(with = PeriodSerializer::class)
-        @SerialName("after_days") val after: Period,
+        @SerialName("after_days") val after: Period = Period.ofDays(10),
         @Serializable(with = LocalTimeSerializer::class)
-        @SerialName("at") val at: LocalTime
+        @SerialName("at") val at: LocalTime = LocalTime.of(19, 0)
     )
 }
