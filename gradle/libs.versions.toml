@@ -48,6 +48,8 @@ poi-ooxml = { module = "org.apache.poi:poi-ooxml", version.ref = "poi" }
 
 junit-jupiter = "org.junit.jupiter:junit-jupiter:5.9.0"
 
+quartz = { module = "org.quartz-scheduler:quartz", version = "2.3.2" }
+
 [plugins]
 sqldelight = { id = "com.squareup.sqldelight", version.ref = "sqldelight" }
 compose = { id = "org.jetbrains.compose", version.ref = "compose" }

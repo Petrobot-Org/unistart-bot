@@ -1,35 +1,54 @@
 package ru.spbstu.application.notifications
 
+import org.koin.core.context.GlobalContext
+import org.quartz.Job
+import org.quartz.impl.StdSchedulerFactory
 import ru.spbstu.application.auth.entities.User
-import ru.spbstu.application.steps.entities.Step
-import ru.spbstu.application.steps.repository.CompletedStepRepository
 import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
 import java.util.*
-import kotlin.concurrent.scheduleAtFixedRate
-import kotlin.time.Duration.Companion.days
+import org.quartz.JobBuilder.*
+import org.quartz.JobExecutionContext
+import org.quartz.TriggerBuilder.*
+import org.quartz.TriggerKey
 
 class NextStepNotifier(
-    private val completedStepRepository: CompletedStepRepository,
-    private val zoneId: ZoneId,
     private val config: NotificationsConfig.NextStep
 ) {
-    fun start(sendMessage: (User.Id, Step) -> Unit) {
-        Timer().scheduleAtFixedRate(
-            time = Date.from(Instant.from(config.at.atDate(LocalDate.now(zoneId)).atZone(zoneId))),
-            period = 1.days.inWholeMilliseconds
-        ) {
-            val now = Instant.now().atZone(zoneId).toLocalDate()
-            val users = completedStepRepository.getUsersWithCompletedSteps()
-            users.forEach { (user, completedSteps) ->
-                val lastCompletedStep = completedSteps.maxBy { it.step.value }
-                val completionDate = lastCompletedStep.endTime.atZone(zoneId).toLocalDate()
-                if (lastCompletedStep.step.value != Step.LastValue && completionDate + config.after == now) {
-                    val nextStep = Step(lastCompletedStep.step.value + 1)
-                    sendMessage(user.id, nextStep)
-                }
-            }
+    private val scheduler = StdSchedulerFactory().scheduler
+
+    fun start(sendMessage: (User.Id) -> Unit) {
+        scheduler.setJobFactory { _, _ -> Job(sendMessage) }
+        scheduler.start()
+    }
+
+    fun shutdown() {
+        scheduler.shutdown()
+    }
+
+    fun scheduleNotification(userId: User.Id) {
+        val name = userId.value.toString()
+        val group = "nextStep"
+        scheduler.unscheduleJob(TriggerKey.triggerKey(name, group))
+
+        val job = newJob(Job::class.java)
+            .withIdentity(name, group)
+            .usingJobData("userId", userId.value)
+            .build()
+
+        val trigger = newTrigger()
+            .withIdentity(name, group)
+            .startAt(Date.from(Instant.now().plusSeconds(5)))
+            .forJob(job)
+            .build()
+
+        scheduler.scheduleJob(job, trigger)
+    }
+
+    class Job(private val sendMessage: (User.Id) -> Unit) : org.quartz.Job {
+        override fun execute(context: JobExecutionContext?) {
+            val data = context!!.jobDetail.jobDataMap
+            val userId = data.getLong("userId")
+            sendMessage(User.Id(userId))
         }
     }
 }

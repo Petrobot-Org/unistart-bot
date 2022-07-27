@@ -12,9 +12,9 @@ class ConfigureNotifiers(
 ) {
     context(TelegramBot)
     operator fun invoke(scope: CoroutineScope) {
-        nextStepNotifier.start { userId, nextStep ->
+        nextStepNotifier.start { userId ->
             scope.launch {
-                sendTextMessage(userId.value.toChatId(), Strings.Notifications.NextStep(nextStep))
+                sendTextMessage(userId.value.toChatId(), "Strings.Notifications.NextStep(nextStep)")
             }
         }
     }

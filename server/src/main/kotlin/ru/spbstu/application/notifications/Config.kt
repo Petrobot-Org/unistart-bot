@@ -2,10 +2,8 @@ package ru.spbstu.application.notifications
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import ru.spbstu.application.serializers.LocalTimeSerializer
-import ru.spbstu.application.serializers.PeriodSerializer
-import java.time.LocalTime
-import java.time.Period
+import ru.spbstu.application.serializers.DurationSerializer
+import java.time.Duration
 
 @Serializable
 class NotificationsConfig(
@@ -13,9 +11,7 @@ class NotificationsConfig(
 ) {
     @Serializable
     class NextStep(
-        @Serializable(with = PeriodSerializer::class)
-        @SerialName("after_days") val after: Period = Period.ofDays(10),
-        @Serializable(with = LocalTimeSerializer::class)
-        @SerialName("at") val at: LocalTime = LocalTime.of(19, 0)
+        @Serializable(with = DurationSerializer::class)
+        @SerialName("before_seconds") val before: Duration = Duration.ofDays(1)
     )
 }

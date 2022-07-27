@@ -22,6 +22,7 @@ dependencies {
     implementation(libs.sqldelight.sqlite)
     implementation(libs.kaml)
     implementation(libs.bundles.poi)
+    implementation(libs.quartz)
     testImplementation(libs.junit.jupiter)
 }
 
