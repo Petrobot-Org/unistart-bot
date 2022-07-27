@@ -1,8 +1,8 @@
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 
 plugins {
-    kotlin("multiplatform")
-    id("org.jetbrains.compose") version Versions.compose
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.compose)
 }
 
 group = "ru.spbstu"
@@ -26,11 +26,8 @@ kotlin {
         val jsMain by getting {
             dependencies {
                 implementation(project(":common"))
-                implementation("io.ktor:ktor-client-core:${Versions.ktor}")
-                implementation("io.ktor:ktor-client-content-negotiation:${Versions.ktor}")
-                implementation("io.ktor:ktor-serialization-kotlinx-json:${Versions.ktor}")
-                implementation("io.ktor:ktor-client-auth:${Versions.ktor}")
-                implementation("dev.inmo:tgbotapi.webapps:${Versions.telegramBotApi}")
+                implementation(libs.bundles.ktor.client)
+                implementation(libs.tgbotapi.webapps)
                 implementation(compose.runtime)
                 implementation(compose.web.core)
             }

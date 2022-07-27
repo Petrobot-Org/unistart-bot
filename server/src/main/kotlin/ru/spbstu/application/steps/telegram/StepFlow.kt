@@ -96,7 +96,7 @@ suspend fun BehaviourContext.handleIdeaGenerationMethods(message: CommonMessage<
     if (method == IdeaGenerationStrings.TrendyFriendy) {
         sendTrendyFriendyApp(message.chat)
     } else {
-        giveAndSendBonus(
+        giveBonusWithMessage(
             message.chat.id,
             Strings.BonusTypesByString[method]!!,
             Step(1)

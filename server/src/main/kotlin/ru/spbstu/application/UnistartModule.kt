@@ -6,13 +6,16 @@ import org.koin.dsl.module
 import ru.spbstu.application.admin.TrendsZip
 import ru.spbstu.application.admin.usecases.AddPhoneNumbersUseCase
 import ru.spbstu.application.admin.usecases.IsAdminUseCase
+import ru.spbstu.application.admin.usecases.IsRootAdminUseCase
 import ru.spbstu.application.auth.repository.*
 import ru.spbstu.application.auth.usecases.IsSubscribedUseCase
 import ru.spbstu.application.auth.usecases.RegisterUserUseCase
-import ru.spbstu.application.admin.usecases.IsRootAdminUseCase
 import ru.spbstu.application.data.*
+import ru.spbstu.application.notifications.ConfigureNotifiers
+import ru.spbstu.application.notifications.NextStepNotifier
 import ru.spbstu.application.steps.repository.*
-import ru.spbstu.application.steps.usecases.*
+import ru.spbstu.application.steps.usecases.CheckAndUpdateBonusAccountingUseCase
+import ru.spbstu.application.steps.usecases.GetStepDurationUseCase
 import ru.spbstu.application.telegram.TelegramBot
 import ru.spbstu.application.trendyfriendy.trendyFriendyModule
 import java.time.ZoneId
@@ -42,5 +45,7 @@ val unistartModule = module(createdAtStart = true) {
     singleOf(::IsSubscribedUseCase)
     singleOf(::CheckAndUpdateBonusAccountingUseCase)
     singleOf(::TrendsZip)
+    singleOf(::NextStepNotifier)
+    singleOf(::ConfigureNotifiers)
     singleOf(::TelegramBot)
 }

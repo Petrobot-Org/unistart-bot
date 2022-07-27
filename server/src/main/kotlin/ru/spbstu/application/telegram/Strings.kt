@@ -5,7 +5,9 @@ import ru.spbstu.application.auth.entities.Avatar
 import ru.spbstu.application.auth.entities.Occupation
 import ru.spbstu.application.steps.entities.BonusType
 import ru.spbstu.application.steps.entities.Step
-import kotlin.math.min
+import java.time.Duration
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 object Strings {
     val Avatars = mapOf(
@@ -171,6 +173,14 @@ object Strings {
     const val StatisticsSpreadsheetExtraPoints = "Бонусы"
     const val StatisticsSpreadsheetOccupation = "Род занятий"
 
+    object Notifications {
+        fun NextStep(duration: Duration, step: Step, bonus: Long) =
+            "Если ты пройдёшь этап ${step.value} в течение ${duration.run {
+                val hours = toHours()
+                "$hours ${pluralize(hours, "часа", "часов", "часов")}"
+            }}, то получишь $bonus ${pluralize(bonus, "бонус", "бонуса", "бонусов")} 🌟"
+    }
+
     fun StatisticsSpreadsheetStep(step: Step) = "Этап ${step.value}"
 
     fun MyRanking(numberOfMembers: Int, myPosition: Int, myBonuses: Long) =
@@ -182,12 +192,18 @@ object Strings {
         pluralize(bonusValue, "зачислен", "зачислено", "зачислено")
     } $bonusValue ${
         pluralize(bonusValue, "бонус", "бонуса", "бонусов")
-    } \uD83C\uDF1F"
+    } 🌟"
 
-    fun NewBonusForStep(bonusValue: Long, step: Step) = "Этап ${step.value} пройден \uD83C\uDFC6\n" +
-            "Твоё вознаграждение за скорость прохождения составляет $bonusValue ${
-                pluralize(bonusValue, "бонус", "бонуса", "бонусов")
-            } \uD83C\uDF1F"
+    fun NewBonusForStep(bonusValue: Long, step: Step) = buildString {
+        appendLine("Этап ${step.value} пройден 🏆")
+        if (bonusValue != 0L) {
+            append(
+                "Твоё вознаграждение за скорость прохождения составляет $bonusValue ${
+                    pluralize(bonusValue, "бонус", "бонуса", "бонусов")
+                } 🌟"
+            )
+        }
+    }
 }
 
 private fun pluralize(quantity: Long, one: String, few: String, many: String): String {

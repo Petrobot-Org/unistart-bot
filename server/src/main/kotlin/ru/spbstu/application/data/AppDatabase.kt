@@ -2,10 +2,13 @@ package ru.spbstu.application.data
 
 import com.squareup.sqldelight.EnumColumnAdapter
 import com.squareup.sqldelight.sqlite.driver.JdbcSqliteDriver
+import mu.KotlinLogging
 import ru.spbstu.application.data.adapters.*
 import ru.spbstu.application.data.source.*
 import java.sql.SQLException
 import java.util.*
+
+private val logger = KotlinLogging.logger { }
 
 fun createAppDatabase(jdbcString: String): AppDatabase {
     val driver = JdbcSqliteDriver(
@@ -15,7 +18,7 @@ fun createAppDatabase(jdbcString: String): AppDatabase {
         try {
             AppDatabase.Schema.create(it)
         } catch (e: SQLException) {
-            e.printStackTrace()
+            logger.info { "Couldn't create schema. Already created?" }
         }
     }
     return AppDatabase(

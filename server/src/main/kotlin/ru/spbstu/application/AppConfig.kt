@@ -4,22 +4,43 @@ import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.decodeFromStream
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import mu.KotlinLogging
 import ru.spbstu.application.auth.entities.User
+import ru.spbstu.application.notifications.NotificationsConfig
 import ru.spbstu.application.steps.entities.Step
 import ru.spbstu.application.telegram.TelegramToken
 import java.io.FileInputStream
+
+private val logger = KotlinLogging.logger { }
 
 class Secrets(
     val telegramToken: TelegramToken
 )
 
 @Serializable
+class DurationBonus(
+    @SerialName("duration_factor") val durationFactor: Double,
+    @SerialName("bonus") val bonus: Long
+)
+
+@Serializable
 class AppConfig(
-    val timezone: String,
-    @SerialName("jdbc") val jdbcString: String,
-    @SerialName("public_hostname") val publicHostname: String,
-    @SerialName("root_admin_user_ids") val rootAdminUserIds: Collection<User.Id>,
-    @SerialName("default_step_durations_seconds") val defaultStepDurationsSeconds: Map<Step, Long>
+    val timezone: String = "Europe/Moscow",
+    @SerialName("jdbc") val jdbcString: String = "jdbc:sqlite:main.sqlite",
+    @SerialName("public_hostname") val publicHostname: String = "https://127.0.0.1",
+    @SerialName("root_admin_user_ids") val rootAdminUserIds: Collection<User.Id> = emptyList(),
+    @SerialName("default_step_durations_seconds") val defaultStepDurationsSeconds: Map<Step, Long> = mapOf(
+        Step(1L) to 604_800,
+        Step(2L) to 604_800,
+        Step(3L) to 604_800,
+        Step(4L) to 604_800
+    ),
+    @SerialName("notifications") val notifications: NotificationsConfig = NotificationsConfig(),
+    @SerialName("duration_to_bonus") val durationToBonus: Collection<DurationBonus> = listOf(
+        DurationBonus(0.5, 8L),
+        DurationBonus(1.0, 5L),
+        DurationBonus(2.0, 3L)
+    )
 )
 
 fun readSecrets(): Secrets {
@@ -29,24 +50,19 @@ fun readSecrets(): Secrets {
 }
 
 fun readAppConfig(): AppConfig {
-    return readConfig("application.yaml")
+    return readConfig("application.yaml") { AppConfig() }
 }
 
-inline fun <reified T> readConfig(path: String): T {
+private inline fun <reified T> readConfig(path: String, default: () -> T): T {
     return try {
         readCustomConfig(path)
     } catch (e: Exception) {
-        readDefaultConfig(path)
+        logger.warn { "$path is malformed. Loading default config." }
+        default()
     }
 }
 
-inline fun <reified T> readDefaultConfig(path: String): T {
-    return AppConfig::class.java.getResourceAsStream("/$path")!!.use { inputStream ->
-        Yaml.default.decodeFromStream(inputStream)
-    }
-}
-
-inline fun <reified T> readCustomConfig(path: String): T {
+private inline fun <reified T> readCustomConfig(path: String): T {
     return FileInputStream(path).use { inputStream ->
         Yaml.default.decodeFromStream(inputStream)
     }

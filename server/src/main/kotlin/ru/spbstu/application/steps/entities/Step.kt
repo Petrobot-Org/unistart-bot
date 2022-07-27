@@ -6,6 +6,10 @@ import kotlinx.serialization.Serializable
 @JvmInline
 value class Step(val value: Long) {
     init {
-        require(value in 0..4)
+        require(value in 0..LastValue)
+    }
+
+    companion object {
+        const val LastValue = 4L
     }
 }

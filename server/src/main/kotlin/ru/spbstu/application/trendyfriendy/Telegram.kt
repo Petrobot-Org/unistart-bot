@@ -14,7 +14,7 @@ import org.koin.core.context.GlobalContext
 import ru.spbstu.application.AppConfig
 import ru.spbstu.application.steps.entities.BonusType
 import ru.spbstu.application.steps.entities.Step
-import ru.spbstu.application.steps.telegram.giveAndSendBonus
+import ru.spbstu.application.steps.telegram.giveBonusWithMessage
 import ru.spbstu.application.telegram.IdeaGenerationStrings
 import trendyfriendy.Idea
 import java.io.ByteArrayOutputStream
@@ -43,7 +43,7 @@ suspend fun sendTrendyFriendyIdeas(bot: TelegramBot, userId: Long, ideas: List<I
         document,
         replyMarkup = flatReplyKeyboard { simpleButton(IdeaGenerationStrings.BackToIdeaGeneration) }
     )
-    bot.giveAndSendBonus(userId.toChatId(), BonusType.TrendyFriendy, Step(1))
+    bot.giveBonusWithMessage(userId.toChatId(), BonusType.TrendyFriendy, Step(1))
 }
 
 private fun createIdeasXlsx(ideas: List<Idea>): ByteArray {

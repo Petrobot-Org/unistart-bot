@@ -77,6 +77,7 @@ object Xlsx {
     }
 
     fun createStatisticsSpreadsheet(info: List<UserWithCompletedSteps>): ByteArray {
+        require(Step.LastValue == 4L)
         val workbook = XSSFWorkbook()
         workbook.createSheet().apply {
             val style = workbook.createCellStyle().apply {

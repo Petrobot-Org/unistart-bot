@@ -66,7 +66,7 @@ private suspend fun BehaviourContext.changeStepDuration(dataCallbackQuery: DataC
 }
 
 private fun stepDurationKeyboard(): InlineKeyboardMarkup {
-    val durations = (1L..4L).map { getStepDuration(Step(it)) }
+    val durations = (1L..Step.LastValue).map { getStepDuration(Step(it)) }
     return inlineKeyboard {
         durations.forEach {
             row {
