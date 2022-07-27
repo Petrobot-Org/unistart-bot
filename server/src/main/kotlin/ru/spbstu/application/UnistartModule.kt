@@ -25,7 +25,6 @@ val unistartModule = module(createdAtStart = true) {
     val appConfig = readAppConfig()
     val secrets = readSecrets()
     single { appConfig }
-    single { appConfig.notifications.nextStep }
     single { secrets.telegramToken }
     single { createAppDatabase(appConfig.jdbcString) }
     single { ZoneId.of(appConfig.timezone) }
