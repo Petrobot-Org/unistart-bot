@@ -5,6 +5,7 @@ import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.types.UserId
 import org.koin.core.context.GlobalContext
 import ru.spbstu.application.auth.entities.User
+import ru.spbstu.application.notifications.NextStepNotifier
 import ru.spbstu.application.steps.entities.BonusType
 import ru.spbstu.application.steps.entities.Step
 import ru.spbstu.application.steps.usecases.CheckAndUpdateBonusAccountingUseCase
@@ -12,6 +13,7 @@ import ru.spbstu.application.telegram.Strings
 import java.time.Instant
 
 private val checkAndUpdateBonusAccounting: CheckAndUpdateBonusAccountingUseCase by GlobalContext.get().inject()
+private val nextStepNotifier: NextStepNotifier by GlobalContext.get().inject()
 
 suspend fun TelegramBot.giveBonusWithMessage(
     userId: UserId,
@@ -24,5 +26,6 @@ suspend fun TelegramBot.giveBonusWithMessage(
     }
     if (result.stepBonus != null) {
         sendTextMessage(userId, Strings.NewBonusForStep(result.stepBonus, step))
+        nextStepNotifier.rescheduleFor(User.Id(userId.chatId))
     }
 }

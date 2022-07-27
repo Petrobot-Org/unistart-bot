@@ -3,6 +3,7 @@ package ru.spbstu.application.steps.usecases
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.repository.UserRepository
 import ru.spbstu.application.data.DatabaseTransactionWithResult
+import ru.spbstu.application.notifications.NextStepNotifier
 import ru.spbstu.application.steps.entities.BonusAccounting
 import ru.spbstu.application.steps.entities.BonusType
 import ru.spbstu.application.steps.entities.Step
@@ -58,7 +59,7 @@ class CheckAndUpdateBonusAccountingUseCase(
             completedStepRepository.add(step, userId, at)
             userRepository.setAvailableStepsCount(userId, max(user.availableStepsCount, step.value + 1))
 
-            val stepStartedAt = completedStepRepository.getCompletedStepsByUser(user).maxOf { it.endTime }
+            val stepStartedAt = completedStepRepository.getByUserId(user.id).maxOf { it.endTime }
             val durationOfStep = Duration.between(stepStartedAt, at)
             when {
                 durationOfStep < Duration.ofHours(72) -> 8L

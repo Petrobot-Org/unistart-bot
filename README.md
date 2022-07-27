@@ -19,6 +19,12 @@ default_step_durations_seconds: # Длительность шагов по ум�
   4: 604800
 notifications:
   next_step:
-    after_days: 10
-    at: 19:00
+    before_seconds: 86400
+duration_to_bonus:
+  - duration_factor: 0.5
+    bonus: 8
+  - duration_factor: 1.0
+    bonus: 5
+  - duration_factor: 2.0
+    bonus: 3
 ```

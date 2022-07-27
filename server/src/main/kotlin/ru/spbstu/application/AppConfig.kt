@@ -18,6 +18,12 @@ class Secrets(
 )
 
 @Serializable
+class DurationBonus(
+    @SerialName("duration_factor") val durationFactor: Double,
+    @SerialName("bonus") val bonus: Long
+)
+
+@Serializable
 class AppConfig(
     val timezone: String = "Europe/Moscow",
     @SerialName("jdbc") val jdbcString: String = "jdbc:sqlite:main.sqlite",
@@ -29,7 +35,12 @@ class AppConfig(
         Step(3L) to 604_800,
         Step(4L) to 604_800
     ),
-    @SerialName("notifications") val notifications: NotificationsConfig = NotificationsConfig()
+    @SerialName("notifications") val notifications: NotificationsConfig = NotificationsConfig(),
+    @SerialName("duration_to_bonus") val durationToBonus: Collection<DurationBonus> = listOf(
+        DurationBonus(0.5, 8L),
+        DurationBonus(1.0, 5L),
+        DurationBonus(2.0, 3L)
+    )
 )
 
 fun readSecrets(): Secrets {
