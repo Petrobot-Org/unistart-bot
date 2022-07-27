@@ -10,6 +10,7 @@ import dev.inmo.tgbotapi.extensions.utils.types.buttons.simpleButton
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.types.buttons.RequestContactKeyboardButton
 import dev.inmo.tgbotapi.types.buttons.SimpleKeyboardButton
+import dev.inmo.tgbotapi.types.chat.Chat
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
 import dev.inmo.tgbotapi.types.message.content.TextContent
 import kotlinx.coroutines.flow.first
@@ -17,11 +18,14 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import org.koin.core.context.GlobalContext
 import ru.spbstu.application.admin.usecases.IsAdminUseCase
+import ru.spbstu.application.auth.entities.Avatar
 import ru.spbstu.application.auth.entities.PhoneNumber
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.repository.StartInfoRepository
 import ru.spbstu.application.auth.repository.UserRepository
+import ru.spbstu.application.auth.usecases.RegisterAdminUserUseCase
 import ru.spbstu.application.auth.usecases.RegisterUserUseCase
+import ru.spbstu.application.notifications.NextStepNotifier
 import ru.spbstu.application.steps.telegram.handleSteps
 import ru.spbstu.application.telegram.Strings
 import ru.spbstu.application.telegram.Strings.AvatarByString
@@ -47,90 +51,61 @@ private val isAdmin: IsAdminUseCase by GlobalContext.get().inject()
 private val userRepository: UserRepository by GlobalContext.get().inject()
 private val startInfoRepository: StartInfoRepository by GlobalContext.get().inject()
 private val registerUser: RegisterUserUseCase by GlobalContext.get().inject()
+private val registerAdminUser: RegisterAdminUserUseCase by GlobalContext.get().inject()
+private val nextStepNotifier: NextStepNotifier by GlobalContext.get().inject()
 
 suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
-    if (userRepository.contains(User.Id(message.chat.id.chatId))) {
+    val userId = User.Id(message.chat.id.chatId)
+
+    if (userRepository.contains(userId)) {
         sendTextMessage(message.chat.id, UserHasAlreadyBeenRegistered)
         handleSteps(message)
         return
     }
-    val phoneNumber = waitContactFrom(
-        message.chat,
-        SendTextMessage(
-            message.chat.id, Strings.WelcomeRequirePhone,
-            replyMarkup = ReplyKeyboardMarkup(
-                RequestContactKeyboardButton(Strings.SendPhoneButton),
-                resizeKeyboard = true,
-                oneTimeKeyboard = true
-            )
-        )
-    ).map { PhoneNumber.valueOf(it.contact.phoneNumber)!! }.first()
-    if (!startInfoRepository.contains(phoneNumber) && !isAdmin(User.Id(message.chat.id.chatId))) {
-        sendTextMessage(message.chat.id, Strings.NoPhoneInDatabase)
-        return
-    }
+    val phoneNumber = waitPhoneNumber(message.chat)
+
     if (userRepository.contains(phoneNumber)) {
         sendTextMessage(message.chat.id, PhoneNumberIsAlreadyInDatabase)
         return
     }
 
-    bot.sendPhotoResource(
-        chat = message.chat,
-        resourcePath = Strings.StartAvatars, Strings.ChooseAvatar,
-        replyMarkup = ReplyKeyboardMarkup(
-            buttons = AvatarByString.keys.map { SimpleKeyboardButton(it) }.toTypedArray(),
-            resizeKeyboard = true,
-            oneTimeKeyboard = true
-        )
-    )
-
-    val avatar = waitTextFrom(
-        message.chat
-    )
-        .map { AvatarByString[it.text] }
-        .onEach { if (it == null) sendTextMessage(message.chat.id, InvalidAvatar) }
-        .firstNotNull()
-
-    val occupation = waitTextFrom(
-        message.chat,
-        SendTextMessage(
-            message.chat.id, Strings.ChooseOccupation,
-            replyMarkup = ReplyKeyboardMarkup(
-                buttons = arrayOf(
-                    SimpleKeyboardButton(OccupationByString.keys.elementAt(6)),
-                    SimpleKeyboardButton(OccupationByString.keys.elementAt(7)),
-                    SimpleKeyboardButton(Student)
-                ),
-                resizeKeyboard = true,
-                oneTimeKeyboard = true
-            )
-        )
-    ).onEach {
-        if (it.text == Student) {
-            sendTextMessage(
-                message.chat.id, Strings.ChooseCourse,
-                replyMarkup = replyKeyboard(
-                    resizeKeyboard = true,
-                    oneTimeKeyboard = true
-                )
-                {
-                    OccupationByString.keys.take(6).chunked(2).forEach {
-                        row {
-                            it.forEach { simpleButton(it) }
-                        }
-                    }
-                }
-            )
-        } else if (it.text !in OccupationByString) {
-            sendTextMessage(message.chat.id, InvalidOccupation)
+    if (isAdmin(userId)) {
+        try {
+            registerAdminUser(userId, phoneNumber, Instant.now())
+        } catch (e: Exception) {
+            sendTextMessage(message.chat, Strings.DatabaseError)
+            throw e
         }
-    }.map { OccupationByString[it.text] }
-        .firstNotNull()
+        handleSteps(message)
+        return
+    }
 
-    val (startLevel, firstStepInfo) = waitTextFrom(
-        message.chat,
+    if (!startInfoRepository.contains(phoneNumber)) {
+        sendTextMessage(message.chat.id, Strings.NoPhoneInDatabase)
+        return
+    }
+
+    val avatar = waitAvatar(message.chat)
+    val occupation = waitOccupation(message.chat)
+    val (startLevel, firstStepInfo) = waitStartLevel(message.chat)
+
+    try {
+        registerUser(userId, phoneNumber, avatar, occupation, startLevel, Instant.now())
+        nextStepNotifier.rescheduleFor(userId)
+    } catch (e: Exception) {
+        sendTextMessage(message.chat, Strings.DatabaseError)
+        throw e
+    }
+
+    sendTextMessage(message.chat.id, firstStepInfo)
+    handleSteps(message)
+}
+
+private suspend fun BehaviourContext.waitStartLevel(chat: Chat) =
+    waitTextFrom(
+        chat,
         SendTextMessage(
-            message.chat.id, HaveIdeaQuestion,
+            chat.id, HaveIdeaQuestion,
             replyMarkup = replyKeyboard(
                 resizeKeyboard = true,
                 oneTimeKeyboard = true
@@ -150,14 +125,69 @@ suspend fun BehaviourContext.handleStart(message: CommonMessage<TextContent>) {
         }
     }.firstNotNull()
 
-    try {
-        registerUser(User.Id(message.chat.id.chatId), phoneNumber, avatar, occupation, startLevel, Instant.now())
-    } catch (e: Exception) {
-        sendTextMessage(message.chat, Strings.DatabaseError)
-        throw e
-    }
+private suspend fun BehaviourContext.waitOccupation(chat: Chat) =
+    waitTextFrom(
+        chat,
+        SendTextMessage(
+            chat.id, Strings.ChooseOccupation,
+            replyMarkup = ReplyKeyboardMarkup(
+                buttons = arrayOf(
+                    SimpleKeyboardButton(OccupationByString.keys.elementAt(6)),
+                    SimpleKeyboardButton(OccupationByString.keys.elementAt(7)),
+                    SimpleKeyboardButton(Student)
+                ),
+                resizeKeyboard = true,
+                oneTimeKeyboard = true
+            )
+        )
+    ).onEach {
+        if (it.text == Student) {
+            sendTextMessage(
+                chat.id, Strings.ChooseCourse,
+                replyMarkup = replyKeyboard(
+                    resizeKeyboard = true,
+                    oneTimeKeyboard = true
+                )
+                {
+                    OccupationByString.keys.take(6).chunked(2).forEach {
+                        row {
+                            it.forEach { simpleButton(it) }
+                        }
+                    }
+                }
+            )
+        } else if (it.text !in OccupationByString) {
+            sendTextMessage(chat.id, InvalidOccupation)
+        }
+    }.map { OccupationByString[it.text] }
+        .firstNotNull()
 
-    sendTextMessage(message.chat.id, firstStepInfo)
+private suspend fun BehaviourContext.waitAvatar(chat: Chat): Avatar {
+    bot.sendPhotoResource(
+        chat = chat,
+        resourcePath = Strings.StartAvatars, Strings.ChooseAvatar,
+        replyMarkup = ReplyKeyboardMarkup(
+            buttons = AvatarByString.keys.map { SimpleKeyboardButton(it) }.toTypedArray(),
+            resizeKeyboard = true,
+            oneTimeKeyboard = true
+        )
+    )
 
-    handleSteps(message)
+    return waitTextFrom(chat)
+        .map { AvatarByString[it.text] }
+        .onEach { if (it == null) sendTextMessage(chat.id, InvalidAvatar) }
+        .firstNotNull()
 }
+
+private suspend fun BehaviourContext.waitPhoneNumber(chat: Chat) =
+    waitContactFrom(
+        chat,
+        SendTextMessage(
+            chat.id, Strings.WelcomeRequirePhone,
+            replyMarkup = ReplyKeyboardMarkup(
+                RequestContactKeyboardButton(Strings.SendPhoneButton),
+                resizeKeyboard = true,
+                oneTimeKeyboard = true
+            )
+        )
+    ).map { PhoneNumber.valueOf(it.contact.phoneNumber)!! }.first()
