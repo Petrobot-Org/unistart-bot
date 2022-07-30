@@ -11,7 +11,6 @@ import ru.spbstu.application.steps.entities.CompletedStep
 import ru.spbstu.application.steps.entities.Step
 import ru.spbstu.application.steps.entities.UserWithCompletedSteps
 import trendyfriendy.TrendCard
-import java.io.File
 import java.io.FileOutputStream
 import java.time.Instant
 
@@ -19,7 +18,7 @@ internal class XlsxTest {
 
     @Test
     fun parsePhoneNumbers() {
-        this::class.java.getResourceAsStream("/phones.xlsx").use { inputStream ->
+        this::class.java.getResourceAsStream("/phones.xlsx")!!.use { inputStream ->
             when (val result = Xlsx.parsePhoneNumbers(inputStream)) {
                 is Xlsx.Result.OK -> {
                     val expected = listOf(
@@ -33,6 +32,15 @@ internal class XlsxTest {
                 is Xlsx.Result.InvalidFile -> fail("Invalid file")
             }
         }
+    }
+
+    @Test
+    fun parseInvalidPhoneNumbers() {
+        val expectedErrorRows = listOf(3, 4, 5)
+        val errorRows = (this::class.java.getResourceAsStream("/invalid_phones.xlsx")!!.use { inputStream ->
+            Xlsx.parsePhoneNumbers(inputStream)
+        } as? Xlsx.Result.BadFormat)?.errorRows
+        assertEquals(expectedErrorRows, errorRows)
     }
 
     @Test
@@ -50,7 +58,7 @@ internal class XlsxTest {
                 TrendCard("Тренд 7", "Описание", "pic1.jpeg"),
             )
         )
-        this::class.java.getResourceAsStream("/trends.xlsx").use { inputStream ->
+        this::class.java.getResourceAsStream("/trends.xlsx")!!.use { inputStream ->
             when (val result = Xlsx.parseTrends(inputStream)) {
                 is Xlsx.Result.OK -> assertEquals(expected, result.value)
                 is Xlsx.Result.BadFormat -> fail("Bad format in rows ${result.errorRows}")

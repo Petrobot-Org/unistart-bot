@@ -1,5 +1,6 @@
 package ru.spbstu.application.admin
 
+import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.HorizontalAlignment
 import org.apache.poi.ss.usermodel.VerticalAlignment
 import org.apache.poi.ss.util.CellRangeAddress
@@ -25,15 +26,15 @@ object Xlsx {
             val phoneNumbers = XSSFWorkbook(inputStream)
                 .use { workbook ->
                     workbook.getSheetAt(0).map { row ->
-                        try {
-                            row.getCell(0).stringCellValue.filterNot { it.isWhitespace() }
-                        } catch (e: Exception) {
-                            row.getCell(0).numericCellValue.toInt().toString()
+                        val cell = row.getCell(0)
+                        when (cell.cellType) {
+                            CellType.STRING -> cell.stringCellValue.filterNot { it.isWhitespace() }.removePrefix("+")
+                            CellType.NUMERIC -> cell.numericCellValue.toInt().toString()
+                            else -> null
                         }
                     }
                 }
-                .dropLastWhile { it.isBlank() }
-                .map { PhoneNumber.valueOf(it.removePrefix("+")) }
+                .map { cellValue -> cellValue?.let { PhoneNumber.valueOf(it) } }
             return if (!phoneNumbers.contains(null)) {
                 Result.OK(phoneNumbers.filterNotNull())
             } else {
