@@ -19,12 +19,14 @@ internal class XlsxTest {
 
     @Test
     fun parsePhoneNumbers() {
-        File("src/test/testPhoneBook.xlsx").inputStream().use { inputStream ->
+        this::class.java.getResourceAsStream("/phones.xlsx").use { inputStream ->
             when (val result = Xlsx.parsePhoneNumbers(inputStream)) {
                 is Xlsx.Result.OK -> {
-                    val expected =
-                        listOf("000", "111", "222", "333", "444", "555", "666", "777", "888", "999", "111")
-                            .map { PhoneNumber.valueOf(it) }
+                    val expected = listOf(
+                        PhoneNumber.valueOf("79000000000"),
+                        PhoneNumber.valueOf("79000000001"),
+                        PhoneNumber.valueOf("79000000002"),
+                    )
                     assertEquals(expected, result.value)
                 }
                 is Xlsx.Result.BadFormat -> fail("Bad format in rows ${result.errorRows}")
@@ -48,7 +50,7 @@ internal class XlsxTest {
                 TrendCard("Тренд 7", "Описание", "pic1.jpeg"),
             )
         )
-        File("src/test/trends.xlsx").inputStream().use { inputStream ->
+        this::class.java.getResourceAsStream("/trends.xlsx").use { inputStream ->
             when (val result = Xlsx.parseTrends(inputStream)) {
                 is Xlsx.Result.OK -> assertEquals(expected, result.value)
                 is Xlsx.Result.BadFormat -> fail("Bad format in rows ${result.errorRows}")

@@ -4,7 +4,7 @@ package ru.spbstu.application.auth.entities
 value class PhoneNumber private constructor(val value: String) {
     companion object {
         fun valueOf(value: String): PhoneNumber? {
-            return if (value.all { it.isDigit() }) {
+            return if (value.matches(Regex("\\d{2,15}"))) {
                 PhoneNumber(value)
             } else {
                 null

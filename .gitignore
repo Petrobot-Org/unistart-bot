@@ -42,3 +42,4 @@ kotlin-ide/
 /server/src/test/stats.xlsx
 /server/trends.yaml
 /server/trends/
+**/~$*

@@ -22,15 +22,18 @@ object Xlsx {
 
     fun parsePhoneNumbers(inputStream: InputStream): Result<List<PhoneNumber>> {
         try {
-            val phoneNumbers = XSSFWorkbook(inputStream).use { workbook ->
-                workbook.getSheetAt(0).map { row ->
-                    try {
-                        row.getCell(0).stringCellValue
-                    } catch (ignore: IllegalStateException) {
-                        String()
+            val phoneNumbers = XSSFWorkbook(inputStream)
+                .use { workbook ->
+                    workbook.getSheetAt(0).map { row ->
+                        try {
+                            row.getCell(0).stringCellValue.filterNot { it.isWhitespace() }
+                        } catch (e: Exception) {
+                            row.getCell(0).numericCellValue.toInt().toString()
+                        }
                     }
                 }
-            }.dropLastWhile { it.isEmpty() }.map { PhoneNumber.valueOf(it.removePrefix("+")) }
+                .dropLastWhile { it.isBlank() }
+                .map { PhoneNumber.valueOf(it.removePrefix("+")) }
             return if (!phoneNumbers.contains(null)) {
                 Result.OK(phoneNumbers.filterNotNull())
             } else {
