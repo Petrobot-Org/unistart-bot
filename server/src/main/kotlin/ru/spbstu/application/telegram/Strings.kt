@@ -6,8 +6,6 @@ import ru.spbstu.application.auth.entities.Occupation
 import ru.spbstu.application.steps.entities.BonusType
 import ru.spbstu.application.steps.entities.Step
 import java.time.Duration
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 
 object Strings {
     val Avatars = mapOf(
@@ -94,7 +92,7 @@ object Strings {
         const val InvalidZip = "Некорректный zip-архив. Загрузите другой файл."
 
         fun InvalidSpreadsheet(rows: List<Int>) =
-            "Ошибки в таблице в строках ${rows.joinToString()}. Исправьте их и загрузите файл ещё раз."
+            "Ошибки в таблице в строках ${rows.map { it + 1 }.joinToString()}. Исправьте их и загрузите файл ещё раз."
 
         object Menu {
             const val UploadPhoneNumbers = "Загрузить номера телефонов"
@@ -175,10 +173,12 @@ object Strings {
 
     object Notifications {
         fun NextStep(duration: Duration, step: Step, bonus: Long) =
-            "Если ты пройдёшь этап ${step.value} в течение ${duration.run {
-                val hours = toHours()
-                "$hours ${pluralize(hours, "часа", "часов", "часов")}"
-            }}, то получишь $bonus ${pluralize(bonus, "бонус", "бонуса", "бонусов")} 🌟"
+            "Если ты пройдёшь этап ${step.value} в течение ${
+                duration.run {
+                    val hours = toHours()
+                    "$hours ${pluralize(hours, "часа", "часов", "часов")}"
+                }
+            }, то получишь $bonus ${pluralize(bonus, "бонус", "бонуса", "бонусов")} 🌟"
     }
 
     fun StatisticsSpreadsheetStep(step: Step) = "Этап ${step.value}"
