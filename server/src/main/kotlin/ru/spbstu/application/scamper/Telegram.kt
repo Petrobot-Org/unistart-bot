@@ -9,6 +9,7 @@ import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitContentMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitDataCallbackQuery
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.*
+import dev.inmo.tgbotapi.extensions.utils.withContent
 import dev.inmo.tgbotapi.requests.abstracts.asMultipartFile
 import dev.inmo.tgbotapi.types.chat.Chat
 import dev.inmo.tgbotapi.types.message.MarkdownParseMode
@@ -19,6 +20,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.spbstu.application.steps.entities.BonusType
@@ -86,10 +88,10 @@ private suspend fun BehaviourContext.waitAnswer(
     onQuestionAnswered: (String) -> BonusType?
 ) = waitContentMessage()
     .filter { it.chat.id == chat.id }
-    .filter { it.content is TextContent }
+    .mapNotNull { it.withContent<TextContent>() }
     .onEach { delete(chat, it.messageId) }
     .collect {
-        val bonusType = onQuestionAnswered((it.content as TextContent).text)
+        val bonusType = onQuestionAnswered(it.content.text)
         if (bonusType != null) {
             giveBonusWithMessage(chat.id, bonusType, Step(1), true)
         }
