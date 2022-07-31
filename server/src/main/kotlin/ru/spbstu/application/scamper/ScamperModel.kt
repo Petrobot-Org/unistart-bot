@@ -16,10 +16,12 @@ class ScamperModel(private val questionnaire: Questionnaire) {
     val actions = _actions.consumeAsFlow()
 
     val state = combine(position, answers, showAllQuestions) { position, answers, showAllQuestions ->
-        val letter = questionnaire.letters.getOrElse(position.letterIndex) { questionnaire.letters.first() }
-        val question = position.questionIndex?.let { letter.questions.getOrNull(it) }
-        if (question == null) {
-            State.LetterDetails(letter, questionnaire.letters, position.letterIndex, showAllQuestions)
+        val letter = position.letterIndex?.let { questionnaire.letters[it] }
+        val question = position.questionIndex?.let { letter?.questions?.getOrNull(it) }
+        if (letter == null) {
+            State.AllLetters(questionnaire.letters)
+        } else if (question == null) {
+            State.LetterDetails(letter, position.letterIndex, showAllQuestions)
         } else {
             State.Question(
                 question = question,
@@ -43,13 +45,15 @@ class ScamperModel(private val questionnaire: Questionnaire) {
     }
 
     fun onQuestionAnswered(text: String): BonusType? {
-        val answer = ScamperAnswer(position.value.letterIndex, position.value.questionIndex ?: return null, text)
+        val letterIndex = position.value.letterIndex ?: return null
+        val questionIndex = position.value.questionIndex ?: return null
+        val answer = ScamperAnswer(letterIndex, questionIndex, text)
         answers.value += answer
-        return questionnaire.letters[position.value.letterIndex].bonusType
+        return questionnaire.letters[letterIndex].bonusType
     }
 
     fun onNextQuestion() {
-        val letter = questionnaire.letters[position.value.letterIndex]
+        val letter = questionnaire.letters[position.value.letterIndex ?: return]
         val nextIndex = position.value.questionIndex?.plus(1) ?: 0
         if (nextIndex in letter.questions.indices) {
             position.value = position.value.copy(questionIndex = nextIndex)
@@ -59,7 +63,7 @@ class ScamperModel(private val questionnaire: Questionnaire) {
     }
 
     fun onNextLetter() {
-        position.value = Position((position.value.letterIndex + 1) % questionnaire.letters.size)
+        position.value = Position((position.value.letterIndex?.plus(1) ?: 0) % questionnaire.letters.size)
     }
 
     suspend fun onEnding() {
@@ -74,10 +78,17 @@ class ScamperModel(private val questionnaire: Questionnaire) {
         showAllQuestions.value = true
     }
 
+    fun onToLetters() {
+        position.value = Position()
+    }
+
     sealed interface State {
+        data class AllLetters(
+            val letters: List<ScamperLetter>
+        ) : State
+
         data class LetterDetails(
             val letter: ScamperLetter,
-            val otherLetters: List<ScamperLetter>,
             val letterIndex: Int,
             val showAllQuestions: Boolean
         ) : State
@@ -93,7 +104,7 @@ class ScamperModel(private val questionnaire: Questionnaire) {
     }
 
     data class Position(
-        val letterIndex: Int = 0,
+        val letterIndex: Int? = null,
         val questionIndex: Int? = null
     )
 }

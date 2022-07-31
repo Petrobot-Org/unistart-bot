@@ -14,7 +14,7 @@ val StandardQuestionnaire = Questionnaire(
         ScamperLetter(
             character = 'C',
             description = IdeaGenerationStrings.CDescription,
-            questions = IdeaGenerationStrings.СQuestions,
+            questions = IdeaGenerationStrings.CQuestions,
             bonusType = BonusType.ScamperC
         ),
         ScamperLetter(
