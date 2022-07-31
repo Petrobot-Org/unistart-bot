@@ -33,11 +33,10 @@ private val bonusTypeWithBonusValue: Map<BonusType, Long> = mapOf(
 )
 
 class CheckAndUpdateBonusAccountingUseCase(
-    private val config: AppConfig,
     private val userRepository: UserRepository,
     private val bonusAccountingRepository: BonusAccountingRepository,
     private val completedStepRepository: CompletedStepRepository,
-    private val getStepDuration: GetStepDurationUseCase,
+    private val calculateDurationBonus: CalculateDurationBonusUseCase,
     private val transactionWithResult: DatabaseTransactionWithResult
 ) {
     data class Result(
@@ -56,19 +55,14 @@ class CheckAndUpdateBonusAccountingUseCase(
         }
 
         val stepBonus = if (
-            bonusAccountingRepository.getBonusesByUsedId(userId).containsAll(stepsWithBonusType[step]!!) &&
+            bonusAccountingRepository.getBonusesByUserId(userId).containsAll(stepsWithBonusType[step]!!) &&
             completedStepRepository.get(userId, step) == null
         ) {
             completedStepRepository.add(step, userId, at)
             userRepository.setAvailableStepsCount(userId, max(user.availableStepsCount, step.value + 1))
 
             val stepStartedAt = completedStepRepository.getByUserId(user.id).maxOf { it.endTime }
-            val actualStepDuration = Duration.between(stepStartedAt, at)
-            val stepDuration = getStepDuration(step).duration
-
-            config.durationToBonus
-                .filter { actualStepDuration < stepDuration * it.durationFactor }
-                .maxOfOrNull { it.bonus } ?: 0L
+            calculateDurationBonus(step, stepStartedAt, at)
         } else {
             null
         }
