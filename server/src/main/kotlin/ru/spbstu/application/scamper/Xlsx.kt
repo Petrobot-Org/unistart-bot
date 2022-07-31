@@ -40,7 +40,7 @@ object Xlsx {
                     }
                 }
             }
-            autoSizeColumn(0)
+            autoSizeColumn(0, true)
             autoSizeColumn(1)
         }
         return ByteArrayOutputStream().apply {
