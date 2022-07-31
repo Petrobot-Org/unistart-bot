@@ -67,7 +67,7 @@ class ScamperModel(private val questionnaire: Questionnaire) {
     }
 
     suspend fun onEnding() {
-        _actions.send(Action.Ended(answers.value))
+        _actions.send(Action.Ended(answers.value, questionnaire))
     }
 
     fun onHideAllQuestions() {
@@ -100,7 +100,7 @@ class ScamperModel(private val questionnaire: Questionnaire) {
     }
 
     sealed interface Action {
-        data class Ended(val answers: List<ScamperAnswer>) : Action
+        data class Ended(val answers: List<ScamperAnswer>, val questionnaire: Questionnaire) : Action
     }
 
     data class Position(
