@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.first
 import org.koin.core.context.GlobalContext
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.repository.UserRepository
+import ru.spbstu.application.scamper.handleScamper
 import ru.spbstu.application.steps.entities.Step
 import ru.spbstu.application.telegram.IdeaGenerationStrings
 import ru.spbstu.application.telegram.Strings
@@ -93,15 +94,21 @@ suspend fun BehaviourContext.handleIdeaGenerationMethods(message: CommonMessage<
         message.chat,
         IdeaGenerationStrings.IdeaGenerationWithDescription.getValue(method).pathToIllustration
     )
-    if (method == IdeaGenerationStrings.TrendyFriendy) {
-        sendTrendyFriendyApp(message.chat)
-    } else {
-        giveBonusWithMessage(
-            message.chat.id,
-            Strings.BonusTypesByString[method]!!,
-            Step(1)
-        )
-        handleStep1(message)
+    when (method) {
+        IdeaGenerationStrings.TrendyFriendy -> {
+            sendTrendyFriendyApp(message.chat)
+        }
+        IdeaGenerationStrings.Scamper -> {
+            handleScamper(message.chat)
+        }
+        else -> {
+            giveBonusWithMessage(
+                message.chat.id,
+                Strings.BonusTypesByString[method]!!,
+                Step(1)
+            )
+            handleStep1(message)
+        }
     }
 }
 

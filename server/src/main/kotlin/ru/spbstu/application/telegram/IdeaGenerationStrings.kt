@@ -1,5 +1,9 @@
 package ru.spbstu.application.telegram
 
+import dev.inmo.tgbotapi.extensions.utils.formatting.boldln
+import dev.inmo.tgbotapi.extensions.utils.formatting.buildEntities
+import dev.inmo.tgbotapi.extensions.utils.formatting.regularln
+import dev.inmo.tgbotapi.types.message.textsources.pre
 import ru.spbstu.application.steps.entities.IdeaGenerationInfo
 
 object IdeaGenerationStrings {
@@ -267,4 +271,24 @@ object IdeaGenerationStrings {
             ), TrendyFriendyPath
         )
     )
+
+    object ScamperUI {
+        const val Initializing = "Начинаем игру…"
+        const val End = "✅ Завершить игру"
+        const val BackToQuestions = "⬆️ Ко всем вопросам"
+        const val NextQuestion = "➡️ Следующий вопрос"
+        const val NextLetter = "⏭️ Следующая буква"
+
+        fun QuestionAsked(question: String, previousAnswers: List<String>) = buildEntities {
+            boldln("Вопрос:")
+            regularln(question)
+            regularln("")
+            if (previousAnswers.isNotEmpty()) {
+                boldln("Твои ответы:")
+                previousAnswers.forEach { regularln("– $it") }
+            } else {
+                regularln("Пиши свои мысли в чат")
+            }
+        }
+    }
 }
