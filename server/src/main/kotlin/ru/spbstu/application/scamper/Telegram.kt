@@ -35,12 +35,13 @@ suspend fun BehaviourContext.handleScamper(chat: Chat) {
                 when (it) {
                     is ScamperModel.Action.Ended -> {
                         edit(message, text = IdeaGenerationStrings.ScamperUI.Ended, replyMarkup = null)
-                        val spreadsheet = Xlsx.createScamperSpreadsheet(it.answers,questionnaire)
+                        val spreadsheet = Xlsx.createScamperSpreadsheet(it.answers, questionnaire)
                         val document = spreadsheet.asMultipartFile(IdeaGenerationStrings.ScamperUI.Filename + ".xlsx")
                         sendDocument(chat, document, replyMarkup = flatReplyKeyboard(
                             resizeKeyboard = true,
                             oneTimeKeyboard = true
                         ) { simpleButton(IdeaGenerationStrings.BackToIdeaGeneration) })
+                        edit(message, text = IdeaGenerationStrings.ScamperEnding)
                         coroutineScope.cancel()
                     }
                 }
@@ -118,10 +119,11 @@ private suspend fun TelegramBot.renderState(
                     }
                 } else {
                     row {
-                        dataButton(IdeaGenerationStrings.ScamperUI.ToFirstQuestion, "scamper_question ${it.letterIndex} ${0}")
-                    }
-                    row {
                         dataButton(IdeaGenerationStrings.ScamperUI.ShowAllQuestions, "scamper_show")
+                        dataButton(
+                            IdeaGenerationStrings.ScamperUI.ToFirstQuestion,
+                            "scamper_question ${it.letterIndex} ${0}"
+                        )
                     }
                 }
                 row {
