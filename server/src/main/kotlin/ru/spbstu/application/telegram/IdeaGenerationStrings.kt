@@ -275,11 +275,14 @@ object IdeaGenerationStrings {
     object ScamperUI {
         const val Initializing = "Начинаем игру…"
         const val End = "✅ Завершить игру"
-        const val BackToQuestions = "⬆️ Ко всем вопросам"
+        const val BackToQuestions = "⬆️ Обратно"
         const val NextQuestion = "➡️ Следующий вопрос"
         const val NextLetter = "⏭️ Следующая буква"
         const val Ended = "Готовлю файл…"
         const val Filename = "Scamper"
+        const val ShowAllQuestions = "👁️ Показать все вопросы"
+        const val HideAllQuestions = "❌ Спрятать все вопросы"
+        const val ToFirstQuestion = "К первому вопросу"
 
         fun QuestionAsked(question: String, previousAnswers: List<String>) = buildEntities {
             boldln("Вопрос:")

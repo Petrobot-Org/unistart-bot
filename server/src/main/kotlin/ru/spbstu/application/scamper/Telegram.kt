@@ -46,34 +46,15 @@ suspend fun BehaviourContext.handleScamper(chat: Chat) {
                 }
             }
         }
-        launch {
-            model.state.collect { renderState(it, message) }
-        }
-        launch {
-            waitAnswer(chat, model::onQuestionAnswered)
-        }
-        launch {
-            waitCallbacks(
-                chat = chat,
-                onQuestionChosen = model::onQuestionChosen,
-                onLetterChosen = model::onLetterChosen,
-                onEnding = model::onEnding,
-                onQuestionDismissed = model::onQuestionDismissed,
-                onNextQuestion = model::onNextQuestion,
-                onNextLetter = model::onNextLetter
-            )
-        }
+        launch { model.state.collect { renderState(it, message) } }
+        launch { waitAnswer(chat, model::onQuestionAnswered) }
+        launch { waitCallbacks(chat, model) }
     }
 }
 
 private suspend fun BehaviourContext.waitCallbacks(
     chat: Chat,
-    onQuestionChosen: (Int, Int) -> Unit,
-    onLetterChosen: (Int) -> Unit,
-    onEnding: suspend () -> Unit,
-    onQuestionDismissed: () -> Unit,
-    onNextQuestion: () -> Unit,
-    onNextLetter: () -> Unit
+    model: ScamperModel
 ) {
     waitDataCallbackQuery()
         .filter { it.from.id == chat.id }
@@ -81,15 +62,17 @@ private suspend fun BehaviourContext.waitCallbacks(
             val tokens = it.data.split(' ')
             when {
                 it.data.matches(Regex("scamper_question \\d+ \\d+")) -> {
-                    onQuestionChosen(tokens[1].toInt(), tokens[2].toInt())
+                    model.onQuestionChosen(tokens[1].toInt(), tokens[2].toInt())
                 }
                 it.data.matches(Regex("scamper_letter \\d+")) -> {
-                    onLetterChosen(tokens[1].toInt())
+                    model.onLetterChosen(tokens[1].toInt())
                 }
-                it.data == "scamper_end" -> onEnding()
-                it.data == "scamper_dismiss" -> onQuestionDismissed()
-                it.data == "scamper_next_question" -> onNextQuestion()
-                it.data == "scamper_next_letter" -> onNextLetter()
+                it.data == "scamper_end" -> model.onEnding()
+                it.data == "scamper_dismiss" -> model.onQuestionDismissed()
+                it.data == "scamper_next_question" -> model.onNextQuestion()
+                it.data == "scamper_next_letter" -> model.onNextLetter()
+                it.data == "scamper_hide" -> model.onHideAllQuestions()
+                it.data == "scamper_show" -> model.onShowAllQuestions()
             }
         }
 }
@@ -115,7 +98,7 @@ private suspend fun TelegramBot.renderState(
     message: ContentMessage<TextContent>
 ) {
     when (it) {
-        is ScamperModel.State.ChooseQuestion -> edit(
+        is ScamperModel.State.LetterDetails -> edit(
             message = message,
             text = it.letter.description,
             replyMarkup = inlineKeyboard {
@@ -124,9 +107,21 @@ private suspend fun TelegramBot.renderState(
                         dataButton(letter.character.toString(), "scamper_letter $index")
                     }
                 }
-                it.letter.questions.forEachIndexed { index, s ->
+                if (it.showAllQuestions) {
+                    it.letter.questions.forEachIndexed { index, s ->
+                        row {
+                            dataButton(s, "scamper_question ${it.letterIndex} $index")
+                        }
+                    }
                     row {
-                        dataButton(s, "scamper_question ${it.letterIndex} $index")
+                        dataButton(IdeaGenerationStrings.ScamperUI.HideAllQuestions, "scamper_hide")
+                    }
+                } else {
+                    row {
+                        dataButton(IdeaGenerationStrings.ScamperUI.ToFirstQuestion, "scamper_question ${it.letterIndex} ${0}")
+                    }
+                    row {
+                        dataButton(IdeaGenerationStrings.ScamperUI.ShowAllQuestions, "scamper_show")
                     }
                 }
                 row {
@@ -135,7 +130,7 @@ private suspend fun TelegramBot.renderState(
             },
             parseMode = MarkdownParseMode
         )
-        is ScamperModel.State.AnswerQuestion -> edit(
+        is ScamperModel.State.Question -> edit(
             message = message,
             entities = IdeaGenerationStrings.ScamperUI.QuestionAsked(it.question, it.previousAnswers),
             replyMarkup = inlineKeyboard {

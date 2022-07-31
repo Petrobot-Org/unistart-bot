@@ -9,18 +9,19 @@ import ru.spbstu.application.steps.entities.BonusType
 
 class ScamperModel(private val questionnaire: Questionnaire) {
     private val position = MutableStateFlow(Position())
+    private val showAllQuestions = MutableStateFlow(false)
     private val answers = MutableStateFlow(emptyList<ScamperAnswer>())
     private val _actions = Channel<Action>(Channel.BUFFERED)
 
     val actions = _actions.consumeAsFlow()
 
-    val state = combine(position, answers) { position, answers ->
+    val state = combine(position, answers, showAllQuestions) { position, answers, showAllQuestions ->
         val letter = questionnaire.letters.getOrElse(position.letterIndex) { questionnaire.letters.first() }
         val question = position.questionIndex?.let { letter.questions.getOrNull(it) }
         if (question == null) {
-            State.ChooseQuestion(letter, questionnaire.letters, position.letterIndex)
+            State.LetterDetails(letter, questionnaire.letters, position.letterIndex, showAllQuestions)
         } else {
-            State.AnswerQuestion(
+            State.Question(
                 question = question,
                 previousAnswers = answers
                     .filter { it.letterIndex == position.letterIndex && it.questionIndex == position.questionIndex }
@@ -65,14 +66,23 @@ class ScamperModel(private val questionnaire: Questionnaire) {
         _actions.send(Action.Ended(answers.value))
     }
 
+    fun onHideAllQuestions() {
+        showAllQuestions.value = false
+    }
+
+    fun onShowAllQuestions() {
+        showAllQuestions.value = true
+    }
+
     sealed interface State {
-        data class ChooseQuestion(
+        data class LetterDetails(
             val letter: ScamperLetter,
             val otherLetters: List<ScamperLetter>,
-            val letterIndex: Int
+            val letterIndex: Int,
+            val showAllQuestions: Boolean
         ) : State
 
-        data class AnswerQuestion(
+        data class Question(
             val question: String,
             val previousAnswers: List<String>
         ) : State
