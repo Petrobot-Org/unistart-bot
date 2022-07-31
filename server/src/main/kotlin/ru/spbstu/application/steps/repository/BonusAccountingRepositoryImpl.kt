@@ -21,11 +21,7 @@ class BonusAccountingRepositoryImpl(private val database: AppDatabase) : BonusAc
         return database.bonusAccountingQueries.get(userId, bonusType, mapper).executeAsOneOrNull()
     }
 
-    override fun getBonusesByUsedId(userId: User.Id): List<BonusType> {
+    override fun getBonusesByUserId(userId: User.Id): List<BonusType> {
         return database.bonusAccountingQueries.getBonusesByUserId(userId).executeAsList()
-    }
-
-    override fun getByUsedId(userId: User.Id): List<BonusAccounting> {
-        return database.bonusAccountingQueries.getByUserId(userId, mapper).executeAsList()
     }
 }

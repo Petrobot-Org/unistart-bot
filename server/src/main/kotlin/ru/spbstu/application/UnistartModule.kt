@@ -15,6 +15,7 @@ import ru.spbstu.application.data.*
 import ru.spbstu.application.notifications.ConfigureNotifiers
 import ru.spbstu.application.notifications.NextStepNotifier
 import ru.spbstu.application.steps.repository.*
+import ru.spbstu.application.steps.usecases.CalculateDurationBonusUseCase
 import ru.spbstu.application.steps.usecases.CheckAndUpdateBonusAccountingUseCase
 import ru.spbstu.application.steps.usecases.GetStepDurationUseCase
 import ru.spbstu.application.telegram.TelegramBot
@@ -45,6 +46,7 @@ val unistartModule = module(createdAtStart = true) {
     singleOf(::RegisterUserUseCase)
     singleOf(::RegisterAdminUserUseCase)
     singleOf(::IsSubscribedUseCase)
+    singleOf(::CalculateDurationBonusUseCase)
     singleOf(::CheckAndUpdateBonusAccountingUseCase)
     singleOf(::TrendsZip)
     singleOf(::NextStepNotifier)

@@ -17,6 +17,7 @@ import dev.inmo.tgbotapi.utils.PreviewFeature
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import org.koin.core.context.GlobalContext
+import ru.spbstu.application.notifications.NextStepNotifier
 import ru.spbstu.application.steps.entities.Step
 import ru.spbstu.application.steps.repository.StepDurationRepository
 import ru.spbstu.application.steps.usecases.GetStepDurationUseCase
@@ -27,6 +28,7 @@ import java.time.Duration
 
 private val getStepDuration: GetStepDurationUseCase by GlobalContext.get().inject()
 private val stepDurationRepository: StepDurationRepository by GlobalContext.get().inject()
+private val nextStepNotifier: NextStepNotifier by GlobalContext.get().inject()
 
 suspend fun BehaviourContext.stepDurationCommand() {
     onAdminText(Strings.AdminPanel.Menu.StepDuration) { showStepDurations(it) }
@@ -57,6 +59,7 @@ private suspend fun BehaviourContext.changeStepDuration(dataCallbackQuery: DataC
         .firstNotNull()
 
     stepDurationRepository.changeDuration(step, duration)
+    nextStepNotifier.rescheduleAll()
 
     editMessageReplyMarkup(
         chat = dataCallbackQuery.from,

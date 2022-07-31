@@ -7,6 +7,7 @@ import org.quartz.TriggerBuilder.newTrigger
 import org.quartz.impl.StdSchedulerFactory
 import ru.spbstu.application.AppConfig
 import ru.spbstu.application.auth.entities.User
+import ru.spbstu.application.extensions.times
 import ru.spbstu.application.steps.entities.CompletedStep
 import ru.spbstu.application.steps.entities.Step
 import ru.spbstu.application.steps.repository.CompletedStepRepository
@@ -44,6 +45,13 @@ class NextStepNotifier(
         rescheduleFor(userId, completedSteps)
     }
 
+    fun rescheduleAll() {
+        scheduler.clear()
+        completedStepRepository.getUsersWithCompletedSteps().forEach {
+            rescheduleFor(it.user.id, it.completedSteps)
+        }
+    }
+
     private fun rescheduleFor(userId: User.Id, completedSteps: List<CompletedStep>) {
         val jobKey = JobKey.jobKey(userId.value.toString(), NextStepGroup)
         scheduler.deleteJob(jobKey)
@@ -62,10 +70,10 @@ class NextStepNotifier(
             .build()
 
         val triggers = config.durationToBonus.map {
-            val duration = Duration.ofSeconds((stepDuration.seconds * it.durationFactor).toLong())
+            val duration = stepDuration * it.durationFactor
             val deadline = endTime + duration
             val softDeadline = deadline - config.notifications.nextStep.before
-            if (softDeadline.isBefore(Instant.now())) {
+            if (softDeadline.isBefore(Instant.now().minusSeconds(60))) {
                 return@map null
             }
             newTrigger()
@@ -75,13 +83,6 @@ class NextStepNotifier(
         }.filterNotNull().toSet()
 
         scheduler.scheduleJob(job, triggers, true)
-    }
-
-    private fun rescheduleAll() {
-        scheduler.clear()
-        completedStepRepository.getUsersWithCompletedSteps().forEach {
-            rescheduleFor(it.user.id, it.completedSteps)
-        }
     }
 
     class Job(

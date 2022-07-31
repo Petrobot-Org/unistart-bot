@@ -24,6 +24,7 @@ dependencies {
     implementation(libs.bundles.poi)
     implementation(libs.quartz)
     testImplementation(libs.junit.jupiter)
+    testImplementation(libs.mockk)
 }
 
 tasks.getByName<Test>("test") {

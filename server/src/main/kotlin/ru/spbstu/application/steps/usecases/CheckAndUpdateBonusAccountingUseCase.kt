@@ -1,9 +1,10 @@
 package ru.spbstu.application.steps.usecases
 
+import ru.spbstu.application.AppConfig
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.repository.UserRepository
 import ru.spbstu.application.data.DatabaseTransactionWithResult
-import ru.spbstu.application.notifications.NextStepNotifier
+import ru.spbstu.application.extensions.times
 import ru.spbstu.application.steps.entities.BonusAccounting
 import ru.spbstu.application.steps.entities.BonusType
 import ru.spbstu.application.steps.entities.Step
@@ -35,6 +36,7 @@ class CheckAndUpdateBonusAccountingUseCase(
     private val userRepository: UserRepository,
     private val bonusAccountingRepository: BonusAccountingRepository,
     private val completedStepRepository: CompletedStepRepository,
+    private val calculateDurationBonus: CalculateDurationBonusUseCase,
     private val transactionWithResult: DatabaseTransactionWithResult
 ) {
     data class Result(
@@ -53,20 +55,14 @@ class CheckAndUpdateBonusAccountingUseCase(
         }
 
         val stepBonus = if (
-            bonusAccountingRepository.getBonusesByUsedId(userId).containsAll(stepsWithBonusType[step]!!) &&
+            bonusAccountingRepository.getBonusesByUserId(userId).containsAll(stepsWithBonusType[step]!!) &&
             completedStepRepository.get(userId, step) == null
         ) {
             completedStepRepository.add(step, userId, at)
             userRepository.setAvailableStepsCount(userId, max(user.availableStepsCount, step.value + 1))
 
             val stepStartedAt = completedStepRepository.getByUserId(user.id).maxOf { it.endTime }
-            val durationOfStep = Duration.between(stepStartedAt, at)
-            when {
-                durationOfStep < Duration.ofHours(72) -> 8L
-                durationOfStep < Duration.ofDays(7) -> 5L
-                durationOfStep < Duration.ofDays(14) -> 3L
-                else -> 0L
-            }
+            calculateDurationBonus(step, stepStartedAt, at)
         } else {
             null
         }
