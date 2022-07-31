@@ -12,6 +12,7 @@ import dev.inmo.tgbotapi.extensions.utils.types.buttons.*
 import dev.inmo.tgbotapi.requests.abstracts.asMultipartFile
 import dev.inmo.tgbotapi.types.chat.Chat
 import dev.inmo.tgbotapi.types.message.MarkdownParseMode
+import dev.inmo.tgbotapi.types.message.MarkdownV2ParseMode
 import dev.inmo.tgbotapi.types.message.abstracts.ContentMessage
 import dev.inmo.tgbotapi.types.message.content.TextContent
 import kotlinx.coroutines.cancel
@@ -41,7 +42,7 @@ suspend fun BehaviourContext.handleScamper(chat: Chat) {
                             resizeKeyboard = true,
                             oneTimeKeyboard = true
                         ) { simpleButton(IdeaGenerationStrings.BackToIdeaGeneration) })
-                        edit(message, text = IdeaGenerationStrings.ScamperEnding)
+                        edit(message, text = IdeaGenerationStrings.ScamperEnding, parseMode = MarkdownParseMode)
                         coroutineScope.cancel()
                     }
                 }
@@ -142,7 +143,7 @@ private suspend fun TelegramBot.renderState(
                     dataButton(IdeaGenerationStrings.ScamperUI.End, "scamper_end")
                 }
             },
-            parseMode = MarkdownParseMode
+            parseMode = MarkdownV2ParseMode
         )
         is ScamperModel.State.Question -> edit(
             message = message,
