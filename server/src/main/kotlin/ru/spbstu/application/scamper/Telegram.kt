@@ -8,9 +8,7 @@ import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitContentMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitDataCallbackQuery
-import dev.inmo.tgbotapi.extensions.utils.types.buttons.dataButton
-import dev.inmo.tgbotapi.extensions.utils.types.buttons.inlineKeyboard
-import dev.inmo.tgbotapi.extensions.utils.types.buttons.row
+import dev.inmo.tgbotapi.extensions.utils.types.buttons.*
 import dev.inmo.tgbotapi.requests.abstracts.asMultipartFile
 import dev.inmo.tgbotapi.types.chat.Chat
 import dev.inmo.tgbotapi.types.message.MarkdownParseMode
@@ -39,7 +37,10 @@ suspend fun BehaviourContext.handleScamper(chat: Chat) {
                         edit(message, text = IdeaGenerationStrings.ScamperUI.Ended, replyMarkup = null)
                         val spreadsheet = Xlsx.createScamperSpreadsheet(it.answers,questionnaire)
                         val document = spreadsheet.asMultipartFile(IdeaGenerationStrings.ScamperUI.Filename + ".xlsx")
-                        sendDocument(chat, document)
+                        sendDocument(chat, document, replyMarkup = flatReplyKeyboard(
+                            resizeKeyboard = true,
+                            oneTimeKeyboard = true
+                        ) { simpleButton(IdeaGenerationStrings.BackToIdeaGeneration) })
                         coroutineScope.cancel()
                     }
                 }
