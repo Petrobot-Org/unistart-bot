@@ -4,6 +4,12 @@ enum class BonusType {
     Bisociation,
     DelphiMethod,
     BrainstormMethod,
-    Scamper,
-    TrendyFriendy
+    TrendyFriendy,
+    ScamperS,
+    ScamperC,
+    ScamperA,
+    ScamperM,
+    ScamperP,
+    ScamperE,
+    ScamperR,
 }

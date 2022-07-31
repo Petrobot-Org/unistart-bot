@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import ru.spbstu.application.steps.entities.BonusType
 
 class ScamperModel(private val questionnaire: Questionnaire) {
     private val position = MutableStateFlow(Position())
@@ -40,8 +41,10 @@ class ScamperModel(private val questionnaire: Questionnaire) {
         position.value = Position(letterIndex)
     }
 
-    fun onQuestionAnswered(answer: String) {
-        answers.value += ScamperAnswer(position.value.letterIndex, position.value.questionIndex ?: return, answer)
+    fun onQuestionAnswered(text: String): BonusType? {
+        val answer = ScamperAnswer(position.value.letterIndex, position.value.questionIndex ?: return null, text)
+        answers.value += answer
+        return questionnaire.letters[position.value.letterIndex].bonusType
     }
 
     fun onNextQuestion() {

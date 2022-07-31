@@ -1,17 +1,14 @@
 package ru.spbstu.application.steps.usecases
 
-import ru.spbstu.application.AppConfig
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.repository.UserRepository
 import ru.spbstu.application.data.DatabaseTransactionWithResult
-import ru.spbstu.application.extensions.times
 import ru.spbstu.application.steps.entities.BonusAccounting
 import ru.spbstu.application.steps.entities.BonusType
 import ru.spbstu.application.steps.entities.Step
 import ru.spbstu.application.steps.repository.BonusAccountingRepository
 import ru.spbstu.application.steps.repository.CompletedStepRepository
 import java.lang.Long.max
-import java.time.Duration
 import java.time.Instant
 
 private val stepsWithBonusType: Map<Step, List<BonusType>> = mapOf(
@@ -19,8 +16,14 @@ private val stepsWithBonusType: Map<Step, List<BonusType>> = mapOf(
         BonusType.Bisociation,
         BonusType.DelphiMethod,
         BonusType.BrainstormMethod,
-        BonusType.Scamper,
-        BonusType.TrendyFriendy
+        BonusType.TrendyFriendy,
+        BonusType.ScamperS,
+        BonusType.ScamperC,
+        BonusType.ScamperA,
+        BonusType.ScamperM,
+        BonusType.ScamperP,
+        BonusType.ScamperE,
+        BonusType.ScamperR,
     )
 )
 
@@ -28,8 +31,14 @@ private val bonusTypeWithBonusValue: Map<BonusType, Long> = mapOf(
     BonusType.Bisociation to 1L,
     BonusType.DelphiMethod to 1L,
     BonusType.BrainstormMethod to 1L,
-    BonusType.Scamper to 1L,
-    BonusType.TrendyFriendy to 5L
+    BonusType.TrendyFriendy to 5L,
+    BonusType.ScamperS to 1L,
+    BonusType.ScamperC to 1L,
+    BonusType.ScamperA to 1L,
+    BonusType.ScamperM to 1L,
+    BonusType.ScamperP to 1L,
+    BonusType.ScamperE to 1L,
+    BonusType.ScamperR to 1L,
 )
 
 class CheckAndUpdateBonusAccountingUseCase(

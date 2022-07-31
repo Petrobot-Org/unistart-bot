@@ -21,6 +21,9 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import ru.spbstu.application.steps.entities.BonusType
+import ru.spbstu.application.steps.entities.Step
+import ru.spbstu.application.steps.telegram.giveBonusWithMessage
 import ru.spbstu.application.telegram.IdeaGenerationStrings
 
 suspend fun BehaviourContext.handleScamper(chat: Chat) {
@@ -91,13 +94,18 @@ private suspend fun BehaviourContext.waitCallbacks(
 
 private suspend fun BehaviourContext.waitAnswer(
     chat: Chat,
-    onQuestionAnswered: (String) -> Unit
+    onQuestionAnswered: (String) -> BonusType?
 ) {
     waitContentMessage()
         .filter { it.chat.id == chat.id }
         .filter { it.content is TextContent }
         .onEach { delete(chat, it.messageId) }
-        .collect { onQuestionAnswered((it.content as TextContent).text) }
+        .collect {
+            val bonusType = onQuestionAnswered((it.content as TextContent).text)
+            if (bonusType != null) {
+                giveBonusWithMessage(chat.id, bonusType, Step(1), true)
+            }
+        }
 }
 
 private suspend fun TelegramBot.renderState(
@@ -130,12 +138,11 @@ private suspend fun TelegramBot.renderState(
             entities = IdeaGenerationStrings.ScamperUI.QuestionAsked(it.question, it.previousAnswers),
             replyMarkup = inlineKeyboard {
                 row {
-
                     dataButton(IdeaGenerationStrings.ScamperUI.BackToQuestions, "scamper_dismiss")
                 }
                 row {
-                    dataButton(IdeaGenerationStrings.ScamperUI.NextQuestion, "scamper_next_question")
                     dataButton(IdeaGenerationStrings.ScamperUI.NextLetter, "scamper_next_letter")
+                    dataButton(IdeaGenerationStrings.ScamperUI.NextQuestion, "scamper_next_question")
                 }
             }
         )
