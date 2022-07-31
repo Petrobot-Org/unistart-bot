@@ -278,6 +278,8 @@ object IdeaGenerationStrings {
         const val BackToQuestions = "⬆️ Ко всем вопросам"
         const val NextQuestion = "➡️ Следующий вопрос"
         const val NextLetter = "⏭️ Следующая буква"
+        const val Ended = "Готовлю файл…"
+        const val Filename = "Scamper"
 
         fun QuestionAsked(question: String, previousAnswers: List<String>) = buildEntities {
             boldln("Вопрос:")

@@ -3,6 +3,7 @@ package ru.spbstu.application.scamper
 import dev.inmo.tgbotapi.bot.TelegramBot
 import dev.inmo.tgbotapi.extensions.api.delete
 import dev.inmo.tgbotapi.extensions.api.edit.edit
+import dev.inmo.tgbotapi.extensions.api.send.media.sendDocument
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitContentMessage
@@ -10,6 +11,7 @@ import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitDataCallb
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.dataButton
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.inlineKeyboard
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.row
+import dev.inmo.tgbotapi.requests.abstracts.asMultipartFile
 import dev.inmo.tgbotapi.types.chat.Chat
 import dev.inmo.tgbotapi.types.message.MarkdownParseMode
 import dev.inmo.tgbotapi.types.message.abstracts.ContentMessage
@@ -23,13 +25,17 @@ import ru.spbstu.application.telegram.IdeaGenerationStrings
 
 suspend fun BehaviourContext.handleScamper(chat: Chat) {
     val message = sendTextMessage(chat, IdeaGenerationStrings.ScamperUI.Initializing)
-    val model = ScamperModel(StandardQuestionnaire)
+    val questionnaire = StandardQuestionnaire
+    val model = ScamperModel(questionnaire)
     coroutineScope {
         launch {
             model.actions.collect {
                 when (it) {
                     is ScamperModel.Action.Ended -> {
-                        edit(message, text = it.toString(), replyMarkup = null)
+                        edit(message, text = IdeaGenerationStrings.ScamperUI.Ended, replyMarkup = null)
+                        val spreadsheet = Xlsx.createScamperSpreadsheet(it.answers,questionnaire)
+                        val document = spreadsheet.asMultipartFile(IdeaGenerationStrings.ScamperUI.Filename + ".xlsx")
+                        sendDocument(chat, document)
                         cancel()
                     }
                 }
