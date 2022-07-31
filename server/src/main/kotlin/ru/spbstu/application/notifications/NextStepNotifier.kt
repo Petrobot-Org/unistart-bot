@@ -7,6 +7,7 @@ import org.quartz.TriggerBuilder.newTrigger
 import org.quartz.impl.StdSchedulerFactory
 import ru.spbstu.application.AppConfig
 import ru.spbstu.application.auth.entities.User
+import ru.spbstu.application.extensions.times
 import ru.spbstu.application.steps.entities.CompletedStep
 import ru.spbstu.application.steps.entities.Step
 import ru.spbstu.application.steps.repository.CompletedStepRepository
@@ -62,7 +63,7 @@ class NextStepNotifier(
             .build()
 
         val triggers = config.durationToBonus.map {
-            val duration = Duration.ofSeconds((stepDuration.seconds * it.durationFactor).toLong())
+            val duration = stepDuration * it.durationFactor
             val deadline = endTime + duration
             val softDeadline = deadline - config.notifications.nextStep.before
             if (softDeadline.isBefore(Instant.now())) {
