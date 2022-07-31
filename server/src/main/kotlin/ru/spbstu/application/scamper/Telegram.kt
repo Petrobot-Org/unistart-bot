@@ -31,6 +31,7 @@ suspend fun BehaviourContext.handleScamper(chat: Chat) {
     val questionnaire = StandardQuestionnaire
     val model = ScamperModel(questionnaire)
     coroutineScope {
+        val coroutineScope = this
         launch {
             model.actions.collect {
                 when (it) {
@@ -39,7 +40,7 @@ suspend fun BehaviourContext.handleScamper(chat: Chat) {
                         val spreadsheet = Xlsx.createScamperSpreadsheet(it.answers,questionnaire)
                         val document = spreadsheet.asMultipartFile(IdeaGenerationStrings.ScamperUI.Filename + ".xlsx")
                         sendDocument(chat, document)
-                        cancel()
+                        coroutineScope.cancel()
                     }
                 }
             }
