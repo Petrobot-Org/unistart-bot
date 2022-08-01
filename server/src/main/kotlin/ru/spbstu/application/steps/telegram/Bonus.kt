@@ -4,7 +4,8 @@ import dev.inmo.tgbotapi.bot.TelegramBot
 import dev.inmo.tgbotapi.extensions.api.delete
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.types.UserId
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.core.context.GlobalContext
@@ -19,6 +20,7 @@ import java.time.Instant
 private val checkAndUpdateBonusAccounting: CheckAndUpdateBonusAccountingUseCase by GlobalContext.get().inject()
 private val nextStepNotifier: NextStepNotifier by GlobalContext.get().inject()
 
+@OptIn(DelicateCoroutinesApi::class)
 suspend fun TelegramBot.giveBonusWithMessage(
     userId: UserId,
     bonusType: BonusType,
@@ -34,12 +36,10 @@ suspend fun TelegramBot.giveBonusWithMessage(
         sendTextMessage(userId, Strings.NewBonusForStep(result.stepBonus, step))
     } else null
     if (remove) {
-        coroutineScope {
-            launch {
-                delay(6000L)
-                stageMessage?.messageId?.let { delete(userId, it) }
-                stepMessage?.messageId?.let { delete(userId, it) }
-            }
+        GlobalScope.launch {
+            delay(6000L)
+            stageMessage?.delete(this@giveBonusWithMessage)
+            stepMessage?.delete(this@giveBonusWithMessage)
         }
     }
 }
