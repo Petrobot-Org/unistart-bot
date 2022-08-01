@@ -1,13 +1,10 @@
 package ru.spbstu.application.steps.telegram
 
 import dev.inmo.tgbotapi.bot.TelegramBot
-import dev.inmo.tgbotapi.extensions.api.delete
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.types.UserId
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import dev.inmo.tgbotapi.types.message.abstracts.ContentMessage
+import dev.inmo.tgbotapi.types.message.content.TextContent
 import org.koin.core.context.GlobalContext
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.notifications.NextStepNotifier
@@ -20,13 +17,11 @@ import java.time.Instant
 private val checkAndUpdateBonusAccounting: CheckAndUpdateBonusAccountingUseCase by GlobalContext.get().inject()
 private val nextStepNotifier: NextStepNotifier by GlobalContext.get().inject()
 
-@OptIn(DelicateCoroutinesApi::class)
 suspend fun TelegramBot.giveBonusWithMessage(
     userId: UserId,
     bonusType: BonusType,
-    step: Step,
-    remove: Boolean = false
-) {
+    step: Step
+): List<ContentMessage<TextContent>> {
     val result = checkAndUpdateBonusAccounting(User.Id(userId.chatId), bonusType, step, Instant.now())
     val stageMessage = if (result.stageBonus != null) {
         sendTextMessage(userId, Strings.NewBonusForStage(result.stageBonus))
@@ -35,11 +30,5 @@ suspend fun TelegramBot.giveBonusWithMessage(
         nextStepNotifier.rescheduleFor(User.Id(userId.chatId))
         sendTextMessage(userId, Strings.NewBonusForStep(result.stepBonus, step))
     } else null
-    if (remove) {
-        GlobalScope.launch {
-            delay(6000L)
-            stageMessage?.delete(this@giveBonusWithMessage)
-            stepMessage?.delete(this@giveBonusWithMessage)
-        }
-    }
+    return listOfNotNull(stageMessage, stepMessage)
 }

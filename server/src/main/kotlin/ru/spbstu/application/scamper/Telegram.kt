@@ -6,23 +6,22 @@ import dev.inmo.tgbotapi.extensions.api.edit.edit
 import dev.inmo.tgbotapi.extensions.api.send.media.sendDocument
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
-import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitContentMessage
-import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitDataCallbackQuery
+import dev.inmo.tgbotapi.extensions.utils.asDataCallbackQuery
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.*
 import dev.inmo.tgbotapi.extensions.utils.withContent
 import dev.inmo.tgbotapi.requests.abstracts.asMultipartFile
 import dev.inmo.tgbotapi.types.chat.Chat
 import dev.inmo.tgbotapi.types.message.MarkdownParseMode
 import dev.inmo.tgbotapi.types.message.MarkdownV2ParseMode
+import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
 import dev.inmo.tgbotapi.types.message.abstracts.ContentMessage
 import dev.inmo.tgbotapi.types.message.content.TextContent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.coroutineScope
+import dev.inmo.tgbotapi.types.queries.callback.DataCallbackQuery
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import ru.spbstu.application.steps.entities.BonusType
 import ru.spbstu.application.steps.entities.Step
 import ru.spbstu.application.steps.telegram.giveBonusWithMessage
@@ -32,11 +31,10 @@ suspend fun BehaviourContext.handleScamper(chat: Chat) {
     val message = sendTextMessage(chat, IdeaGenerationStrings.ScamperUI.Initializing)
     val model = ScamperModel(StandardQuestionnaire)
     coroutineScope {
-        val coroutineScope = this
-        launch { model.actions.collect { act(it, message, coroutineScope) } }
-        launch { model.state.collect { renderState(it, message) } }
-        launch { waitAnswer(chat, model::onQuestionAnswered) }
-        launch { waitCallbacks(chat, model) }
+        model.actions.onEach { act(it, message, this) }.launchIn(this)
+        model.state.onEach { renderState(it, message) }.launchIn(this)
+        waitAnswer(chat, model::onQuestionAnswered).launchIn(this)
+        waitCallbacks(chat, model).launchIn(this)
     }
 }
 
@@ -59,12 +57,13 @@ private suspend fun BehaviourContext.act(
     }
 }
 
-private suspend fun BehaviourContext.waitCallbacks(
+private fun BehaviourContext.waitCallbacks(
     chat: Chat,
     model: ScamperModel
-) = waitDataCallbackQuery()
+) = callbackQueriesFlow
+    .mapNotNull { it.data as? DataCallbackQuery }
     .filter { it.from.id == chat.id }
-    .collect {
+    .onEach {
         val tokens = it.data.split(' ')
         when {
             it.data.matches(Regex("scamper_question \\d+ \\d+")) -> {
@@ -83,17 +82,21 @@ private suspend fun BehaviourContext.waitCallbacks(
         }
     }
 
-private suspend fun BehaviourContext.waitAnswer(
+private fun BehaviourContext.waitAnswer(
     chat: Chat,
     onQuestionAnswered: (String) -> BonusType?
-) = waitContentMessage()
+) = messagesFlow
+    .mapNotNull { (it.data as? CommonMessage<*>)?.withContent<TextContent>() }
     .filter { it.chat.id == chat.id }
-    .mapNotNull { it.withContent<TextContent>() }
-    .onEach { delete(chat, it.messageId) }
-    .collect {
+    .onEach {
+        delete(chat, it.messageId)
         val bonusType = onQuestionAnswered(it.content.text)
         if (bonusType != null) {
-            giveBonusWithMessage(chat.id, bonusType, Step(1), true)
+            val messages = giveBonusWithMessage(chat.id, bonusType, Step(1))
+            launch {
+                delay(6000)
+                messages.forEach { it.delete(this@waitAnswer) }
+            }
         }
     }
 
