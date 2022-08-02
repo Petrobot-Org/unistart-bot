@@ -1,5 +1,6 @@
 package ru.spbstu.application.admin
 
+import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.HorizontalAlignment
 import org.apache.poi.ss.usermodel.VerticalAlignment
 import org.apache.poi.ss.util.CellRangeAddress
@@ -22,15 +23,18 @@ object Xlsx {
 
     fun parsePhoneNumbers(inputStream: InputStream): Result<List<PhoneNumber>> {
         try {
-            val phoneNumbers = XSSFWorkbook(inputStream).use { workbook ->
-                workbook.getSheetAt(0).map { row ->
-                    try {
-                        row.getCell(0).stringCellValue
-                    } catch (ignore: IllegalStateException) {
-                        String()
+            val phoneNumbers = XSSFWorkbook(inputStream)
+                .use { workbook ->
+                    workbook.getSheetAt(0).map { row ->
+                        val cell = row.getCell(0)
+                        when (cell.cellType) {
+                            CellType.STRING -> cell.stringCellValue.filterNot { it.isWhitespace() }.removePrefix("+")
+                            CellType.NUMERIC -> cell.numericCellValue.toInt().toString()
+                            else -> null
+                        }
                     }
                 }
-            }.dropLastWhile { it.isEmpty() }.map { PhoneNumber.valueOf(it.removePrefix("+")) }
+                .map { cellValue -> cellValue?.let { PhoneNumber.valueOf(it) } }
             return if (!phoneNumbers.contains(null)) {
                 Result.OK(phoneNumbers.filterNotNull())
             } else {
