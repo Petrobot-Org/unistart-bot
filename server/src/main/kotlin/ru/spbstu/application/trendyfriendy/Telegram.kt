@@ -41,7 +41,10 @@ suspend fun sendTrendyFriendyIdeas(bot: TelegramBot, userId: Long, ideas: List<I
     bot.sendDocument(
         userId.toChatId(),
         document,
-        replyMarkup = flatReplyKeyboard { simpleButton(IdeaGenerationStrings.BackToIdeaGeneration) }
+        replyMarkup = flatReplyKeyboard(
+            resizeKeyboard = true,
+            oneTimeKeyboard = true
+        ) { simpleButton(IdeaGenerationStrings.BackToIdeaGeneration) }
     )
     bot.giveBonusWithMessage(userId.toChatId(), BonusType.TrendyFriendy, Step(1))
 }

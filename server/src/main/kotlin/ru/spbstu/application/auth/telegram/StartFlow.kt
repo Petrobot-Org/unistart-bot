@@ -190,4 +190,6 @@ private suspend fun BehaviourContext.waitPhoneNumber(chat: Chat) =
                 oneTimeKeyboard = true
             )
         )
-    ).map { PhoneNumber.valueOf(it.contact.phoneNumber)!! }.first()
+    ).map { content ->
+        PhoneNumber.valueOf(content.contact.phoneNumber.filter { it.isDigit() })!!
+    }.first()

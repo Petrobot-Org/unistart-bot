@@ -33,7 +33,6 @@ object Strings {
         BonusType.Bisociation to IdeaGenerationStrings.Bisociation,
         BonusType.DelphiMethod to IdeaGenerationStrings.DelphiMethod,
         BonusType.BrainstormMethod to IdeaGenerationStrings.BrainstormMethod,
-        BonusType.Scamper to IdeaGenerationStrings.Scamper,
         BonusType.TrendyFriendy to IdeaGenerationStrings.TrendyFriendy
     )
     val BonusTypesByString = BonusTypes.map { it.value to it.key }.toMap()
