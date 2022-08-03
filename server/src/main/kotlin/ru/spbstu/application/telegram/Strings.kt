@@ -1,3 +1,5 @@
+@file:Suppress("FunctionName")
+
 package ru.spbstu.application.telegram
 
 import dev.inmo.tgbotapi.types.chat.PrivateChat
