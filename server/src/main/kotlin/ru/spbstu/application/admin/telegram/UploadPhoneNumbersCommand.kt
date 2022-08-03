@@ -50,11 +50,15 @@ private suspend fun BehaviourContext.onPhoneNumbersUploaded(message: CommonMessa
         }
         is Xlsx.Result.OK -> result.value
     }
+    val nonRussianPhoneNumbers = phoneNumbers.filterNot { it.isRussian() }
+    if (nonRussianPhoneNumbers.isNotEmpty()) {
+        sendTextMessage(message.chat, UploadPhoneNumbers.NonRussianPhoneNumbers(nonRussianPhoneNumbers))
+    }
     val startInstant = waitStartInstant(message.chat)
     val duration = waitDuration(message.chat)
     try {
-        val rowsAffected = addPhoneNumbers(phoneNumbers.toSet(), startInstant, duration)
-        sendTextMessage(message.chat, UploadPhoneNumbers.Added(rowsAffected.toLong()))
+        val changes = addPhoneNumbers(phoneNumbers.toSet(), startInstant, duration)
+        sendTextMessage(message.chat, UploadPhoneNumbers.Added(changes))
     } catch (e: Exception) {
         sendTextMessage(message.chat, Strings.DatabaseError)
         throw e

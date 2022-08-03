@@ -1,8 +1,11 @@
+@file:Suppress("FunctionName")
+
 package ru.spbstu.application.telegram
 
 import dev.inmo.tgbotapi.types.chat.PrivateChat
 import ru.spbstu.application.auth.entities.Avatar
 import ru.spbstu.application.auth.entities.Occupation
+import ru.spbstu.application.auth.entities.PhoneNumber
 import ru.spbstu.application.steps.entities.BonusType
 import ru.spbstu.application.steps.entities.Step
 import java.time.Duration
@@ -131,12 +134,15 @@ object Strings {
         }
 
         object UploadPhoneNumbers {
-            const val RequireDocument = "Загрузите документ .xlsx с номерами /n" +
-                    "Формат номеров: +7… или 7…/n" +
+            const val RequireDocument = "Загрузите документ users.xlsx с номерами \n" +
+                    "Формат номеров: +7… или 7…\n" +
                     "Формат ячеек с данными: текстовый или числовой"
             const val RequireStartDate = "Дата начала подписки для этих номеров (дд.мм.гггг)"
             const val RequireDurationDays = "Продолжительность подписки в днях"
             const val InvalidDate = "Некорректная дата. Попробуйте ещё раз."
+
+            fun NonRussianPhoneNumbers(phoneNumbers: List<PhoneNumber>) =
+                "Внимание! Файл содержит нероссийские номера: ${phoneNumbers.joinToString { "+${it.value}" }}"
 
             fun Added(count: Long) =
                 "${
@@ -152,7 +158,7 @@ object Strings {
             const val Header = "Список администраторов. Нажмите, чтобы удалить."
             const val AddAdmin = "Добавить"
             const val SendContact = "Отправьте контакт нового администратора"
-            const val ErrorNoTelegram = "Это пользователь не имеет телеграмма"
+            const val ErrorNoTelegram = "Этот пользователь не имеет аккаунта в Telegram или его настройки конфиденциальности не позволяют получить данные о пользователе через контакт"
             const val CantDeleteRootAdmin = "Нельзя удалить главного администратора"
             fun ConfirmationOfDeletion(chat: PrivateChat) = "Вы хотите удалить ${NameOfAdmin(chat)} из администраторов?"
 
