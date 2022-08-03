@@ -29,7 +29,7 @@ object Xlsx {
                         val cell = row.getCell(0)
                         when (cell.cellType) {
                             CellType.STRING -> cell.stringCellValue.filterNot { it.isWhitespace() }.removePrefix("+")
-                            CellType.NUMERIC -> cell.numericCellValue.toInt().toString()
+                            CellType.NUMERIC -> cell.numericCellValue.toLong().toString()
                             else -> null
                         }
                     }
