@@ -11,4 +11,8 @@ value class PhoneNumber private constructor(val value: String) {
             }
         }
     }
+
+    override fun toString(): String {
+        return value
+    }
 }

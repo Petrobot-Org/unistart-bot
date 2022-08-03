@@ -5,6 +5,7 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import ru.spbstu.application.admin.TrendsZip
 import ru.spbstu.application.admin.usecases.AddPhoneNumbersUseCase
+import ru.spbstu.application.admin.usecases.AddAdminsUseCase
 import ru.spbstu.application.admin.usecases.IsAdminUseCase
 import ru.spbstu.application.admin.usecases.IsRootAdminUseCase
 import ru.spbstu.application.auth.repository.*
@@ -39,6 +40,7 @@ val unistartModule = module(createdAtStart = true) {
     singleOf(::StartInfoRepositoryImpl) bind StartInfoRepository::class
     singleOf(::AdminRepositoryImpl) bind AdminRepository::class
     singleOf(::BonusAccountingRepositoryImpl) bind BonusAccountingRepository::class
+    singleOf(::AddAdminsUseCase)
     singleOf(::IsRootAdminUseCase)
     singleOf(::IsAdminUseCase)
     singleOf(::GetStepDurationUseCase)

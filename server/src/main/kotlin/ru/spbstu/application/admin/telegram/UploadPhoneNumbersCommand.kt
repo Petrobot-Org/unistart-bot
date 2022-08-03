@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.onEach
 import org.koin.core.context.GlobalContext
 import ru.spbstu.application.admin.Xlsx
 import ru.spbstu.application.admin.usecases.AddPhoneNumbersUseCase
+import ru.spbstu.application.auth.entities.PhoneNumber
 import ru.spbstu.application.telegram.Strings
 import ru.spbstu.application.telegram.Strings.AdminPanel.UploadPhoneNumbers
 import ru.spbstu.application.telegram.waitTextFrom
@@ -29,7 +30,7 @@ private val addPhoneNumbers: AddPhoneNumbersUseCase by GlobalContext.get().injec
 
 suspend fun BehaviourContext.uploadPhoneNumbersCommand() {
     onAdminText(Strings.AdminPanel.Menu.UploadPhoneNumbers) { sendHelpMessage(it) }
-    onAdminDocument(initialFilter = { it.content.media.fileName?.endsWith(".xlsx") == true }) {
+    onAdminDocument(initialFilter = { it.content.media.fileName?.equals("users.xlsx")==true}) {
         onPhoneNumbersUploaded(it)
     }
 }
@@ -39,16 +40,9 @@ private suspend fun BehaviourContext.sendHelpMessage(message: CommonMessage<Text
 }
 
 private suspend fun BehaviourContext.onPhoneNumbersUploaded(message: CommonMessage<DocumentContent>) {
-    val phoneNumbers = when (val result = Xlsx.parsePhoneNumbers(downloadFile(message.content.media).inputStream())) {
-        is Xlsx.Result.InvalidFile -> {
-            sendTextMessage(message.chat, Strings.AdminPanel.InvalidXlsx)
-            return
-        }
-        is Xlsx.Result.BadFormat -> {
-            sendTextMessage(message.chat, Strings.AdminPanel.InvalidSpreadsheet(result.errorRows))
-            return
-        }
-        is Xlsx.Result.OK -> result.value
+    val phoneNumbers = getPhoneNumbersFromXlsx(message)
+    if (phoneNumbers.isEmpty()) {
+        return
     }
     val startInstant = waitStartInstant(message.chat)
     val duration = waitDuration(message.chat)
@@ -58,6 +52,20 @@ private suspend fun BehaviourContext.onPhoneNumbersUploaded(message: CommonMessa
     } catch (e: Exception) {
         sendTextMessage(message.chat, Strings.DatabaseError)
         throw e
+    }
+}
+
+suspend fun BehaviourContext.getPhoneNumbersFromXlsx(message: CommonMessage<DocumentContent>): List<PhoneNumber>{
+      return when (val result = Xlsx.parsePhoneNumbers(downloadFile(message.content.media).inputStream())) {
+        is Xlsx.Result.InvalidFile -> {
+            sendTextMessage(message.chat, Strings.AdminPanel.InvalidXlsx)
+            return emptyList()
+        }
+        is Xlsx.Result.BadFormat -> {
+            sendTextMessage(message.chat, Strings.AdminPanel.InvalidSpreadsheet(result.errorRows))
+            return emptyList()
+        }
+        is Xlsx.Result.OK -> result.value
     }
 }
 
