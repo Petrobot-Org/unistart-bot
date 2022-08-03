@@ -30,10 +30,12 @@ object Xlsx {
                         when (cell.cellType) {
                             CellType.STRING -> cell.stringCellValue.filterNot { it.isWhitespace() }.removePrefix("+")
                             CellType.NUMERIC -> cell.numericCellValue.toLong().toString()
+                            CellType.BLANK -> ""
                             else -> null
                         }
                     }
                 }
+                .dropLastWhile { it?.isBlank() == true }
                 .map { cellValue -> cellValue?.let { PhoneNumber.valueOf(it) } }
             return if (!phoneNumbers.contains(null)) {
                 Result.OK(phoneNumbers.filterNotNull())
