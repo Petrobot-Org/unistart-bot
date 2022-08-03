@@ -131,8 +131,8 @@ object Strings {
         }
 
         object UploadPhoneNumbers {
-            const val RequireDocument = "Загрузите документ .xlsx с номерами /n" +
-                    "Формат номеров: +7… или 7…/n" +
+            const val RequireDocument = "Загрузите документ .xlsx с номерами\n" +
+                    "Формат номеров: +7… или 7…\n" +
                     "Формат ячеек с данными: текстовый или числовой"
             const val RequireStartDate = "Дата начала подписки для этих номеров (дд.мм.гггг)"
             const val RequireDurationDays = "Продолжительность подписки в днях"
