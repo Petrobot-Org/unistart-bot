@@ -3,6 +3,7 @@ package ru.spbstu.application.telegram
 import dev.inmo.tgbotapi.types.chat.PrivateChat
 import ru.spbstu.application.auth.entities.Avatar
 import ru.spbstu.application.auth.entities.Occupation
+import ru.spbstu.application.auth.entities.PhoneNumber
 import ru.spbstu.application.steps.entities.BonusType
 import ru.spbstu.application.steps.entities.Step
 import java.time.Duration
@@ -137,6 +138,9 @@ object Strings {
             const val RequireStartDate = "Дата начала подписки для этих номеров (дд.мм.гггг)"
             const val RequireDurationDays = "Продолжительность подписки в днях"
             const val InvalidDate = "Некорректная дата. Попробуйте ещё раз."
+
+            fun NonRussianPhoneNumbers(phoneNumbers: List<PhoneNumber>) =
+                "Внимание! Файл содержит нероссийские номера: ${phoneNumbers.joinToString { "+${it.value}" }}"
 
             fun Added(count: Long) =
                 "${

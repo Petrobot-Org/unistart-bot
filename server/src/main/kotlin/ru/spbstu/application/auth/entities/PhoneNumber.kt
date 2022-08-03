@@ -11,4 +11,8 @@ value class PhoneNumber private constructor(val value: String) {
             }
         }
     }
+
+    fun isRussian(): Boolean {
+        return Regex("7\\d{10}").matches(value)
+    }
 }
