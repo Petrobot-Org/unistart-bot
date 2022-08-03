@@ -134,7 +134,7 @@ object Strings {
         }
 
         object UploadPhoneNumbers {
-            const val RequireDocument = "Загрузите документ .xlsx с номерами\n" +
+            const val RequireDocument = "Загрузите документ users.xlsx с номерами \n" +
                     "Формат номеров: +7… или 7…\n" +
                     "Формат ячеек с данными: текстовый или числовой"
             const val RequireStartDate = "Дата начала подписки для этих номеров (дд.мм.гггг)"
@@ -158,7 +158,7 @@ object Strings {
             const val Header = "Список администраторов. Нажмите, чтобы удалить."
             const val AddAdmin = "Добавить"
             const val SendContact = "Отправьте контакт нового администратора"
-            const val ErrorNoTelegram = "Это пользователь не имеет телеграмма"
+            const val ErrorNoTelegram = "Этот пользователь не имеет аккаунта в Telegram или его настройки конфиденциальности не позволяют получить данные о пользователе через контакт"
             const val CantDeleteRootAdmin = "Нельзя удалить главного администратора"
             fun ConfirmationOfDeletion(chat: PrivateChat) = "Вы хотите удалить ${NameOfAdmin(chat)} из администраторов?"
 
