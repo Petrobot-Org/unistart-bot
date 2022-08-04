@@ -39,7 +39,12 @@ suspend fun BehaviourContext.listOfAdminsCommand() {
     onAdminText(Strings.AdminPanel.Menu.ListOfAdmins) { uploadListOfAdmins(it.chat) }
     onRootAdminDataCallbackQuery(Regex("delete admin:\\d+")) { deleteAdmin(it) }
     onRootAdminDataCallbackQuery(Regex("delete root admin")) { deleteRootAdmin(it.from) }
-    onRootAdminDataCallbackQuery(Regex("add admin")) { addAdmin(it) }
+    onRootAdminDataCallbackQuery(Regex("add admin")) {
+        addAdmin(it)
+    }
+    onAdminDocument(initialFilter = { it.content.media.fileName?.equals("admins.xlsx") == true }) {
+        onAdminsUploaded(it)
+    }
 }
 
 private suspend fun BehaviourContext.deleteRootAdmin(chat: Chat) {
@@ -81,9 +86,6 @@ private suspend fun BehaviourContext.addAdmin(dataCallbackQuery: DataCallbackQue
         adminRepository.add(User.Id(userId.chatId))
     } else {
         sendTextMessage(dataCallbackQuery.from, Strings.AdminPanel.ListOfAdmins.FormatOfXlsxTable)
-        onAdminDocument(initialFilter = { it.content.media.fileName?.equals("admins.xlsx") == true }) {
-            onAdminsUploaded(it)
-        }
     }
     editMessageReplyMarkup(
         chat = dataCallbackQuery.from,
