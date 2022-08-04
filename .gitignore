@@ -43,3 +43,4 @@ kotlin-ide/
 /server/trends.yaml
 /server/trends/
 **/~$*
+megalinter-reports/
