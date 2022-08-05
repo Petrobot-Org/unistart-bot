@@ -3,7 +3,6 @@ package ru.spbstu.application.steps.usecases
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
-
 import ru.spbstu.application.AppConfig
 import ru.spbstu.application.DurationBonus
 import ru.spbstu.application.steps.entities.Step
@@ -21,7 +20,7 @@ internal class CalculateDurationBonusUseCaseTest {
             durationToBonus = listOf(
                 DurationBonus(0.5, 3L),
                 DurationBonus(1.0, 2L),
-                DurationBonus(2.0, 1L),
+                DurationBonus(2.0, 1L)
             )
         )
         val getStepDurationUseCase = mockk<GetStepDurationUseCase>()

@@ -59,12 +59,15 @@ private suspend fun BehaviourContext.setCommands(chat: Chat, helpEntries: List<H
 }
 
 private suspend fun BehaviourContext.handleHelp(chat: Chat, helpEntries: List<HelpEntry>) {
-    sendTextMessage(chat, buildEntities {
+    sendTextMessage(
+    chat,
+    buildEntities {
         regularln(Strings.Help.Header)
         filterAvailable(chat, helpEntries).forEach {
             regularln("/${it.command} – ${it.description}")
         }
-    })
+    }
+    )
 }
 
 private fun filterAvailable(chat: Chat, helpEntries: List<HelpEntry>): List<HelpEntry> {

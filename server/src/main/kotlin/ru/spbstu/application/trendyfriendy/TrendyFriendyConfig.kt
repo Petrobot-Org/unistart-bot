@@ -27,5 +27,4 @@ class TrendyFriendyConfig private constructor(
             return sets.isNotEmpty() && sets.all { it.value.size >= cardsPerGame }
         }
     }
-
 }

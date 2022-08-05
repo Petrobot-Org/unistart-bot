@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:filename")
+
 package ru.spbstu.application.extensions
 
 import java.time.Duration
