@@ -158,9 +158,21 @@ object Strings {
             const val No = "Нет"
             const val Header = "Список администраторов. Нажмите, чтобы удалить."
             const val AddAdmin = "Добавить"
+            const val ChooseTheWayOfAddition = "Выберите способ добавления новых администраторов"
+            const val AddByContact = "C помощью контакта"
+            const val AddByXlsxTable = "С помощью .xlsx таблицы"
+            const val FormatOfXlsxTable = "Загрузите документ admins.xlsx с номерами \n" +
+                    "Формат номеров: +7… или 7…\n" +
+                    "Формат ячеек с данными: текстовый или числовой"
             const val SendContact = "Отправьте контакт нового администратора"
             const val ErrorNoTelegram = "Этот пользователь не имеет аккаунта в Telegram или его настройки конфиденциальности не позволяют получить данные о пользователе через контакт"
             const val CantDeleteRootAdmin = "Нельзя удалить главного администратора"
+            fun UnableToAddAdmin(phoneNumbers: List<PhoneNumber>) = "Не удалось добавить ${pluralize(phoneNumbers.size.toLong(),"админиcтратора","админиcтраторов", "админиcтраторов")}" +
+                    " по ${pluralize(phoneNumbers.size.toLong(),"номеру","номерам", "номерам")}  $phoneNumbers," +
+                    " так как ${pluralize(phoneNumbers.size.toLong(),"пользователь", "пользователи", "пользователи")}" +
+                    " с  ${pluralize(phoneNumbers.size.toLong(),"этим","этими", "этими")} " +
+                    " ${pluralize(phoneNumbers.size.toLong(),"номером","номерами", "номерами")} " +
+                    "не ${pluralize(phoneNumbers.size.toLong(),"зарегистрирован","зарегистрированы", "зарегистрированы")}"
             fun ConfirmationOfDeletion(chat: PrivateChat) = "Вы хотите удалить ${NameOfAdmin(chat)} из администраторов?"
 
             fun NameOfAdmin(chat: PrivateChat) =

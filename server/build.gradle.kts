@@ -32,7 +32,7 @@ tasks.getByName<Test>("test") {
 }
 
 application {
-    mainClass.set("ru.spbstu.application.ServerKt")
+    mainClass.set("ru.spbstu.application.MainKt")
 }
 
 sqldelight {
