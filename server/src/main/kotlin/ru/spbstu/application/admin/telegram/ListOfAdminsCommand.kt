@@ -101,7 +101,9 @@ private suspend fun BehaviourContext.onAdminsUploaded(message: CommonMessage<Doc
     }
     try {
         val failedNumbers = addAdmins(phoneNumbers.toSet())
-        sendTextMessage(message.chat, Strings.AdminPanel.ListOfAdmins.UnableToAddAdmin(failedNumbers))
+        if (failedNumbers.isNotEmpty()) {
+            sendTextMessage(message.chat, Strings.AdminPanel.ListOfAdmins.UnableToAddAdmin(failedNumbers))
+        }
     } catch (e: Exception) {
         sendTextMessage(message.chat, Strings.DatabaseError)
         throw e
