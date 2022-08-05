@@ -16,7 +16,7 @@ class AddAdminsUseCase(
             val user = userRepository.get(it)
             if (user != null) {
                 adminRepository.add(user.id)
-            } else{
+            } else {
                 errNumbers.add(it)
             }
         }

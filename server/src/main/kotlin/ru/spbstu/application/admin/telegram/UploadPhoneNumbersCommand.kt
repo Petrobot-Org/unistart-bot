@@ -30,7 +30,7 @@ private val addPhoneNumbers: AddPhoneNumbersUseCase by GlobalContext.get().injec
 
 suspend fun BehaviourContext.uploadPhoneNumbersCommand() {
     onAdminText(Strings.AdminPanel.Menu.UploadPhoneNumbers) { sendHelpMessage(it) }
-    onAdminDocument(initialFilter = { it.content.media.fileName?.equals("users.xlsx")==true}) {
+    onAdminDocument(initialFilter = { it.content.media.fileName?.equals("users.xlsx") == true }) {
         onPhoneNumbersUploaded(it)
     }
 }
@@ -59,7 +59,7 @@ private suspend fun BehaviourContext.onPhoneNumbersUploaded(message: CommonMessa
     }
 }
 
-suspend fun BehaviourContext.getPhoneNumbersFromXlsx(message: CommonMessage<DocumentContent>): List<PhoneNumber>{
+suspend fun BehaviourContext.getPhoneNumbersFromXlsx(message: CommonMessage<DocumentContent>): List<PhoneNumber> {
       return when (val result = Xlsx.parsePhoneNumbers(downloadFile(message.content.media).inputStream())) {
         is Xlsx.Result.InvalidFile -> {
             sendTextMessage(message.chat, Strings.AdminPanel.InvalidXlsx)

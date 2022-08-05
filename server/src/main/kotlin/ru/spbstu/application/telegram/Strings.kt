@@ -168,7 +168,7 @@ object Strings {
             const val ErrorNoTelegram = "Этот пользователь не имеет аккаунта в Telegram или его настройки конфиденциальности не позволяют получить данные о пользователе через контакт"
             const val CantDeleteRootAdmin = "Нельзя удалить главного администратора"
             fun UnableToAddAdmin(phoneNumbers: List<PhoneNumber>) = "Не удалось добавить ${pluralize(phoneNumbers.size.toLong(),"админиcтратора","админиcтраторов", "админиcтраторов")}" +
-                    " по ${pluralize(phoneNumbers.size.toLong(),"номеру","номерам", "номерам")}  ${phoneNumbers}," +
+                    " по ${pluralize(phoneNumbers.size.toLong(),"номеру","номерам", "номерам")}  $phoneNumbers," +
                     " так как ${pluralize(phoneNumbers.size.toLong(),"пользователь", "пользователи", "пользователи")}" +
                     " с  ${pluralize(phoneNumbers.size.toLong(),"этим","этими", "этими")} " +
                     " ${pluralize(phoneNumbers.size.toLong(),"номером","номерами", "номерами")} " +

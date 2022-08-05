@@ -62,17 +62,18 @@ private suspend fun BehaviourContext.uploadListOfAdmins(chat: Chat) {
 private suspend fun BehaviourContext.addAdmin(dataCallbackQuery: DataCallbackQuery) {
     val wayOfAddition = waitTextFrom(
         dataCallbackQuery.from,
-        SendTextMessage(dataCallbackQuery.from.id, Strings.AdminPanel.ListOfAdmins.ChooseTheWayOfAddition,
+        SendTextMessage(
+        dataCallbackQuery.from.id, Strings.AdminPanel.ListOfAdmins.ChooseTheWayOfAddition,
             replyMarkup = replyKeyboard(
                 resizeKeyboard = true,
                 oneTimeKeyboard = true
-            )
-            {
+            ) {
                 row {
                     simpleButton(Strings.AdminPanel.ListOfAdmins.AddByContact)
                     simpleButton(Strings.AdminPanel.ListOfAdmins.AddByXlsxTable)
                 }
-            })
+            }
+        )
     ).first { it.text == Strings.AdminPanel.ListOfAdmins.AddByContact || it.text == Strings.AdminPanel.ListOfAdmins.AddByXlsxTable }
         .text
     if (wayOfAddition == Strings.AdminPanel.ListOfAdmins.AddByContact) {

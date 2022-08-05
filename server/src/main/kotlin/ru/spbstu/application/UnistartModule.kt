@@ -4,8 +4,8 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import ru.spbstu.application.admin.TrendsZip
-import ru.spbstu.application.admin.usecases.AddPhoneNumbersUseCase
 import ru.spbstu.application.admin.usecases.AddAdminsUseCase
+import ru.spbstu.application.admin.usecases.AddPhoneNumbersUseCase
 import ru.spbstu.application.admin.usecases.IsAdminUseCase
 import ru.spbstu.application.admin.usecases.IsRootAdminUseCase
 import ru.spbstu.application.auth.repository.*
