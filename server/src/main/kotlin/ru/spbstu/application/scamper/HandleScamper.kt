@@ -1,12 +1,12 @@
 package ru.spbstu.application.scamper
 
 import dev.inmo.tgbotapi.bot.TelegramBot
+import dev.inmo.tgbotapi.extensions.api.answers.answer
 import dev.inmo.tgbotapi.extensions.api.delete
 import dev.inmo.tgbotapi.extensions.api.edit.edit
 import dev.inmo.tgbotapi.extensions.api.send.media.sendDocument
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
-import dev.inmo.tgbotapi.extensions.utils.asDataCallbackQuery
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.*
 import dev.inmo.tgbotapi.extensions.utils.withContent
 import dev.inmo.tgbotapi.requests.abstracts.asMultipartFile
@@ -48,10 +48,12 @@ private suspend fun BehaviourContext.act(
         val spreadsheet = Xlsx.createScamperSpreadsheet(it.answers, it.questionnaire)
         val document = spreadsheet.asMultipartFile(IdeaGenerationStrings.ScamperUI.Filename + ".xlsx")
         sendDocument(
-            message.chat, document, replyMarkup = flatReplyKeyboard(
+            message.chat, document,
+            replyMarkup = flatReplyKeyboard(
                 resizeKeyboard = true,
                 oneTimeKeyboard = true
-            ) { simpleButton(IdeaGenerationStrings.BackToIdeaGeneration) })
+            ) { simpleButton(IdeaGenerationStrings.BackToIdeaGeneration) }
+        )
         edit(message, text = IdeaGenerationStrings.ScamperEnding, parseMode = MarkdownParseMode)
         coroutineScope.cancel()
     }
@@ -80,6 +82,7 @@ private fun BehaviourContext.waitCallbacks(
             it.data == "scamper_show" -> model.onShowAllQuestions()
             it.data == "scamper_to_letters" -> model.onToLetters()
         }
+        answer(it)
     }
 
 private fun BehaviourContext.waitAnswer(

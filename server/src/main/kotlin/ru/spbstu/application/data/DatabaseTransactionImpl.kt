@@ -12,4 +12,8 @@ class DatabaseTransactionWithResultImpl(private val appDatabase: AppDatabase) : 
     override fun <R> invoke(body: () -> R): R {
         return appDatabase.transactionWithResult { body() }
     }
+
+    override fun changes(): Long {
+        return appDatabase.utilsQueries.changes().executeAsOne()
+    }
 }

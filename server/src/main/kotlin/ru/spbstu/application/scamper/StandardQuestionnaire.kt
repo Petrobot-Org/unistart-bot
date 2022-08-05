@@ -46,6 +46,6 @@ val StandardQuestionnaire = Questionnaire(
             description = IdeaGenerationStrings.RDescription,
             questions = IdeaGenerationStrings.RQuestions,
             bonusType = BonusType.ScamperR
-        ),
+        )
     )
 )

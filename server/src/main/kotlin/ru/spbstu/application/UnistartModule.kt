@@ -10,8 +10,8 @@ import ru.spbstu.application.admin.usecases.IsAdminUseCase
 import ru.spbstu.application.admin.usecases.IsRootAdminUseCase
 import ru.spbstu.application.auth.repository.*
 import ru.spbstu.application.auth.usecases.IsSubscribedUseCase
-import ru.spbstu.application.auth.usecases.RegisterUserUseCase
 import ru.spbstu.application.auth.usecases.RegisterAdminUserUseCase
+import ru.spbstu.application.auth.usecases.RegisterUserUseCase
 import ru.spbstu.application.data.*
 import ru.spbstu.application.notifications.ConfigureNotifiers
 import ru.spbstu.application.notifications.NextStepNotifier

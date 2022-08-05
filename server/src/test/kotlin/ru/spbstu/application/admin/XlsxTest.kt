@@ -24,7 +24,7 @@ internal class XlsxTest {
                     val expected = listOf(
                         PhoneNumber.valueOf("79000000000"),
                         PhoneNumber.valueOf("79000000001"),
-                        PhoneNumber.valueOf("79000000002"),
+                        PhoneNumber.valueOf("79000000002")
                     )
                     assertEquals(expected, result.value)
                 }
@@ -37,9 +37,11 @@ internal class XlsxTest {
     @Test
     fun parseInvalidPhoneNumbers() {
         val expectedErrorRows = listOf(3, 4, 5)
-        val errorRows = (this::class.java.getResourceAsStream("/invalid_phones.xlsx")!!.use { inputStream ->
+        val errorRows = (
+        this::class.java.getResourceAsStream("/invalid_phones.xlsx")!!.use { inputStream ->
             Xlsx.parsePhoneNumbers(inputStream)
-        } as? Xlsx.Result.BadFormat)?.errorRows
+        } as? Xlsx.Result.BadFormat
+        )?.errorRows
         assertEquals(expectedErrorRows, errorRows)
     }
 
@@ -49,13 +51,13 @@ internal class XlsxTest {
             "Gartner" to listOf(
                 TrendCard("Тренд 1", "Описание", "pic1.jpeg"),
                 TrendCard("Тренд 2", "Описание", "pic1.jpeg"),
-                TrendCard("Тренд 3", "Описание", "pic1.jpeg"),
+                TrendCard("Тренд 3", "Описание", "pic1.jpeg")
             ),
             "Skolkovo" to listOf(
                 TrendCard("Тренд 4", "Описание", "pic1.jpeg"),
                 TrendCard("Тренд 5", "Описание", "pic1.jpeg"),
                 TrendCard("Тренд 6", "Описание", "pic1.jpeg"),
-                TrendCard("Тренд 7", "Описание", "pic1.jpeg"),
+                TrendCard("Тренд 7", "Описание", "pic1.jpeg")
             )
         )
         this::class.java.getResourceAsStream("/trends.xlsx")!!.use { inputStream ->

@@ -15,9 +15,8 @@ class AddAdminsUseCase(
         phoneNumbers.forEach {
             val user = userRepository.get(it)
             if (user != null) {
-                    adminRepository.add(user.id)
-            }
-            else{
+                adminRepository.add(user.id)
+            } else{
                 errNumbers.add(it)
             }
         }

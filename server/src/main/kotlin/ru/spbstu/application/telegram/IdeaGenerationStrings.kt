@@ -265,7 +265,8 @@ object IdeaGenerationStrings {
                 Pair(HowToStartDelphiMethod, WhatIsNextStep),
                 Pair(WhatIsNextStepDelphiMethod, WhatIsTheLastStep),
                 Pair(WhatIsTheLastStepDelphiMethod, GetIllustration)
-            ), DelphiMethodPath
+            ),
+            DelphiMethodPath
         ),
         BrainstormMethod to IdeaGenerationInfo(
             listOf(
@@ -280,13 +281,15 @@ object IdeaGenerationStrings {
             listOf(
                 Pair(ScamperDescription, HowDoesItWork),
                 Pair(HowDoesScamperWork, GetIllustration)
-            ), ScamperPath
+            ),
+            ScamperPath
         ),
         TrendyFriendy to IdeaGenerationInfo(
             listOf(
                 Pair(TrendyFriendyDescription, HowDoesItWork),
                 Pair(HowDoesTrendyFriendyWork, GetIllustration)
-            ), TrendyFriendyPath
+            ),
+            TrendyFriendyPath
         )
     )
 

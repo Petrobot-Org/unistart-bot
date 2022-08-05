@@ -1,3 +1,5 @@
+@file:Suppress("FunctionName")
+
 package ru.spbstu.application.telegram
 
 import dev.inmo.tgbotapi.types.chat.PrivateChat
@@ -105,7 +107,8 @@ object Strings {
         object UploadTrends {
             val RequireDocumentPair = """Загрузите zip-архив. Он должен содержать:
                 |1. Документ .xlsx с трендами в формате: категория, название тренда, описание, имя картинки
-                |2. Сами картинки""".trimMargin()
+                |2. Сами картинки
+""".trimMargin()
 
             const val NoXlsxInArchive = "В архиве не найден .xlsx файл"
             const val Success = "База трендов обновлена!"
@@ -138,6 +141,9 @@ object Strings {
             const val RequireStartDate = "Дата начала подписки для этих номеров (дд.мм.гггг)"
             const val RequireDurationDays = "Продолжительность подписки в днях"
             const val InvalidDate = "Некорректная дата. Попробуйте ещё раз."
+
+            fun NonRussianPhoneNumbers(phoneNumbers: List<PhoneNumber>) =
+                "Внимание! Файл содержит нероссийские номера: ${phoneNumbers.joinToString { "+${it.value}" }}"
 
             fun Added(count: Long) =
                 "${

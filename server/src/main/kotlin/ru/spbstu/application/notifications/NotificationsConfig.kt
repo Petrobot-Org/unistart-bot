@@ -12,6 +12,7 @@ class NotificationsConfig(
     @Serializable
     class NextStep(
         @Serializable(with = DurationSerializer::class)
-        @SerialName("before_seconds") val before: Duration = Duration.ofDays(1)
+        @SerialName("before_seconds")
+        val before: Duration = Duration.ofDays(1)
     )
 }

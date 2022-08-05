@@ -109,8 +109,7 @@ private suspend fun BehaviourContext.waitStartLevel(chat: Chat) =
             replyMarkup = replyKeyboard(
                 resizeKeyboard = true,
                 oneTimeKeyboard = true
-            )
-            {
+            ) {
                 row { simpleButton(SuperIdea) }
                 row { simpleButton(NotMyIdea) }
                 row { simpleButton(NoIdea) }
@@ -147,8 +146,7 @@ private suspend fun BehaviourContext.waitOccupation(chat: Chat) =
                 replyMarkup = replyKeyboard(
                     resizeKeyboard = true,
                     oneTimeKeyboard = true
-                )
-                {
+                ) {
                     OccupationByString.keys.take(6).chunked(2).forEach {
                         row {
                             it.forEach { simpleButton(it) }

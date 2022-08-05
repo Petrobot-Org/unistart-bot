@@ -54,9 +54,11 @@ private fun createIdeasXlsx(ideas: List<Idea>): ByteArray {
     workbook.createSheet().apply {
         createRow(0).apply {
             val style = workbook.createCellStyle().apply {
-                setFont(workbook.createFont().apply {
+                setFont(
+                workbook.createFont().apply {
                     bold = true
-                })
+                }
+                )
                 wrapText = true
                 heightInPoints = 3 * defaultRowHeightInPoints
             }
