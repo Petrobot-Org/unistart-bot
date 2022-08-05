@@ -43,7 +43,6 @@ class UserRepositoryImpl(private val database: AppDatabase) : UserRepository {
         return database.userQueries.get(id, mapper).executeAsOneOrNull() != null
     }
 
-
     override fun sortByAmountOfCoins(): List<User> {
         return database.userQueries.sortByAmountOfCoins(mapper).executeAsList()
     }
@@ -55,5 +54,4 @@ class UserRepositoryImpl(private val database: AppDatabase) : UserRepository {
     override fun setAvailableStepsCount(id: User.Id, newAvailableStepsCount: Long) {
         database.userQueries.updateAvailableStepsCount(newAvailableStepsCount, id)
     }
-
 }

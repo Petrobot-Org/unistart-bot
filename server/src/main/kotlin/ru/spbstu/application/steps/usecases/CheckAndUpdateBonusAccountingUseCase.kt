@@ -23,7 +23,7 @@ private val stepsWithBonusType: Map<Step, List<BonusType>> = mapOf(
         BonusType.ScamperM,
         BonusType.ScamperP,
         BonusType.ScamperE,
-        BonusType.ScamperR,
+        BonusType.ScamperR
     )
 )
 
@@ -38,7 +38,7 @@ private val bonusTypeWithBonusValue: Map<BonusType, Long> = mapOf(
     BonusType.ScamperM to 1L,
     BonusType.ScamperP to 1L,
     BonusType.ScamperE to 1L,
-    BonusType.ScamperR to 1L,
+    BonusType.ScamperR to 1L
 )
 
 class CheckAndUpdateBonusAccountingUseCase(

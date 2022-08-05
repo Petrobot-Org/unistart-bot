@@ -38,11 +38,8 @@ fun App(screenModel: ScreenModel) {
         onDispose { }
     }
     Div(attrs = {
-        classes(buildList {
-            add("loadable")
-            if (state.loadingState.finishing) add("loading")
-        })
-
+        classes("loadable")
+        if (state.loadingState.finishing) classes("loading")
         style {
             display(DisplayStyle.Flex)
             flexDirection(FlexDirection.Column)
@@ -128,12 +125,8 @@ private fun ChooseSetScreen(
     })
     Button(attrs = {
         onClick { generateCards() }
-        classes(buildList {
-            add("btn")
-            add("btn-primary")
-            add("loadable")
-            if (state.loadingState.gettingCards) add("loading")
-        })
+        classes("btn", "btn-primary", "loadable")
+        if (state.loadingState.gettingCards) classes("loading")
         style {
             margin(8.px)
         }
@@ -156,7 +149,6 @@ private fun LabeledCheckbox(
         Label(attrs = {
             classes("label", "cursor-pointer")
         }) {
-
             text()
             Input(InputType.Checkbox) {
                 classes("checkbox")
@@ -253,7 +245,7 @@ private fun PlayingScreen(
     }
     state.cards.forEachIndexed { index, card ->
         Div(attrs = {
-            classes("card", "image-full", "delay${index}")
+            classes("card", "image-full", "delay$index")
             style {
                 flex(1)
                 margin(8.px)

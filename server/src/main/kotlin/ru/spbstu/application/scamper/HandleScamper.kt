@@ -48,10 +48,12 @@ private suspend fun BehaviourContext.act(
         val spreadsheet = Xlsx.createScamperSpreadsheet(it.answers, it.questionnaire)
         val document = spreadsheet.asMultipartFile(IdeaGenerationStrings.ScamperUI.Filename + ".xlsx")
         sendDocument(
-            message.chat, document, replyMarkup = flatReplyKeyboard(
+            message.chat, document,
+            replyMarkup = flatReplyKeyboard(
                 resizeKeyboard = true,
                 oneTimeKeyboard = true
-            ) { simpleButton(IdeaGenerationStrings.BackToIdeaGeneration) })
+            ) { simpleButton(IdeaGenerationStrings.BackToIdeaGeneration) }
+        )
         edit(message, text = IdeaGenerationStrings.ScamperEnding, parseMode = MarkdownParseMode)
         coroutineScope.cancel()
     }

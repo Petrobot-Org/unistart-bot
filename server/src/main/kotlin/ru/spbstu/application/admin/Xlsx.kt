@@ -40,13 +40,15 @@ object Xlsx {
             return if (!phoneNumbers.contains(null)) {
                 Result.OK(phoneNumbers.filterNotNull())
             } else {
-                Result.BadFormat(phoneNumbers.mapIndexedNotNull { index, phoneNumber ->
+                Result.BadFormat(
+                phoneNumbers.mapIndexedNotNull { index, phoneNumber ->
                     if (phoneNumber == null) {
                         index
                     } else {
                         null
                     }
-                })
+                }
+                )
             }
         } catch (e: Exception) {
             return Result.InvalidFile()
