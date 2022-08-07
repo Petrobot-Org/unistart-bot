@@ -313,7 +313,7 @@ object IdeaGenerationStrings {
             regularln("")
             if (previousAnswers.isNotEmpty()) {
                 boldln("Твои ответы:")
-                previousAnswers.forEach { regularln("– $it") }
+                previousAnswers.takeLast(5).forEach { regularln("– $it".take(256)) }
             } else {
                 regularln("Пиши свои мысли в чат")
             }
