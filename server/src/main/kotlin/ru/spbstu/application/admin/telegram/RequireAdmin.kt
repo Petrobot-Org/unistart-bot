@@ -21,9 +21,9 @@ import dev.inmo.tgbotapi.types.queries.callback.DataCallbackQuery
 import dev.inmo.tgbotapi.types.update.abstracts.Update
 import kotlinx.coroutines.Job
 import org.koin.core.context.GlobalContext
+import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.usecases.IsNonRootAdminUseCase
 import ru.spbstu.application.auth.usecases.IsRootAdminUseCase
-import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.telegram.HelpContext
 import ru.spbstu.application.telegram.HelpEntry
 import ru.spbstu.application.telegram.Role

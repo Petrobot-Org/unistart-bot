@@ -25,10 +25,14 @@ suspend fun TelegramBot.giveBonusWithMessage(
     val result = checkAndUpdateBonusAccounting(User.Id(userId.chatId), bonusType, step, Instant.now())
     val stageMessage = if (result.stageBonus != null) {
         sendTextMessage(userId, Strings.NewBonusForStage(result.stageBonus))
-    } else null
+    } else {
+    null
+    }
     val stepMessage = if (result.stepBonus != null) {
         nextStepNotifier.rescheduleFor(User.Id(userId.chatId))
         sendTextMessage(userId, Strings.NewBonusForStep(result.stepBonus, step))
-    } else null
+    } else {
+    null
+    }
     return listOfNotNull(stageMessage, stepMessage)
 }
