@@ -25,6 +25,7 @@ dependencies {
     implementation(libs.kaml)
     implementation(libs.bundles.poi)
     implementation(libs.quartz)
+    implementation(libs.serialization.cbor)
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.mockk)
 }

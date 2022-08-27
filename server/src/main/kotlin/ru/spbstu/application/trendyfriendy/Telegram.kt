@@ -1,11 +1,13 @@
 package ru.spbstu.application.trendyfriendy
 
+import dev.inmo.tgbotapi.bot.RequestsExecutor
 import dev.inmo.tgbotapi.bot.TelegramBot
 import dev.inmo.tgbotapi.extensions.api.send.media.sendDocument
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.*
 import dev.inmo.tgbotapi.requests.abstracts.asMultipartFile
+import dev.inmo.tgbotapi.types.ChatId
 import dev.inmo.tgbotapi.types.chat.Chat
 import dev.inmo.tgbotapi.types.toChatId
 import dev.inmo.tgbotapi.types.webapps.WebAppInfo
@@ -21,7 +23,7 @@ import java.io.ByteArrayOutputStream
 
 private val appConfig: AppConfig by GlobalContext.get().inject()
 
-suspend fun BehaviourContext.sendTrendyFriendyApp(chat: Chat) {
+suspend fun RequestsExecutor.sendTrendyFriendyApp(chat: ChatId) {
     sendTextMessage(
         chat,
         IdeaGenerationStrings.TrendyFriendyStart,

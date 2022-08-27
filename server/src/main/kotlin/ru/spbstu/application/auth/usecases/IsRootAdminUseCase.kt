@@ -1,4 +1,4 @@
-package ru.spbstu.application.admin.usecases
+package ru.spbstu.application.auth.usecases
 
 import ru.spbstu.application.AppConfig
 import ru.spbstu.application.auth.entities.User

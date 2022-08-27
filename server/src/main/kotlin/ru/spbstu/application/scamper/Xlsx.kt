@@ -2,6 +2,7 @@ package ru.spbstu.application.scamper
 
 import org.apache.poi.ss.util.CellRangeAddress
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import ru.spbstu.application.telegram.entities.state.ScamperAnswer
 import java.io.ByteArrayOutputStream
 
 object Xlsx {

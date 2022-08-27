@@ -1,27 +1,29 @@
 package ru.spbstu.application.steps.telegram
 
+import com.ithersta.tgbotapi.fsm.entities.triggers.onText
+import com.ithersta.tgbotapi.fsm.entities.triggers.onTransition
+import dev.inmo.tgbotapi.bot.RequestsExecutor
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
-import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.ReplyKeyboardMarkup
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.replyKeyboard
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.row
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.simpleButton
-import dev.inmo.tgbotapi.requests.send.SendTextMessage
+import dev.inmo.tgbotapi.types.ChatId
 import dev.inmo.tgbotapi.types.buttons.SimpleKeyboardButton
 import dev.inmo.tgbotapi.types.message.Markdown
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
 import dev.inmo.tgbotapi.types.message.content.TextContent
-import kotlinx.coroutines.flow.first
 import org.koin.core.context.GlobalContext
-import ru.spbstu.application.auth.entities.User
+import ru.spbstu.application.auth.entities.users.SubscribedUser
 import ru.spbstu.application.auth.repository.UserRepository
-import ru.spbstu.application.scamper.handleScamper
+import ru.spbstu.application.scamper.scamper
+import ru.spbstu.application.scamper.startScamper
 import ru.spbstu.application.steps.entities.Step
-import ru.spbstu.application.telegram.IdeaGenerationStrings
-import ru.spbstu.application.telegram.Strings
+import ru.spbstu.application.telegram.*
 import ru.spbstu.application.telegram.Strings.MyRanking
-import ru.spbstu.application.telegram.sendPhotoResource
-import ru.spbstu.application.telegram.waitTextFrom
+import ru.spbstu.application.telegram.entities.state.EmptyState
+import ru.spbstu.application.telegram.entities.state.IdeaGenerationDescriptionState
+import ru.spbstu.application.telegram.entities.state.IdeaGenerationMenu
 import ru.spbstu.application.trendyfriendy.sendTrendyFriendyApp
 
 private val userRepository: UserRepository by GlobalContext.get().inject()
@@ -35,10 +37,9 @@ private val ideaGenerationMethods = listOf(
     IdeaGenerationStrings.BackToSteps
 )
 
-suspend fun BehaviourContext.handleSteps(message: CommonMessage<TextContent>) {
-    val user = userRepository.get(User.Id(message.chat.id.chatId)) ?: return
+suspend fun RequestsExecutor.sendAvailableSteps(chat: ChatId, user: SubscribedUser) {
     sendTextMessage(
-        message.chat.id,
+        chat,
         Strings.ChooseStep,
         replyMarkup = replyKeyboard(
             resizeKeyboard = true,
@@ -54,66 +55,87 @@ suspend fun BehaviourContext.handleSteps(message: CommonMessage<TextContent>) {
     )
 }
 
-suspend fun BehaviourContext.handleStep1(message: CommonMessage<TextContent>) {
-    sendTextMessage(
-        message.chat.id,
-        IdeaGenerationStrings.ChooseIdeaGeneration,
-        replyMarkup = replyKeyboard(
-            resizeKeyboard = true,
-            oneTimeKeyboard = true
-        ) {
-            ideaGenerationMethods.chunked(2).forEach {
-                row {
-                    it.forEach { simpleButton(it) }
-                }
-            }
+fun RoleFilterBuilder<SubscribedUser>.step1() {
+    scamper()
+    state<EmptyState> {
+        onText(Strings.Step1) {
+            setState(IdeaGenerationMenu)
         }
-    )
-}
-
-suspend fun BehaviourContext.handleIdeaGenerationMethods(message: CommonMessage<TextContent>) {
-    val method = message.content.text
-
-    IdeaGenerationStrings.IdeaGenerationWithDescription.getValue(message.content.text).description.forEach() {
-        waitTextFrom(
-            message.chat,
-            SendTextMessage(
-                chatId = message.chat.id,
-                text = it.first,
+    }
+    state<IdeaGenerationMenu> {
+        onTransition {
+            sendTextMessage(
+                it,
+                IdeaGenerationStrings.ChooseIdeaGeneration,
+                replyMarkup = replyKeyboard(
+                    resizeKeyboard = true,
+                    oneTimeKeyboard = true
+                ) {
+                    ideaGenerationMethods.chunked(2).forEach {
+                        row {
+                            it.forEach { simpleButton(it) }
+                        }
+                    }
+                }
+            )
+        }
+        onText(*IdeaGenerationStrings.IdeaGenerationWithDescription.keys.toTypedArray()) {
+            setState(IdeaGenerationDescriptionState(method = it.content.text))
+        }
+        onText(IdeaGenerationStrings.BackToSteps) {
+            setState(EmptyState)
+        }
+    }
+    state<IdeaGenerationDescriptionState> {
+        onTransition {
+            val description = IdeaGenerationStrings.IdeaGenerationWithDescription
+                .getValue(state.method)
+                .description.getOrNull(state.index) ?: run {
+                sendPhotoResource(
+                    it,
+                    IdeaGenerationStrings.IdeaGenerationWithDescription.getValue(state.method).pathToIllustration
+                )
+                when (state.method) {
+                    IdeaGenerationStrings.TrendyFriendy -> {
+                        sendTrendyFriendyApp(it)
+                        TODO()
+                    }
+                    IdeaGenerationStrings.Scamper -> {
+                        startScamper(it)
+                    }
+                    else -> {
+                        giveBonusWithMessage(
+                            it,
+                            Strings.BonusTypesByString.getValue(state.method),
+                            Step(1)
+                        )
+                        setState(IdeaGenerationMenu)
+                    }
+                }
+                return@onTransition
+            }
+            sendTextMessage(
+                chatId = it,
+                text = description.first,
                 parseMode = Markdown,
                 replyMarkup = ReplyKeyboardMarkup(
-                    buttons = listOf(SimpleKeyboardButton(it.second)).toTypedArray(),
+                    buttons = listOf(SimpleKeyboardButton(description.second)).toTypedArray(),
                     resizeKeyboard = true,
                     oneTimeKeyboard = true
                 )
             )
-        ).first { content -> content.text == it.second }
-    }
-    bot.sendPhotoResource(
-        message.chat,
-        IdeaGenerationStrings.IdeaGenerationWithDescription.getValue(method).pathToIllustration
-    )
-    when (method) {
-        IdeaGenerationStrings.TrendyFriendy -> {
-            sendTrendyFriendyApp(message.chat)
         }
-        IdeaGenerationStrings.Scamper -> {
-            handleScamper(message.chat)
-        }
-        else -> {
-            giveBonusWithMessage(
-                message.chat.id,
-                Strings.BonusTypesByString[method]!!,
-                Step(1)
-            )
-            handleStep1(message)
+        onText {
+            setState(state.copy(index = state.index + 1))
         }
     }
 }
 
-suspend fun BehaviourContext.handleStats(message: CommonMessage<TextContent>) {
+suspend fun StatefulContext<*, SubscribedUser>.handleStats(message: CommonMessage<TextContent>) {
     val sortedUsers = userRepository.sortByAmountOfCoins()
-    val user = userRepository.get(User.Id(message.chat.id.chatId)) ?: return
-    sendTextMessage(message.chat.id, MyRanking(sortedUsers.size, sortedUsers.indexOf(user) + 1, user.amountOfCoins))
-    handleSteps(message)
+    sendTextMessage(
+        message.chat.id,
+        MyRanking(sortedUsers.size, sortedUsers.indexOfFirst { it.id == user.id } + 1, user.amountOfCoins)
+    )
+    sendAvailableSteps(message.chat.id, user)
 }

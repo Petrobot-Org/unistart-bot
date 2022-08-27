@@ -22,12 +22,12 @@ import dev.inmo.tgbotapi.types.message.content.TextContent
 import dev.inmo.tgbotapi.types.update.abstracts.Update
 import kotlinx.coroutines.Job
 import org.koin.core.context.GlobalContext
-import ru.spbstu.application.admin.usecases.IsAdminUseCase
+import ru.spbstu.application.auth.usecases.IsNonRootAdminUseCase
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.usecases.IsSubscribedUseCase
 import java.time.Instant
 
-private val isAdmin: IsAdminUseCase by GlobalContext.get().inject()
+private val isAdmin: IsNonRootAdminUseCase by GlobalContext.get().inject()
 private val isSubscribed: IsSubscribedUseCase by GlobalContext.get().inject()
 
 enum class Role {

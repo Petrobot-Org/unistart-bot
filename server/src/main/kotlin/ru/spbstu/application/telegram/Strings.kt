@@ -44,6 +44,7 @@ object Strings {
 
     const val NotSubscribed = "Подписка неактивна"
     const val DatabaseError = "Ошибка базы данных"
+    const val NoSuchCommand = "Нет такой команды"
 
     object Help {
         const val Header = "Список доступных команд:"
@@ -51,6 +52,12 @@ object Strings {
         const val Stats = "получение статистики о моих достижениях"
         const val Steps = "переход к меню выбора шага"
         const val Admin = "панель администратора"
+        const val Cancel = "отменить операцию"
+    }
+
+    object Cancel {
+        const val NothingToCancel = "Нечего отменять"
+        const val Success = "Операция отменена"
     }
 
     const val WelcomeRequirePhone =
@@ -222,6 +229,8 @@ object Strings {
             )
         }
     }
+
+    fun Exception(message: String?) = "Произошла внутренняя ошибка: $message"
 }
 
 private fun pluralize(quantity: Long, one: String, few: String, many: String): String {

@@ -4,6 +4,7 @@ import dev.inmo.tgbotapi.bot.TelegramBot
 import dev.inmo.tgbotapi.extensions.api.send.media.sendPhoto
 import dev.inmo.tgbotapi.requests.abstracts.FileId
 import dev.inmo.tgbotapi.requests.abstracts.InputFile
+import dev.inmo.tgbotapi.types.ChatId
 import dev.inmo.tgbotapi.types.MessageIdentifier
 import dev.inmo.tgbotapi.types.buttons.KeyboardMarkup
 import dev.inmo.tgbotapi.types.chat.Chat
@@ -15,7 +16,7 @@ import io.ktor.utils.io.streams.*
 private val resourceFileIds = mutableMapOf<String, FileId>()
 
 suspend fun TelegramBot.sendPhotoResource(
-    chat: Chat,
+    chat: ChatId,
     resourcePath: String,
     text: String? = null,
     parseMode: ParseMode? = null,
@@ -28,7 +29,7 @@ suspend fun TelegramBot.sendPhotoResource(
     val fileId = resourceFileIds[resourcePath]
     return if (fileId != null) {
         sendPhoto(
-            chat.id,
+            chat,
             fileId,
             text,
             parseMode,
@@ -43,7 +44,7 @@ suspend fun TelegramBot.sendPhotoResource(
             object {}.javaClass.getResourceAsStream(resourcePath)!!.asInput()
         }
         sendPhoto(
-            chat.id,
+            chat,
             file,
             text,
             parseMode,

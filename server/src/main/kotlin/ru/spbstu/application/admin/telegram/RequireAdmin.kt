@@ -21,15 +21,15 @@ import dev.inmo.tgbotapi.types.queries.callback.DataCallbackQuery
 import dev.inmo.tgbotapi.types.update.abstracts.Update
 import kotlinx.coroutines.Job
 import org.koin.core.context.GlobalContext
-import ru.spbstu.application.admin.usecases.IsAdminUseCase
-import ru.spbstu.application.admin.usecases.IsRootAdminUseCase
+import ru.spbstu.application.auth.usecases.IsNonRootAdminUseCase
+import ru.spbstu.application.auth.usecases.IsRootAdminUseCase
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.telegram.HelpContext
 import ru.spbstu.application.telegram.HelpEntry
 import ru.spbstu.application.telegram.Role
 import ru.spbstu.application.telegram.Strings
 
-private val isAdmin: IsAdminUseCase by GlobalContext.get().inject()
+private val isAdmin: IsNonRootAdminUseCase by GlobalContext.get().inject()
 private val isRootAdmin: IsRootAdminUseCase by GlobalContext.get().inject()
 
 suspend fun BehaviourContext.requireAdmin(chat: Chat) {
