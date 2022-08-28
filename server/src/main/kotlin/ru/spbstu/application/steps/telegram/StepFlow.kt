@@ -24,7 +24,8 @@ import ru.spbstu.application.telegram.Strings.MyRanking
 import ru.spbstu.application.telegram.entities.state.EmptyState
 import ru.spbstu.application.telegram.entities.state.IdeaGenerationDescriptionState
 import ru.spbstu.application.telegram.entities.state.IdeaGenerationMenu
-import ru.spbstu.application.trendyfriendy.sendTrendyFriendyApp
+import ru.spbstu.application.telegram.entities.state.TrendyFriendyState
+import ru.spbstu.application.trendyfriendy.trendyFriendy
 
 private val userRepository: UserRepository by GlobalContext.get().inject()
 private val steps = listOf(Strings.Step1, Strings.Step2, Strings.Step3, Strings.Step4)
@@ -56,6 +57,7 @@ suspend fun RequestsExecutor.sendAvailableSteps(chat: ChatId, user: SubscribedUs
 }
 
 fun RoleFilterBuilder<SubscribedUser>.step1() {
+    trendyFriendy()
     scamper()
     state<EmptyState> {
         onText(Strings.Step1) {
@@ -97,8 +99,7 @@ fun RoleFilterBuilder<SubscribedUser>.step1() {
                 )
                 when (state.method) {
                     IdeaGenerationStrings.TrendyFriendy -> {
-                        sendTrendyFriendyApp(it)
-                        TODO()
+                        setState(TrendyFriendyState)
                     }
                     IdeaGenerationStrings.Scamper -> {
                         startScamper(it)

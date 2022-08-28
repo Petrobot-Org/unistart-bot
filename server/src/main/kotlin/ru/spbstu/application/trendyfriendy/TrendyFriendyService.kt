@@ -41,7 +41,7 @@ class TrendyFriendyService(
     }
 
     suspend fun finish(userId: Long) {
-        sendTrendyFriendyIdeas(telegramBot.bot, userId, ideas[userId] ?: emptyList())
+        telegramBot.bot.sendTrendyFriendyIdeas(userId, ideas[userId] ?: emptyList())
         ideas.remove(userId)
         cards.remove(userId)
     }
