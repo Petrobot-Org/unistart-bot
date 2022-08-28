@@ -44,7 +44,7 @@ object Strings {
 
     const val NotSubscribed = "Подписка неактивна"
     const val DatabaseError = "Ошибка базы данных"
-    const val NoSuchCommand = "Нет такой команды"
+    const val NoSuchCommand = "Нет такой команды или она сейчас недоступна"
 
     object Help {
         const val Header = "Список доступных команд:"
@@ -84,6 +84,7 @@ object Strings {
     const val PhoneNumberIsAlreadyInDatabase = "Этот номер телефона уже был использован при регистрации"
     const val UserHasAlreadyBeenRegistered = "Вы уже зарегистрированы. Повторная регистрация невозможна."
 
+    const val BackToSteps = "Обратно к шагам"
     const val ChooseStep = "Выбери шаг"
     const val Step1 = "1. Генерация идей"
     const val Step2 = "2. Команда"
@@ -165,13 +166,11 @@ object Strings {
             const val No = "Нет"
             const val Header = "Список администраторов. Нажмите, чтобы удалить."
             const val AddAdmin = "Добавить"
-            const val ChooseTheWayOfAddition = "Выберите способ добавления новых администраторов"
-            const val AddByContact = "C помощью контакта"
-            const val AddByXlsxTable = "С помощью .xlsx таблицы"
-            const val FormatOfXlsxTable = "Загрузите документ admins.xlsx с номерами \n" +
+            const val ChooseTheWayOfAddition = "Чтобы добавить нового администратора, сделайте одно из следующего:\n" +
+                    "1. Отправьте его контакт\n" +
+                    "2. Загрузите документ admins.xlsx с номерами \n" +
                     "Формат номеров: +7… или 7…\n" +
                     "Формат ячеек с данными: текстовый или числовой"
-            const val SendContact = "Отправьте контакт нового администратора"
             const val ErrorNoTelegram = "Этот пользователь не имеет аккаунта в Telegram или его настройки конфиденциальности не позволяют получить данные о пользователе через контакт"
             const val CantDeleteRootAdmin = "Нельзя удалить главного администратора"
             fun UnableToAddAdmin(phoneNumbers: List<PhoneNumber>) = "Не удалось добавить ${pluralize(phoneNumbers.size.toLong(),"админиcтратора","админиcтраторов", "админиcтраторов")}" +

@@ -229,7 +229,6 @@ object IdeaGenerationStrings {
     const val ScamperPath = IdeaGenerationMethodsPath + "SCAMPER.png"
 
     const val TrendyFriendy = "Trendy Friendy"
-    const val BackToSteps = "Обратно к шагам"
     const val BackToIdeaGeneration = "Попробовать другие техники"
     const val HowDoesItWork = "Как это работает?"
     const val GetIllustration = "Получить картинку, иллюстрирующую метод"

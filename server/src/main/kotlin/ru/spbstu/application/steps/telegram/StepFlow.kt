@@ -35,7 +35,7 @@ private val ideaGenerationMethods = listOf(
     IdeaGenerationStrings.BrainstormMethod,
     IdeaGenerationStrings.Scamper,
     IdeaGenerationStrings.TrendyFriendy,
-    IdeaGenerationStrings.BackToSteps
+    Strings.BackToSteps
 )
 
 suspend fun RequestsExecutor.sendAvailableSteps(chat: ChatId, user: SubscribedUser) {
@@ -84,7 +84,7 @@ fun RoleFilterBuilder<SubscribedUser>.step1() {
         onText(*IdeaGenerationStrings.IdeaGenerationWithDescription.keys.toTypedArray()) {
             setState(IdeaGenerationDescriptionState(method = it.content.text))
         }
-        onText(IdeaGenerationStrings.BackToSteps) {
+        onText(Strings.BackToSteps) {
             setState(EmptyState)
         }
     }

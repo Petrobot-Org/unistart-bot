@@ -63,6 +63,7 @@ fun StateMachineBuilder.startFlow() {
                 if (isAdmin(userId)) {
                     runCatching {
                         registerAdminUser(userId, phoneNumber, Instant.now())
+                        refreshCommands()
                     }.onFailure {
                         sendTextMessage(message.chat, Strings.DatabaseError)
                     }
@@ -162,6 +163,7 @@ fun StateMachineBuilder.startFlow() {
                     registerUser(userId, state.phoneNumber, state.avatar, state.occupation, startLevel, Instant.now())
                     nextStepNotifier.rescheduleFor(userId)
                     sendTextMessage(message.chat.id, firstStepInfo)
+                    refreshCommands()
                 }.onFailure {
                     sendTextMessage(message.chat, Strings.DatabaseError)
                 }

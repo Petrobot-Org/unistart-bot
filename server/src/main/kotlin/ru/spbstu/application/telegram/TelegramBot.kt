@@ -5,7 +5,6 @@ import dev.inmo.tgbotapi.bot.ktor.telegramBot
 import dev.inmo.tgbotapi.bot.settings.limiters.CommonLimiter
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviourWithLongPolling
 import kotlinx.serialization.Serializable
-import ru.spbstu.application.admin.telegram.adminCommands
 import ru.spbstu.application.notifications.ConfigureNotifiers
 
 class TelegramBot(
@@ -21,9 +20,6 @@ class TelegramBot(
         bot.buildBehaviourWithLongPolling(
             defaultExceptionsHandler = { it.printStackTrace() }
         ) {
-            provideHelp {
-                adminCommands()
-            }
             configureNotifiers(scope)
             with(stateMachine) { collect() }
         }.join()

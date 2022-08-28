@@ -10,7 +10,9 @@ import com.ithersta.tgbotapi.fsm.entities.triggers.onText
 import com.ithersta.tgbotapi.fsm.entities.triggers.onTransition
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.types.UserId
+import ru.spbstu.application.admin.telegram.adminCommands
 import ru.spbstu.application.auth.entities.User
+import ru.spbstu.application.auth.entities.users.AdminUser
 import ru.spbstu.application.auth.entities.users.BaseUser
 import ru.spbstu.application.auth.entities.users.SubscribedUser
 import ru.spbstu.application.auth.telegram.startFlow
@@ -47,11 +49,11 @@ fun createStateMachine(
     role<SubscribedUser> {
         state<EmptyState> {
             onTransition { sendAvailableSteps(it, user) }
-            onCommand("steps", Strings.Help.Steps) { sendAvailableSteps(it.chat.id, user) }
             onCommand("stats", Strings.Help.Stats) { handleStats(it) }
             onText(Strings.GetMyStats) { handleStats(it) }
         }
         step1()
     }
+    adminCommands()
     fallback()
 }
