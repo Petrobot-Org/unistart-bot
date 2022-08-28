@@ -19,7 +19,6 @@ private val isAdmin: IsNonRootAdminUseCase by GlobalContext.get().inject()
 private val completedStepRepository: CompletedStepRepository by GlobalContext.get().inject()
 private val zoneId: ZoneId by GlobalContext.get().inject()
 
-
 fun StateMachineBuilder.statisticsSpreadsheetCommand() {
     role<AdminUser> {
         state<AdminMenu> {

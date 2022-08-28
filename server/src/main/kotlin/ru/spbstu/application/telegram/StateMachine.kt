@@ -12,7 +12,6 @@ import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.types.UserId
 import ru.spbstu.application.admin.telegram.adminCommands
 import ru.spbstu.application.auth.entities.User
-import ru.spbstu.application.auth.entities.users.AdminUser
 import ru.spbstu.application.auth.entities.users.BaseUser
 import ru.spbstu.application.auth.entities.users.SubscribedUser
 import ru.spbstu.application.auth.telegram.startFlow

@@ -3,19 +3,14 @@ package ru.spbstu.application.admin.telegram
 import com.ithersta.tgbotapi.fsm.entities.triggers.onDataCallbackQuery
 import com.ithersta.tgbotapi.fsm.entities.triggers.onText
 import com.ithersta.tgbotapi.fsm.entities.triggers.onTransition
-import dev.inmo.micro_utils.coroutines.firstNotNull
 import dev.inmo.tgbotapi.extensions.api.edit.reply_markup.editMessageReplyMarkup
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
-import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.utils.messageCallbackQueryOrThrow
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.dataButton
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.inlineKeyboard
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.row
 import dev.inmo.tgbotapi.types.buttons.InlineKeyboardMarkup
-import dev.inmo.tgbotapi.types.queries.callback.DataCallbackQuery
-import dev.inmo.tgbotapi.utils.PreviewFeature
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import org.koin.core.context.GlobalContext
 import ru.spbstu.application.auth.entities.users.AdminUser
 import ru.spbstu.application.notifications.NextStepNotifier
@@ -27,7 +22,6 @@ import ru.spbstu.application.telegram.Strings
 import ru.spbstu.application.telegram.Strings.AdminPanel.StepDuration
 import ru.spbstu.application.telegram.entities.state.AdminMenu
 import ru.spbstu.application.telegram.entities.state.WaitingForStepDuration
-import ru.spbstu.application.telegram.waitTextFrom
 import java.time.Duration
 
 private val getStepDuration: GetStepDurationUseCase by GlobalContext.get().inject()
