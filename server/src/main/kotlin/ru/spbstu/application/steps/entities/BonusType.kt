@@ -11,5 +11,5 @@ enum class BonusType {
     ScamperM,
     ScamperP,
     ScamperE,
-    ScamperR,
+    ScamperR
 }
