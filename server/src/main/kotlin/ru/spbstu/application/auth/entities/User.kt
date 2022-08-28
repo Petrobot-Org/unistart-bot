@@ -1,7 +1,6 @@
 package ru.spbstu.application.auth.entities
 
 import kotlinx.serialization.Serializable
-import ru.spbstu.application.auth.entities.users.BaseUser
 
 data class User(
     override val id: Id,
@@ -10,7 +9,7 @@ data class User(
     override val occupation: Occupation,
     override val availableStepsCount: Long,
     override val amountOfCoins: Long
-): UserData {
+) : UserData {
     @Serializable
     @JvmInline
     value class Id(val value: Long)
