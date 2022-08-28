@@ -24,9 +24,9 @@ object Xlsx {
                 createRow(rowNumber++).createCell(0).apply {
                     cellStyle = workbook.createCellStyle().apply {
                         setFont(
-                        workbook.createFont().apply {
-                            bold = true
-                        }
+                            workbook.createFont().apply {
+                                bold = true
+                            }
                         )
                     }
                     setCellValue(letter.character.toString())

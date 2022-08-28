@@ -101,9 +101,11 @@ fun RoleFilterBuilder<SubscribedUser>.step1() {
                     IdeaGenerationStrings.TrendyFriendy -> {
                         setState(TrendyFriendyState)
                     }
+
                     IdeaGenerationStrings.Scamper -> {
                         startScamper(it)
                     }
+
                     else -> {
                         giveBonusWithMessage(
                             it,

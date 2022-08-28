@@ -5,10 +5,6 @@ import com.ithersta.tgbotapi.fsm.entities.triggers.onText
 import com.ithersta.tgbotapi.fsm.entities.triggers.onTransition
 import dev.inmo.tgbotapi.extensions.api.files.downloadFile
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
-import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
-import dev.inmo.tgbotapi.types.chat.Chat
-import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
-import dev.inmo.tgbotapi.types.message.content.DocumentContent
 import org.koin.core.context.GlobalContext
 import ru.spbstu.application.admin.TrendsZip
 import ru.spbstu.application.auth.entities.users.AdminUser
