@@ -10,6 +10,7 @@ fun StateMachineBuilder.fallback() {
         anyState {
             onText {
                 sendTextMessage(it.chat, Strings.NoSuchCommand)
+                setState(state)
             }
         }
     }
