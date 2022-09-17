@@ -10,11 +10,13 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    maven { url = uri("https://repo.repsy.io/mvn/ithersta/tgbotapi") }
 }
 
 dependencies {
     implementation(project(":common"))
     implementation(libs.tgbotapi)
+    implementation(libs.tgbotapi.fsm)
     implementation(libs.bundles.ktor.server)
     implementation(libs.kotlinx.html)
     implementation(libs.bundles.koin)
@@ -23,6 +25,7 @@ dependencies {
     implementation(libs.kaml)
     implementation(libs.bundles.poi)
     implementation(libs.quartz)
+    implementation(libs.serialization.cbor)
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.mockk)
 }

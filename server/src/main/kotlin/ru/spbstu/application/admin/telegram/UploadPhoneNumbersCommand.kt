@@ -1,104 +1,106 @@
 package ru.spbstu.application.admin.telegram
 
-import dev.inmo.micro_utils.coroutines.firstNotNull
+import com.ithersta.tgbotapi.fsm.entities.triggers.onDocument
+import com.ithersta.tgbotapi.fsm.entities.triggers.onText
+import com.ithersta.tgbotapi.fsm.entities.triggers.onTransition
+import dev.inmo.tgbotapi.bot.RequestsExecutor
 import dev.inmo.tgbotapi.extensions.api.files.downloadFile
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
-import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
-import dev.inmo.tgbotapi.requests.send.SendTextMessage
-import dev.inmo.tgbotapi.types.chat.Chat
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
 import dev.inmo.tgbotapi.types.message.content.DocumentContent
-import dev.inmo.tgbotapi.types.message.content.TextContent
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import org.koin.core.context.GlobalContext
 import ru.spbstu.application.admin.Xlsx
 import ru.spbstu.application.admin.usecases.AddPhoneNumbersUseCase
 import ru.spbstu.application.auth.entities.PhoneNumber
+import ru.spbstu.application.auth.entities.users.AdminUser
+import ru.spbstu.application.telegram.StateMachineBuilder
 import ru.spbstu.application.telegram.Strings
 import ru.spbstu.application.telegram.Strings.AdminPanel.UploadPhoneNumbers
-import ru.spbstu.application.telegram.waitTextFrom
+import ru.spbstu.application.telegram.entities.state.AdminMenu
+import ru.spbstu.application.telegram.entities.state.UploadPhoneNumbersState
 import java.time.Duration
-import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
 
 private val zoneId: ZoneId by GlobalContext.get().inject()
 private val addPhoneNumbers: AddPhoneNumbersUseCase by GlobalContext.get().inject()
 
-suspend fun BehaviourContext.uploadPhoneNumbersCommand() {
-    onAdminText(Strings.AdminPanel.Menu.UploadPhoneNumbers) { sendHelpMessage(it) }
-    onAdminDocument(initialFilter = { it.content.media.fileName?.equals("users.xlsx") == true }) {
-        onPhoneNumbersUploaded(it)
+fun StateMachineBuilder.uploadPhoneNumbersCommand() {
+    role<AdminUser> {
+        state<AdminMenu> {
+            onText(Strings.AdminPanel.Menu.UploadPhoneNumbers) {
+                setState(UploadPhoneNumbersState.WaitingForDocument)
+            }
+        }
+        state<UploadPhoneNumbersState.WaitingForDocument> {
+            onTransition {
+                sendTextMessage(it, UploadPhoneNumbers.RequireDocument)
+            }
+            onDocument { message ->
+                val phoneNumbers = getPhoneNumbersFromXlsx(message)
+                if (phoneNumbers.isEmpty()) {
+                    return@onDocument
+                }
+                val nonRussianPhoneNumbers = phoneNumbers.filterNot { it.isRussian() }
+                if (nonRussianPhoneNumbers.isNotEmpty()) {
+                    sendTextMessage(message.chat, UploadPhoneNumbers.NonRussianPhoneNumbers(nonRussianPhoneNumbers))
+                }
+                setState(UploadPhoneNumbersState.WaitingForStart(phoneNumbers))
+            }
+        }
+        state<UploadPhoneNumbersState.WaitingForStart> {
+            onTransition {
+                sendTextMessage(it, UploadPhoneNumbers.RequireStartDate)
+            }
+            onText { message ->
+                val dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.uuuu")
+                val start = runCatching {
+                    val date = dateTimeFormatter.parse(message.content.text, LocalDate::from)
+                    date.atStartOfDay(zoneId).toInstant()
+                }.getOrElse {
+                    sendTextMessage(message.chat, UploadPhoneNumbers.InvalidDate)
+                    return@onText
+                }
+                setState(UploadPhoneNumbersState.WaitingForDuration(state.phoneNumbers, start))
+            }
+        }
+        state<UploadPhoneNumbersState.WaitingForDuration> {
+            onTransition {
+                sendTextMessage(it, UploadPhoneNumbers.RequireDurationDays)
+            }
+            onText { message ->
+                val duration = runCatching {
+                    val days = message.content.text.toLong()
+                    require(days > 0)
+                    Duration.ofDays(days)
+                }.getOrElse {
+                    sendTextMessage(message.chat, Strings.AdminPanel.InvalidDurationDays)
+                    return@onText
+                }
+                runCatching {
+                    val changes = addPhoneNumbers(state.phoneNumbers.toSet(), state.start, duration)
+                    sendTextMessage(message.chat, UploadPhoneNumbers.Added(changes))
+                }.onFailure {
+                    sendTextMessage(message.chat, Strings.DatabaseError)
+                }
+            }
+        }
     }
 }
 
-private suspend fun BehaviourContext.sendHelpMessage(message: CommonMessage<TextContent>) {
-    sendTextMessage(message.chat, UploadPhoneNumbers.RequireDocument)
-}
-
-private suspend fun BehaviourContext.onPhoneNumbersUploaded(message: CommonMessage<DocumentContent>) {
-    val phoneNumbers = getPhoneNumbersFromXlsx(message)
-    if (phoneNumbers.isEmpty()) {
-        return
-    }
-    val nonRussianPhoneNumbers = phoneNumbers.filterNot { it.isRussian() }
-    if (nonRussianPhoneNumbers.isNotEmpty()) {
-        sendTextMessage(message.chat, UploadPhoneNumbers.NonRussianPhoneNumbers(nonRussianPhoneNumbers))
-    }
-    val startInstant = waitStartInstant(message.chat)
-    val duration = waitDuration(message.chat)
-    try {
-        val changes = addPhoneNumbers(phoneNumbers.toSet(), startInstant, duration)
-        sendTextMessage(message.chat, UploadPhoneNumbers.Added(changes))
-    } catch (e: Exception) {
-        sendTextMessage(message.chat, Strings.DatabaseError)
-        throw e
-    }
-}
-
-suspend fun BehaviourContext.getPhoneNumbersFromXlsx(message: CommonMessage<DocumentContent>): List<PhoneNumber> {
-      return when (val result = Xlsx.parsePhoneNumbers(downloadFile(message.content.media).inputStream())) {
+suspend fun RequestsExecutor.getPhoneNumbersFromXlsx(message: CommonMessage<DocumentContent>): List<PhoneNumber> {
+    return when (val result = Xlsx.parsePhoneNumbers(downloadFile(message.content.media).inputStream())) {
         is Xlsx.Result.InvalidFile -> {
             sendTextMessage(message.chat, Strings.AdminPanel.InvalidXlsx)
             return emptyList()
         }
+
         is Xlsx.Result.BadFormat -> {
             sendTextMessage(message.chat, Strings.AdminPanel.InvalidSpreadsheet(result.errorRows))
             return emptyList()
         }
+
         is Xlsx.Result.OK -> result.value
     }
-}
-
-private suspend fun BehaviourContext.waitDuration(chat: Chat): Duration {
-    return waitTextFrom(chat, SendTextMessage(chat.id, UploadPhoneNumbers.RequireDurationDays))
-        .map {
-            try {
-                val days = it.text.toLong()
-                require(days > 0)
-                Duration.ofDays(days)
-            } catch (e: Exception) {
-                null
-            }
-        }
-        .onEach { if (it == null) sendTextMessage(chat, Strings.AdminPanel.InvalidDurationDays) }
-        .firstNotNull()
-}
-
-private suspend fun BehaviourContext.waitStartInstant(chat: Chat): Instant {
-    val dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.uuuu")
-    return waitTextFrom(chat, SendTextMessage(chat.id, UploadPhoneNumbers.RequireStartDate))
-        .map {
-            try {
-                val date = dateTimeFormatter.parse(it.text, LocalDate::from)
-                date.atStartOfDay(zoneId).toInstant()
-            } catch (e: DateTimeParseException) {
-                null
-            }
-        }
-        .onEach { if (it == null) sendTextMessage(chat, UploadPhoneNumbers.InvalidDate) }
-        .firstNotNull()
 }

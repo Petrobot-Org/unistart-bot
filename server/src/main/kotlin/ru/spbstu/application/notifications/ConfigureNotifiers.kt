@@ -11,7 +11,7 @@ class ConfigureNotifiers(
     private val nextStepNotifier: NextStepNotifier
 ) {
     context(TelegramBot)
-    operator fun invoke(scope: CoroutineScope) {
+            operator fun invoke(scope: CoroutineScope) {
         nextStepNotifier.start { userId, duration, step, bonus ->
             scope.launch {
                 sendTextMessage(userId.value.toChatId(), Strings.Notifications.NextStep(duration, step, bonus))

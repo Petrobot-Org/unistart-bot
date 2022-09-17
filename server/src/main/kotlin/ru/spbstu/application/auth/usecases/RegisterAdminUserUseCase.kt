@@ -1,6 +1,5 @@
 package ru.spbstu.application.auth.usecases
 
-import ru.spbstu.application.admin.usecases.IsAdminUseCase
 import ru.spbstu.application.auth.entities.Avatar
 import ru.spbstu.application.auth.entities.Occupation
 import ru.spbstu.application.auth.entities.PhoneNumber

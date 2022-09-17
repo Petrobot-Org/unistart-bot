@@ -1,5 +1,8 @@
 package ru.spbstu.application.auth.entities
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 @JvmInline
 value class PhoneNumber private constructor(val value: String) {
     companion object {

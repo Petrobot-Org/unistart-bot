@@ -7,15 +7,15 @@ CREATE TABLE Subscription (
     id INTEGER AS Subscription.Id PRIMARY KEY AUTOINCREMENT,
     start INTEGER AS Instant NOT NULL,
     duration INTEGER AS Duration NOT NULL,
-    user_id INTEGER AS User.Id NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES User (id),
-    UNIQUE(start, duration, user_id)
+    userId INTEGER AS User.Id NOT NULL,
+    FOREIGN KEY (userId) REFERENCES User (id),
+    UNIQUE(start, duration, userId)
 );
 
 add:
-INSERT OR IGNORE INTO Subscription(start, duration, user_id)
+INSERT OR IGNORE INTO Subscription(start, duration, userId)
 VALUES (:start, :duration, :userId);
 
 get:
 SELECT * FROM Subscription
-WHERE user_id = :userId;
+WHERE userId = :userId;

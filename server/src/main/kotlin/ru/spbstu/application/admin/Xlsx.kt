@@ -41,13 +41,13 @@ object Xlsx {
                 Result.OK(phoneNumbers.filterNotNull())
             } else {
                 Result.BadFormat(
-                phoneNumbers.mapIndexedNotNull { index, phoneNumber ->
-                    if (phoneNumber == null) {
-                        index
-                    } else {
-                        null
+                    phoneNumbers.mapIndexedNotNull { index, phoneNumber ->
+                        if (phoneNumber == null) {
+                            index
+                        } else {
+                            null
+                        }
                     }
-                }
                 )
             }
         } catch (e: Exception) {

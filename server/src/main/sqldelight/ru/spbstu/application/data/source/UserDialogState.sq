@@ -1,0 +1,15 @@
+import ru.spbstu.application.auth.entities.User;
+import ru.spbstu.application.telegram.entities.state.DialogState;
+
+CREATE TABLE UserDialogState (
+    userId INTEGER AS User.Id PRIMARY KEY NOT NULL,
+    state BLOB AS DialogState NOT NULL
+);
+
+get:
+SELECT state FROM UserDialogState
+WHERE userId = :userId;
+
+set:
+INSERT OR REPLACE INTO UserDialogState
+VALUES(:userId, :state);

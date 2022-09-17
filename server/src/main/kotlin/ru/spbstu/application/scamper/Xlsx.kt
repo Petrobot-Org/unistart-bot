@@ -2,6 +2,7 @@ package ru.spbstu.application.scamper
 
 import org.apache.poi.ss.util.CellRangeAddress
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import ru.spbstu.application.telegram.entities.state.ScamperAnswer
 import java.io.ByteArrayOutputStream
 
 object Xlsx {
@@ -23,9 +24,9 @@ object Xlsx {
                 createRow(rowNumber++).createCell(0).apply {
                     cellStyle = workbook.createCellStyle().apply {
                         setFont(
-                        workbook.createFont().apply {
-                            bold = true
-                        }
+                            workbook.createFont().apply {
+                                bold = true
+                            }
                         )
                     }
                     setCellValue(letter.character.toString())

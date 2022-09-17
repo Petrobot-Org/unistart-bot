@@ -2,116 +2,150 @@
 
 package ru.spbstu.application.admin.telegram
 
-import dev.inmo.micro_utils.coroutines.firstNotNull
+import com.ithersta.tgbotapi.fsm.entities.triggers.*
+import dev.inmo.tgbotapi.bot.RequestsExecutor
 import dev.inmo.tgbotapi.extensions.api.chat.get.getChat
 import dev.inmo.tgbotapi.extensions.api.edit.reply_markup.editMessageReplyMarkup
-import dev.inmo.tgbotapi.extensions.api.send.send
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
-import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.utils.asPrivateChat
 import dev.inmo.tgbotapi.extensions.utils.messageCallbackQueryOrThrow
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.*
-import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.types.ChatId
 import dev.inmo.tgbotapi.types.UserId
 import dev.inmo.tgbotapi.types.buttons.InlineKeyboardMarkup
-import dev.inmo.tgbotapi.types.chat.Chat
-import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
-import dev.inmo.tgbotapi.types.message.content.DocumentContent
-import dev.inmo.tgbotapi.types.queries.callback.DataCallbackQuery
 import dev.inmo.tgbotapi.utils.PreviewFeature
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import org.koin.core.context.GlobalContext
 import ru.spbstu.application.AppConfig
 import ru.spbstu.application.admin.usecases.AddAdminsUseCase
 import ru.spbstu.application.auth.entities.User
+import ru.spbstu.application.auth.entities.users.AdminUser
+import ru.spbstu.application.auth.entities.users.RootAdminUser
 import ru.spbstu.application.auth.repository.AdminRepository
+import ru.spbstu.application.telegram.StateMachineBuilder
 import ru.spbstu.application.telegram.Strings
-import ru.spbstu.application.telegram.waitContactFrom
-import ru.spbstu.application.telegram.waitTextFrom
+import ru.spbstu.application.telegram.entities.state.AdminMenu
+import ru.spbstu.application.telegram.entities.state.WaitingForAdminToAdd
+import ru.spbstu.application.telegram.entities.state.WaitingForDeleteConfirmation
 
 private val adminRepository: AdminRepository by GlobalContext.get().inject()
 private val appConfig: AppConfig by GlobalContext.get().inject()
 private val addAdmins: AddAdminsUseCase by GlobalContext.get().inject()
 
-suspend fun BehaviourContext.listOfAdminsCommand() {
-    onAdminText(Strings.AdminPanel.Menu.ListOfAdmins) { uploadListOfAdmins(it.chat) }
-    onRootAdminDataCallbackQuery(Regex("delete admin:\\d+")) { deleteAdmin(it) }
-    onRootAdminDataCallbackQuery(Regex("delete root admin")) { deleteRootAdmin(it.from) }
-    onRootAdminDataCallbackQuery(Regex("add admin")) {
-        addAdmin(it)
-    }
-    onAdminDocument(initialFilter = { it.content.media.fileName?.equals("admins.xlsx") == true }) {
-        onAdminsUploaded(it)
-    }
-}
-
-private suspend fun BehaviourContext.deleteRootAdmin(chat: Chat) {
-    send(chat = chat, text = Strings.AdminPanel.ListOfAdmins.CantDeleteRootAdmin)
-}
-
-private suspend fun BehaviourContext.uploadListOfAdmins(chat: Chat) {
-    sendTextMessage(
-        chat = chat,
-        text = Strings.AdminPanel.ListOfAdmins.Header,
-        replyMarkup = listOfAdminButtons()
-    ).messageId
-}
-
-private suspend fun BehaviourContext.addAdmin(dataCallbackQuery: DataCallbackQuery) {
-    val wayOfAddition = waitTextFrom(
-        dataCallbackQuery.from,
-        SendTextMessage(
-        dataCallbackQuery.from.id, Strings.AdminPanel.ListOfAdmins.ChooseTheWayOfAddition,
-            replyMarkup = replyKeyboard(
-                resizeKeyboard = true,
-                oneTimeKeyboard = true
-            ) {
-                row {
-                    simpleButton(Strings.AdminPanel.ListOfAdmins.AddByContact)
-                    simpleButton(Strings.AdminPanel.ListOfAdmins.AddByXlsxTable)
-                }
+@OptIn(PreviewFeature::class)
+fun StateMachineBuilder.listOfAdminsCommand() {
+    role<AdminUser> {
+        state<AdminMenu> {
+            onText(Strings.AdminPanel.Menu.ListOfAdmins) {
+                sendTextMessage(
+                    it.chat,
+                    text = Strings.AdminPanel.ListOfAdmins.Header,
+                    replyMarkup = listOfAdminButtons()
+                )
             }
-        )
-    ).first { it.text == Strings.AdminPanel.ListOfAdmins.AddByContact || it.text == Strings.AdminPanel.ListOfAdmins.AddByXlsxTable }
-        .text
-    if (wayOfAddition == Strings.AdminPanel.ListOfAdmins.AddByContact) {
-        sendTextMessage(dataCallbackQuery.from, Strings.AdminPanel.ListOfAdmins.SendContact)
-        val userId = waitContactFrom(dataCallbackQuery.from).map {
-            it.contact.userId
-        }.first() ?: run {
-            sendTextMessage(dataCallbackQuery.from, Strings.AdminPanel.ListOfAdmins.ErrorNoTelegram)
-            return
         }
-        adminRepository.add(User.Id(userId.chatId))
-    } else {
-        sendTextMessage(dataCallbackQuery.from, Strings.AdminPanel.ListOfAdmins.FormatOfXlsxTable)
     }
-    editMessageReplyMarkup(
-        chat = dataCallbackQuery.from,
-        messageId = dataCallbackQuery.messageCallbackQueryOrThrow().message.messageId,
-        replyMarkup = listOfAdminButtons()
-    )
+    role<RootAdminUser> {
+        state<AdminMenu> {
+            onDataCallbackQuery(Regex("delete admin:\\d+"), handler = {
+                val userId = it.data.split(":")[1].toLong()
+                setState(
+                    WaitingForDeleteConfirmation(
+                        User.Id(userId),
+                        it.messageCallbackQueryOrThrow().message.messageId
+                    )
+                )
+            })
+            onDataCallbackQuery(Regex("delete root admin"), handler = {
+                sendTextMessage(chat = it.from, text = Strings.AdminPanel.ListOfAdmins.CantDeleteRootAdmin)
+            })
+            onDataCallbackQuery(Regex("add admin"), handler = {
+                setState(WaitingForAdminToAdd(it.messageCallbackQueryOrThrow().message.messageId))
+            })
+        }
+        state<WaitingForAdminToAdd> {
+            onTransition {
+                sendTextMessage(it, Strings.AdminPanel.ListOfAdmins.ChooseTheWayOfAddition)
+            }
+            onContact {
+                val userId = it.content.contact.userId ?: run {
+                    sendTextMessage(it.chat, Strings.AdminPanel.ListOfAdmins.ErrorNoTelegram)
+                    return@onContact
+                }
+                adminRepository.add(User.Id(userId.chatId))
+                editMessageReplyMarkup(
+                    chat = it.chat,
+                    messageId = state.messageId,
+                    replyMarkup = listOfAdminButtons()
+                )
+                setState(AdminMenu)
+            }
+            onDocument { message ->
+                val phoneNumbers = getPhoneNumbersFromXlsx(message)
+                if (phoneNumbers.isEmpty()) {
+                    return@onDocument
+                }
+                runCatching {
+                    val failedNumbers = addAdmins(phoneNumbers.toSet())
+                    if (failedNumbers.isNotEmpty()) {
+                        sendTextMessage(message.chat, Strings.AdminPanel.ListOfAdmins.UnableToAddAdmin(failedNumbers))
+                    }
+                }.onFailure {
+                    sendTextMessage(message.chat, Strings.DatabaseError)
+                }
+                editMessageReplyMarkup(
+                    chat = message.chat,
+                    messageId = state.messageId,
+                    replyMarkup = listOfAdminButtons()
+                )
+                setState(AdminMenu)
+            }
+        }
+        state<WaitingForDeleteConfirmation> {
+            onTransition {
+                sendTextMessage(
+                    it,
+                    text = Strings.AdminPanel.ListOfAdmins
+                        .ConfirmationOfDeletion(getChat(UserId(state.userId.value)).asPrivateChat()!!),
+                    replyMarkup = replyKeyboard(
+                        resizeKeyboard = true
+                    ) {
+                        row {
+                            simpleButton(Strings.AdminPanel.ListOfAdmins.Yes)
+                            simpleButton(Strings.AdminPanel.ListOfAdmins.No)
+                        }
+                    }
+                )
+            }
+            onText(Strings.AdminPanel.ListOfAdmins.Yes, Strings.AdminPanel.ListOfAdmins.No) { message ->
+                val answer = message.content.text == Strings.AdminPanel.ListOfAdmins.Yes
+                if (answer) {
+                    adminRepository.delete(state.userId)
+                    editMessageReplyMarkup(
+                        chat = message.chat,
+                        messageId = state.messageId,
+                        replyMarkup = listOfAdminButtons()
+                    )
+                }
+                setState(AdminMenu)
+            }
+        }
+    }
+    role<AdminUser> {
+        state<AdminMenu> {
+            onDataCallbackQuery(Regex("delete admin:\\d+"), handler = {
+                sendTextMessage(it.from, Strings.UnauthorizedError)
+            })
+            onDataCallbackQuery(Regex("delete root admin"), handler = {
+                sendTextMessage(it.from, Strings.UnauthorizedError)
+            })
+            onDataCallbackQuery(Regex("add admin"), handler = {
+                sendTextMessage(it.from, Strings.UnauthorizedError)
+            })
+        }
+    }
 }
 
-private suspend fun BehaviourContext.onAdminsUploaded(message: CommonMessage<DocumentContent>) {
-    val phoneNumbers = getPhoneNumbersFromXlsx(message)
-    if (phoneNumbers.isEmpty()) {
-        return
-    }
-    try {
-        val failedNumbers = addAdmins(phoneNumbers.toSet())
-        if (failedNumbers.isNotEmpty()) {
-            sendTextMessage(message.chat, Strings.AdminPanel.ListOfAdmins.UnableToAddAdmin(failedNumbers))
-        }
-    } catch (e: Exception) {
-        sendTextMessage(message.chat, Strings.DatabaseError)
-        throw e
-    }
-}
-
-private suspend fun BehaviourContext.listOfAdminButtons(): InlineKeyboardMarkup {
+private suspend fun RequestsExecutor.listOfAdminButtons(): InlineKeyboardMarkup {
     return inlineKeyboard {
         appConfig.rootAdminUserIds.forEach {
             val chat = getChat(ChatId(it.value)).asPrivateChat()!!
@@ -135,41 +169,4 @@ private suspend fun BehaviourContext.listOfAdminButtons(): InlineKeyboardMarkup 
             dataButton(Strings.AdminPanel.ListOfAdmins.AddAdmin, "add admin")
         }
     }
-}
-
-private suspend fun BehaviourContext.deleteAdmin(dataCallbackQuery: DataCallbackQuery) {
-    val userId = dataCallbackQuery.data.split(":")[1].toLong()
-
-    sendTextMessage(
-        chat = dataCallbackQuery.from,
-        text = Strings.AdminPanel.ListOfAdmins.ConfirmationOfDeletion(getChat(UserId(userId)).asPrivateChat()!!),
-        replyMarkup = replyKeyboard(
-            resizeKeyboard = true
-        ) {
-            row {
-                simpleButton(Strings.AdminPanel.ListOfAdmins.Yes)
-                simpleButton(Strings.AdminPanel.ListOfAdmins.No)
-            }
-        }
-    ).messageId
-    val answer = waitTextFrom(dataCallbackQuery.from).map {
-        when (it.text) {
-            Strings.AdminPanel.ListOfAdmins.Yes -> true
-            Strings.AdminPanel.ListOfAdmins.No -> false
-            else -> null
-        }
-    }.firstNotNull()
-    if (answer) {
-        adminRepository.delete(User.Id(userId))
-        editMessageReplyMarkup(
-            chat = dataCallbackQuery.from,
-            messageId = dataCallbackQuery.messageCallbackQueryOrThrow().message.messageId,
-            replyMarkup = listOfAdminButtons()
-        )
-    }
-    sendTextMessage(
-        chat = dataCallbackQuery.from,
-        text = Strings.AdminPanel.Header,
-        replyMarkup = createAdminPanel()
-    )
 }

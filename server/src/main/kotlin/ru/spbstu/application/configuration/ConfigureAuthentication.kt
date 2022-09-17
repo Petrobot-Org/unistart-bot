@@ -10,6 +10,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.koin.ktor.ext.inject
 import ru.spbstu.application.auth.entities.User
+import ru.spbstu.application.auth.usecases.IsAdminUseCase
 import ru.spbstu.application.auth.usecases.IsSubscribedUseCase
 import ru.spbstu.application.telegram.TelegramToken
 import java.time.Instant
@@ -25,6 +26,7 @@ class WebAppUser(
 
 fun Application.configureAuthentication() {
     val isSubscribed: IsSubscribedUseCase by inject()
+    val isAdmin: IsAdminUseCase by inject()
     val telegramToken: TelegramToken by inject()
     val telegramApiUrlsKeeper = TelegramAPIUrlsKeeper(
         telegramToken.value
@@ -41,7 +43,8 @@ fun Application.configureAuthentication() {
                         .first { it.startsWith("user=") }
                         .removePrefix("user=")
                     val webAppUser = Json.decodeFromString<WebAppUser>(userData)
-                    if (isSubscribed(User.Id(webAppUser.id), Instant.now())) {
+                    val userId = User.Id(webAppUser.id)
+                    if (isSubscribed(userId, Instant.now()) || isAdmin(userId)) {
                         UserIdPrincipal(webAppUser.id.toString())
                     } else {
                         null
