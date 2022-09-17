@@ -171,14 +171,23 @@ object Strings {
                     "2. Загрузите документ admins.xlsx с номерами \n" +
                     "Формат номеров: +7… или 7…\n" +
                     "Формат ячеек с данными: текстовый или числовой"
-            const val ErrorNoTelegram = "Этот пользователь не имеет аккаунта в Telegram или его настройки конфиденциальности не позволяют получить данные о пользователе через контакт"
+            const val ErrorNoTelegram =
+                "Этот пользователь не имеет аккаунта в Telegram или его настройки конфиденциальности не позволяют получить данные о пользователе через контакт"
             const val CantDeleteRootAdmin = "Нельзя удалить главного администратора"
-            fun UnableToAddAdmin(phoneNumbers: List<PhoneNumber>) = "Не удалось добавить ${pluralize(phoneNumbers.size,"админиcтратора","админиcтраторов", "админиcтраторов")}" +
-                    " по ${pluralize(phoneNumbers.size,"номеру","номерам", "номерам")}  $phoneNumbers," +
-                    " так как ${pluralize(phoneNumbers.size,"пользователь", "пользователи", "пользователи")}" +
-                    " с  ${pluralize(phoneNumbers.size,"этим","этими", "этими")} " +
-                    " ${pluralize(phoneNumbers.size,"номером","номерами", "номерами")} " +
-                    "не ${pluralize(phoneNumbers.size,"зарегистрирован","зарегистрированы", "зарегистрированы")}"
+            fun UnableToAddAdmin(phoneNumbers: List<PhoneNumber>) = "Не удалось добавить ${
+                pluralize(
+                    phoneNumbers.size,
+                    "админиcтратора",
+                    "админиcтраторов",
+                    "админиcтраторов"
+                )
+            }" +
+                    " по ${pluralize(phoneNumbers.size, "номеру", "номерам", "номерам")} ${phoneNumbers.joinToString { "+$it" }}," +
+                    " так как ${pluralize(phoneNumbers.size, "пользователь", "пользователи", "пользователи")}" +
+                    " с ${pluralize(phoneNumbers.size, "этим", "этими", "этими")} " +
+                    " ${pluralize(phoneNumbers.size, "номером", "номерами", "номерами")} " +
+                    "не ${pluralize(phoneNumbers.size, "зарегистрирован", "зарегистрированы", "зарегистрированы")}"
+
             fun ConfirmationOfDeletion(chat: PrivateChat) = "Вы хотите удалить ${NameOfAdmin(chat)} из администраторов?"
 
             fun NameOfAdmin(chat: PrivateChat) =
