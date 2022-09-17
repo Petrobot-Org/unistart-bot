@@ -3,7 +3,6 @@ package ru.spbstu.application.trendyfriendy
 import com.ithersta.tgbotapi.fsm.entities.StateMachine
 import com.ithersta.tgbotapi.fsm.entities.triggers.onText
 import com.ithersta.tgbotapi.fsm.entities.triggers.onTransition
-import dev.inmo.tgbotapi.bot.RequestsExecutor
 import dev.inmo.tgbotapi.extensions.api.send.media.sendDocument
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
