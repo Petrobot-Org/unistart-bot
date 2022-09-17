@@ -6,6 +6,7 @@ import com.ithersta.tgbotapi.fsm.entities.triggers.onTransition
 import dev.inmo.tgbotapi.bot.RequestsExecutor
 import dev.inmo.tgbotapi.extensions.api.send.media.sendDocument
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
+import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.*
 import dev.inmo.tgbotapi.requests.abstracts.asMultipartFile
 import dev.inmo.tgbotapi.types.UserId
@@ -67,7 +68,7 @@ fun RoleFilterBuilder<SubscribedUser>.trendyFriendy() {
     }
 }
 
-suspend fun RequestsExecutor.sendTrendyFriendyIdeas(userId: Long, ideas: List<Idea>) {
+suspend fun BehaviourContext.sendTrendyFriendyIdeas(userId: Long, ideas: List<Idea>) {
     giveBonusWithMessage(userId.toChatId(), BonusType.TrendyFriendy, Step(1))
     with(stateMachine) { setState(userId.toChatId(), TrendyFriendyEndedState(ideas)) }
 }

@@ -1,5 +1,6 @@
 package ru.spbstu.application.trendyfriendy
 
+import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviour
 import ru.spbstu.application.telegram.TelegramBot
 import trendyfriendy.Idea
 import trendyfriendy.TrendCard
@@ -41,7 +42,7 @@ class TrendyFriendyService(
     }
 
     suspend fun finish(userId: Long) {
-        telegramBot.bot.sendTrendyFriendyIdeas(userId, ideas[userId] ?: emptyList())
+        telegramBot.bot.buildBehaviour { sendTrendyFriendyIdeas(userId, ideas[userId] ?: emptyList()) }
         ideas.remove(userId)
         cards.remove(userId)
     }
