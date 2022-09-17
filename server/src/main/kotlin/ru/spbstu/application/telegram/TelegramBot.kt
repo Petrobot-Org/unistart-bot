@@ -10,11 +10,10 @@ import kotlinx.serialization.Serializable
 import ru.spbstu.application.notifications.ConfigureNotifiers
 
 class TelegramBot(
-    token: TelegramToken,
     private val configureNotifiers: ConfigureNotifiers,
     private val stateMachine: StateMachine<*, *, *>
 ) {
-    val bot = telegramBot(token.value) {
+    val bot = telegramBot(readToken()) {
         requestsLimiter = CommonLimiter(lockCount = 30, regenTime = 1000)
         client = HttpClient(OkHttp)
     }
@@ -28,7 +27,3 @@ class TelegramBot(
         }.join()
     }
 }
-
-@Serializable
-@JvmInline
-value class TelegramToken(val value: String)

@@ -12,7 +12,7 @@ import org.koin.ktor.ext.inject
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.usecases.IsAdminUseCase
 import ru.spbstu.application.auth.usecases.IsSubscribedUseCase
-import ru.spbstu.application.telegram.TelegramToken
+import ru.spbstu.application.telegram.readToken
 import java.time.Instant
 
 @Serializable
@@ -27,10 +27,7 @@ class WebAppUser(
 fun Application.configureAuthentication() {
     val isSubscribed: IsSubscribedUseCase by inject()
     val isAdmin: IsAdminUseCase by inject()
-    val telegramToken: TelegramToken by inject()
-    val telegramApiUrlsKeeper = TelegramAPIUrlsKeeper(
-        telegramToken.value
-    )
+    val telegramApiUrlsKeeper = TelegramAPIUrlsKeeper(readToken())
     install(Authentication) {
         basic {
             validate { credentials ->

@@ -8,14 +8,9 @@ import mu.KotlinLogging
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.notifications.NotificationsConfig
 import ru.spbstu.application.steps.entities.Step
-import ru.spbstu.application.telegram.TelegramToken
 import java.io.FileInputStream
 
 private val logger = KotlinLogging.logger { }
-
-class Secrets(
-    val telegramToken: TelegramToken
-)
 
 @Serializable
 class DurationBonus(
@@ -41,12 +36,6 @@ class AppConfig(
         DurationBonus(2.0, 3)
     )
 )
-
-fun readSecrets(): Secrets {
-    return Secrets(
-        telegramToken = TelegramToken(System.getenv("TELEGRAM_TOKEN"))
-    )
-}
 
 fun readAppConfig(): AppConfig {
     return readConfig("application.yaml") { AppConfig() }
