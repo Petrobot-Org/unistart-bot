@@ -1,8 +1,6 @@
 package ru.spbstu.application.admin
 
-import org.apache.poi.ss.usermodel.CellType
-import org.apache.poi.ss.usermodel.HorizontalAlignment
-import org.apache.poi.ss.usermodel.VerticalAlignment
+import org.apache.poi.ss.usermodel.*
 import org.apache.poi.ss.util.CellRangeAddress
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import ru.spbstu.application.auth.entities.PhoneNumber
@@ -21,39 +19,41 @@ object Xlsx {
         class InvalidFile<T> : Result<T>
     }
 
-    fun parsePhoneNumbers(inputStream: InputStream): Result<List<PhoneNumber>> {
-        try {
-            val phoneNumbers = XSSFWorkbook(inputStream)
-                .use { workbook ->
-                    workbook.getSheetAt(0).map { row ->
-                        val cell = row.getCell(0)
-                        when (cell.cellType) {
-                            CellType.STRING -> cell.stringCellValue.filterNot { it.isWhitespace() }.removePrefix("+")
-                            CellType.NUMERIC -> cell.numericCellValue.toLong().toString()
-                            CellType.BLANK -> ""
-                            else -> null
-                        }
-                    }
-                }
-                .dropLastWhile { it?.isBlank() == true }
-                .map { cellValue -> cellValue?.let { PhoneNumber.valueOf(it) } }
-            return if (!phoneNumbers.contains(null)) {
-                Result.OK(phoneNumbers.filterNotNull())
+    fun parsePhoneNumbers(inputStream: InputStream): Result<List<PhoneNumber>> =
+        runCatching {
+            val phoneNumbers = XSSFWorkbook(inputStream).use { parsePhones(it) }
+            if (phoneNumbers.second.isEmpty()) {
+                Result.OK(phoneNumbers.first.requireNoNulls())
             } else {
-                Result.BadFormat(
-                    phoneNumbers.mapIndexedNotNull { index, phoneNumber ->
-                        if (phoneNumber == null) {
-                            index
-                        } else {
-                            null
-                        }
-                    }
-                )
+                Result.BadFormat(phoneNumbers.second)
             }
-        } catch (e: Exception) {
-            return Result.InvalidFile()
+        }.getOrElse {
+            Result.InvalidFile()
         }
+
+    private fun parsePhones(
+        workbook: Workbook
+    ): Pair<List<PhoneNumber?>, List<Int>> {
+        return workbook.getSheetAt(0)
+            .map { it.getCellText(0) }
+            .dropLastWhile { it.isNullOrBlank() }
+            .map {
+                it?.let { text -> PhoneNumber.valueOf(text.removePrefix("+")) }
+            }
+            .let {
+                it to it.mapIndexedNotNull { index, e -> (index + 1).takeIf { e == null } }
+            }
     }
+
+    private fun Row.getCellText(number: Int) = runCatching {
+        val cell = getCell(number)
+        when (cell.cellType) {
+            CellType.NUMERIC -> cell.numericCellValue.toLong().toString()
+            CellType.STRING -> cell.stringCellValue
+            CellType.BLANK -> ""
+            else -> null
+        }
+    }.getOrNull()
 
     fun parseTrends(inputStream: InputStream): Result<Map<String, List<TrendCard>>> {
         try {
