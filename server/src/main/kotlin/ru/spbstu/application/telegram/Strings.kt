@@ -184,9 +184,9 @@ object Strings {
             }" +
                     " по ${pluralize(phoneNumbers.size, "номеру", "номерам", "номерам")} ${phoneNumbers.joinToString { "+$it" }}," +
                     " так как ${pluralize(phoneNumbers.size, "пользователь", "пользователи", "пользователи")}" +
-                    " с ${pluralize(phoneNumbers.size, "этим", "этими", "этими")} " +
-                    " ${pluralize(phoneNumbers.size, "номером", "номерами", "номерами")} " +
-                    "не ${pluralize(phoneNumbers.size, "зарегистрирован", "зарегистрированы", "зарегистрированы")}"
+                    " с ${pluralize(phoneNumbers.size, "этим", "этими", "этими")}" +
+                    " ${pluralize(phoneNumbers.size, "номером", "номерами", "номерами")}" +
+                    " не ${pluralize(phoneNumbers.size, "зарегистрирован", "зарегистрированы", "зарегистрированы")}"
 
             fun ConfirmationOfDeletion(chat: PrivateChat) = "Вы хотите удалить ${NameOfAdmin(chat)} из администраторов?"
 
