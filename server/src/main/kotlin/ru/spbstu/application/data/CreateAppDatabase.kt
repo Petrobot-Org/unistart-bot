@@ -1,26 +1,17 @@
 package ru.spbstu.application.data
 
-import com.squareup.sqldelight.EnumColumnAdapter
-import com.squareup.sqldelight.sqlite.driver.JdbcSqliteDriver
+import app.cash.sqldelight.EnumColumnAdapter
+import app.cash.sqldelight.driver.jdbc.asJdbcDriver
 import mu.KotlinLogging
 import ru.spbstu.application.data.adapters.*
 import ru.spbstu.application.data.source.*
-import java.sql.SQLException
 import java.util.*
+import javax.sql.DataSource
 
 private val logger = KotlinLogging.logger { }
 
-fun createAppDatabase(jdbcString: String): AppDatabase {
-    val driver = JdbcSqliteDriver(
-        jdbcString,
-        Properties(1).apply { put("foreign_keys", "true") }
-    ).also {
-        try {
-            AppDatabase.Schema.create(it)
-        } catch (e: SQLException) {
-            logger.info { "Couldn't create schema. Already created?" }
-        }
-    }
+fun createAppDatabase(dataSource: DataSource): AppDatabase {
+    val driver = dataSource.asJdbcDriver()
     return AppDatabase(
         driver = driver,
         StepDurationAdapter = StepDuration.Adapter(
@@ -39,7 +30,7 @@ fun createAppDatabase(jdbcString: String): AppDatabase {
             beginAdapter = InstantAdapter,
             durationAdapter = DurationAdapter
         ),
-        UserAdapter = User.Adapter(
+        UsersAdapter = Users.Adapter(
             idAdapter = UserIdAdapter,
             phoneNumberAdapter = UserPhoneNumberAdapter,
             avatarAdapter = EnumColumnAdapter(),
@@ -61,5 +52,12 @@ fun createAppDatabase(jdbcString: String): AppDatabase {
             userIdAdapter = UserIdAdapter,
             stateAdapter = DialogStateAdapter
         )
-    )
+    ).also {
+        runCatching {
+            AppDatabase.Schema.create(driver)
+            AppDatabase.Schema.migrate(driver, 1, 2)
+        }.onFailure {
+            logger.info("Database schema wasn't created")
+        }
+    }
 }

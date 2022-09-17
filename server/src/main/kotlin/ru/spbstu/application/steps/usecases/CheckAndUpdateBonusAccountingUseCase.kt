@@ -10,6 +10,7 @@ import ru.spbstu.application.steps.repository.BonusAccountingRepository
 import ru.spbstu.application.steps.repository.CompletedStepRepository
 import java.lang.Long.max
 import java.time.Instant
+import kotlin.math.max
 
 private val stepsWithBonusType: Map<Step, List<BonusType>> = mapOf(
     Step(1) to listOf(
@@ -27,18 +28,18 @@ private val stepsWithBonusType: Map<Step, List<BonusType>> = mapOf(
     )
 )
 
-private val bonusTypeWithBonusValue: Map<BonusType, Long> = mapOf(
-    BonusType.Bisociation to 1L,
-    BonusType.DelphiMethod to 1L,
-    BonusType.BrainstormMethod to 1L,
-    BonusType.TrendyFriendy to 5L,
-    BonusType.ScamperS to 1L,
-    BonusType.ScamperC to 1L,
-    BonusType.ScamperA to 1L,
-    BonusType.ScamperM to 1L,
-    BonusType.ScamperP to 1L,
-    BonusType.ScamperE to 1L,
-    BonusType.ScamperR to 1L
+private val bonusTypeWithBonusValue: Map<BonusType, Int> = mapOf(
+    BonusType.Bisociation to 1,
+    BonusType.DelphiMethod to 1,
+    BonusType.BrainstormMethod to 1,
+    BonusType.TrendyFriendy to 5,
+    BonusType.ScamperS to 1,
+    BonusType.ScamperC to 1,
+    BonusType.ScamperA to 1,
+    BonusType.ScamperM to 1,
+    BonusType.ScamperP to 1,
+    BonusType.ScamperE to 1,
+    BonusType.ScamperR to 1
 )
 
 class CheckAndUpdateBonusAccountingUseCase(
@@ -49,8 +50,8 @@ class CheckAndUpdateBonusAccountingUseCase(
     private val transactionWithResult: DatabaseTransactionWithResult
 ) {
     data class Result(
-        val stageBonus: Long?,
-        val stepBonus: Long?
+        val stageBonus: Int?,
+        val stepBonus: Int?
     )
 
     operator fun invoke(userId: User.Id, bonusType: BonusType, step: Step, at: Instant) = transactionWithResult {

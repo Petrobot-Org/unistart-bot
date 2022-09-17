@@ -1,6 +1,6 @@
 package ru.spbstu.application.data.adapters
 
-import com.squareup.sqldelight.ColumnAdapter
+import app.cash.sqldelight.ColumnAdapter
 import ru.spbstu.application.auth.entities.Subscription
 
 object SubscriptionIdAdapter : ColumnAdapter<Subscription.Id, Long> {

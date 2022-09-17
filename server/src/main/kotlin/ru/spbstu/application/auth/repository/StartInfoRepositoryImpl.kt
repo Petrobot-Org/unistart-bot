@@ -11,12 +11,12 @@ class StartInfoRepositoryImpl(private val database: AppDatabase) : StartInfoRepo
         StartInfo(number!!, begin, duration, id)
     }
 
-    override fun add(startInfo: StartInfo) {
-        database.startInfoQueries.add(
+    override fun add(startInfo: StartInfo): Boolean {
+        return database.startInfoQueries.add(
             startInfo.phoneNumber,
             startInfo.begin,
             startInfo.duration
-        )
+        ).executeAsOneOrNull() != null
     }
 
     override fun contains(number: PhoneNumber): Boolean {

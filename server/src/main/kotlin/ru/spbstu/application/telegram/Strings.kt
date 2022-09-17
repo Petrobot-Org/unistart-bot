@@ -122,7 +122,7 @@ object Strings {
             const val Success = "База трендов обновлена!"
 
             fun TooFewTrends(minimum: Int) = "В каждой категории должно быть как минимум $minimum ${
-                pluralize(minimum.toLong(), "тренд", "тренда", "трендов")
+                pluralize(minimum, "тренд", "тренда", "трендов")
             }"
 
             fun WriteError(message: String) = "Не удалось записать данные на диск:\n$message"
@@ -135,7 +135,7 @@ object Strings {
             const val Header = "Продолжительность шагов. Нажмите, чтобы изменить."
             fun Button(stepDuration: ru.spbstu.application.steps.entities.StepDuration): String {
                 val days = stepDuration.duration.toDays()
-                return "Этап ${stepDuration.step.value} – $days ${pluralize(days, "день", "дня", "дней")}"
+                return "Этап ${stepDuration.step.value} – $days ${pluralize(days.toInt(), "день", "дня", "дней")}"
             }
 
             fun Change(step: Step) =
@@ -153,7 +153,7 @@ object Strings {
             fun NonRussianPhoneNumbers(phoneNumbers: List<PhoneNumber>) =
                 "Внимание! Файл содержит нероссийские номера: ${phoneNumbers.joinToString { "+${it.value}" }}"
 
-            fun Added(count: Long) =
+            fun Added(count: Int) =
                 "${
                     pluralize(count, "Добавлен", "Добавлено", "Добавлено")
                 } $count ${
@@ -173,12 +173,12 @@ object Strings {
                     "Формат ячеек с данными: текстовый или числовой"
             const val ErrorNoTelegram = "Этот пользователь не имеет аккаунта в Telegram или его настройки конфиденциальности не позволяют получить данные о пользователе через контакт"
             const val CantDeleteRootAdmin = "Нельзя удалить главного администратора"
-            fun UnableToAddAdmin(phoneNumbers: List<PhoneNumber>) = "Не удалось добавить ${pluralize(phoneNumbers.size.toLong(),"админиcтратора","админиcтраторов", "админиcтраторов")}" +
-                    " по ${pluralize(phoneNumbers.size.toLong(),"номеру","номерам", "номерам")}  $phoneNumbers," +
-                    " так как ${pluralize(phoneNumbers.size.toLong(),"пользователь", "пользователи", "пользователи")}" +
-                    " с  ${pluralize(phoneNumbers.size.toLong(),"этим","этими", "этими")} " +
-                    " ${pluralize(phoneNumbers.size.toLong(),"номером","номерами", "номерами")} " +
-                    "не ${pluralize(phoneNumbers.size.toLong(),"зарегистрирован","зарегистрированы", "зарегистрированы")}"
+            fun UnableToAddAdmin(phoneNumbers: List<PhoneNumber>) = "Не удалось добавить ${pluralize(phoneNumbers.size,"админиcтратора","админиcтраторов", "админиcтраторов")}" +
+                    " по ${pluralize(phoneNumbers.size,"номеру","номерам", "номерам")}  $phoneNumbers," +
+                    " так как ${pluralize(phoneNumbers.size,"пользователь", "пользователи", "пользователи")}" +
+                    " с  ${pluralize(phoneNumbers.size,"этим","этими", "этими")} " +
+                    " ${pluralize(phoneNumbers.size,"номером","номерами", "номерами")} " +
+                    "не ${pluralize(phoneNumbers.size,"зарегистрирован","зарегистрированы", "зарегистрированы")}"
             fun ConfirmationOfDeletion(chat: PrivateChat) = "Вы хотите удалить ${NameOfAdmin(chat)} из администраторов?"
 
             fun NameOfAdmin(chat: PrivateChat) =
@@ -196,31 +196,31 @@ object Strings {
     const val StatisticsSpreadsheetOccupation = "Род занятий"
 
     object Notifications {
-        fun NextStep(duration: Duration, step: Step, bonus: Long) =
+        fun NextStep(duration: Duration, step: Step, bonus: Int) =
             "Если ты пройдёшь этап ${step.value} в течение ${
                 duration.run {
                     val hours = toHours()
-                    "$hours ${pluralize(hours, "часа", "часов", "часов")}"
+                    "$hours ${pluralize(hours.toInt(), "часа", "часов", "часов")}"
                 }
             }, то получишь $bonus ${pluralize(bonus, "бонус", "бонуса", "бонусов")} 🌟"
     }
 
     fun StatisticsSpreadsheetStep(step: Step) = "Этап ${step.value}"
 
-    fun MyRanking(numberOfMembers: Int, myPosition: Int, myBonuses: Long) =
+    fun MyRanking(numberOfMembers: Int, myPosition: Int, myBonuses: Int) =
         "Всего участников в системе: $numberOfMembers ${
-            pluralize(numberOfMembers.toLong(), "человек", "человека", "человек")
+            pluralize(numberOfMembers, "человек", "человека", "человек")
         }, ваше текущее место в рейтинге – $myPosition, накоплено бонусов – $myBonuses"
 
-    fun NewBonusForStage(bonusValue: Long) = "Поздравляю, тебе ${
+    fun NewBonusForStage(bonusValue: Int) = "Поздравляю, тебе ${
         pluralize(bonusValue, "зачислен", "зачислено", "зачислено")
     } $bonusValue ${
         pluralize(bonusValue, "бонус", "бонуса", "бонусов")
     } 🌟"
 
-    fun NewBonusForStep(bonusValue: Long, step: Step) = buildString {
+    fun NewBonusForStep(bonusValue: Int, step: Step) = buildString {
         appendLine("Этап ${step.value} пройден 🏆")
-        if (bonusValue != 0L) {
+        if (bonusValue != 0) {
             append(
                 "Твоё вознаграждение за скорость прохождения составляет $bonusValue ${
                     pluralize(bonusValue, "бонус", "бонуса", "бонусов")
@@ -232,10 +232,10 @@ object Strings {
     fun Exception(message: String?) = "Произошла внутренняя ошибка: $message"
 }
 
-private fun pluralize(quantity: Long, one: String, few: String, many: String): String {
+private fun pluralize(quantity: Int, one: String, few: String, many: String): String {
     return when {
-        quantity % 10 == 1L && quantity % 100 != 11L -> one
-        quantity % 10 in 2L..4L && quantity % 100 !in 12L..14L -> few
+        quantity % 10 == 1 && quantity % 100 != 11 -> one
+        quantity % 10 in 2..4 && quantity % 100 !in 12..14 -> few
         else -> many
     }
 }

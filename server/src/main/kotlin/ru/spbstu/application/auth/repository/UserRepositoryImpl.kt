@@ -1,27 +1,16 @@
 package ru.spbstu.application.auth.repository
 
-import ru.spbstu.application.auth.entities.Avatar
-import ru.spbstu.application.auth.entities.Occupation
 import ru.spbstu.application.auth.entities.PhoneNumber
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.data.source.AppDatabase
 
 class UserRepositoryImpl(private val database: AppDatabase) : UserRepository {
-    private val mapper = { id: User.Id?,
-                           phoneNumber: PhoneNumber?,
-                           avatar: Avatar,
-                           occupation: Occupation,
-                           availableStepsCount: Long?,
-                           amountOfCoins: Long? ->
-        User(id!!, phoneNumber!!, avatar, occupation, availableStepsCount!!, amountOfCoins!!)
-    }
-
     override fun get(id: User.Id): User? {
-        return database.userQueries.get(id, mapper).executeAsOneOrNull()
+        return database.userQueries.get(id).executeAsOneOrNull()?.toDomainModel()
     }
 
     override fun get(phoneNumber: PhoneNumber): User? {
-        return database.userQueries.getByPhoneNumber(phoneNumber, mapper).executeAsOneOrNull()
+        return database.userQueries.getByPhoneNumber(phoneNumber).executeAsOneOrNull()?.toDomainModel()
     }
 
     override fun add(user: User) {
@@ -40,18 +29,27 @@ class UserRepositoryImpl(private val database: AppDatabase) : UserRepository {
     }
 
     override fun contains(id: User.Id): Boolean {
-        return database.userQueries.get(id, mapper).executeAsOneOrNull() != null
+        return database.userQueries.get(id).executeAsOneOrNull() != null
     }
 
     override fun sortByAmountOfCoins(): List<User> {
-        return database.userQueries.sortByAmountOfCoins(mapper).executeAsList()
+        return database.userQueries.sortByAmountOfCoins().executeAsList().map { it.toDomainModel() }
     }
 
-    override fun setAmountOfCoins(id: User.Id, newAmountOfCoins: Long) {
+    override fun setAmountOfCoins(id: User.Id, newAmountOfCoins: Int) {
         database.userQueries.updateAmountOfCoins(newAmountOfCoins, id)
     }
 
-    override fun setAvailableStepsCount(id: User.Id, newAvailableStepsCount: Long) {
+    override fun setAvailableStepsCount(id: User.Id, newAvailableStepsCount: Int) {
         database.userQueries.updateAvailableStepsCount(newAvailableStepsCount, id)
     }
+
+    private fun ru.spbstu.application.data.source.Users.toDomainModel() = User(
+        id = id,
+        phoneNumber = phoneNumber,
+        avatar = avatar,
+        occupation = occupation,
+        availableStepsCount = availableStepsCount,
+        amountOfCoins = amountOfCoins
+    )
 }

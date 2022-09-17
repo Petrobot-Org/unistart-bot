@@ -26,9 +26,11 @@ val unistartModule = module(createdAtStart = true) {
     includes(trendyFriendyModule)
     val appConfig = readAppConfig()
     val secrets = readSecrets()
+    single { readDatabaseCredentials() }
+    single { createDataSource(get()) }
+    single { createAppDatabase(get()) }
     single { appConfig }
     single { secrets.telegramToken }
-    single { createAppDatabase(appConfig.jdbcString) }
     single { ZoneId.of(appConfig.timezone) }
     single { createStateMachine(get(), get()) }
     singleOf(::DatabaseTransactionImpl) bind DatabaseTransaction::class

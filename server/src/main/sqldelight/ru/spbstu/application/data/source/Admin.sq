@@ -1,7 +1,7 @@
 import ru.spbstu.application.auth.entities.User;
 
 CREATE TABLE Admin (
-    id INTEGER AS User.Id PRIMARY KEY NOT NULL
+    id BIGINT AS User.Id PRIMARY KEY NOT NULL
 );
 
 add:

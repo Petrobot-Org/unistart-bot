@@ -34,7 +34,7 @@ fun StateMachineBuilder.stepDurationCommand() {
                 sendTextMessage(it.chat, StepDuration.Header, replyMarkup = stepDurationKeyboard())
             }
             onDataCallbackQuery(Regex("change_step_duration \\d"), handler = {
-                val step = Step(it.data.split(' ')[1].toLong())
+                val step = Step(it.data.split(' ')[1].toInt())
                 setState(WaitingForStepDuration(step, it.messageCallbackQueryOrThrow().message.messageId))
             })
         }
@@ -67,7 +67,7 @@ fun StateMachineBuilder.stepDurationCommand() {
 }
 
 private fun stepDurationKeyboard(): InlineKeyboardMarkup {
-    val durations = (1L..Step.LastValue).map { getStepDuration(Step(it)) }
+    val durations = (1..Step.LastValue).map { getStepDuration(Step(it)) }
     return inlineKeyboard {
         durations.forEach {
             row {

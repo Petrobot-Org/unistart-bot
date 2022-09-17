@@ -20,26 +20,25 @@ class Secrets(
 @Serializable
 class DurationBonus(
     @SerialName("duration_factor") val durationFactor: Double,
-    @SerialName("bonus") val bonus: Long
+    @SerialName("bonus") val bonus: Int
 )
 
 @Serializable
 class AppConfig(
     val timezone: String = "Europe/Moscow",
-    @SerialName("jdbc") val jdbcString: String = "jdbc:sqlite:main.sqlite",
     @SerialName("public_hostname") val publicHostname: String = "https://127.0.0.1",
     @SerialName("root_admin_user_ids") val rootAdminUserIds: Collection<User.Id> = emptyList(),
     @SerialName("default_step_durations_seconds") val defaultStepDurationsSeconds: Map<Step, Long> = mapOf(
-        Step(1L) to 604_800,
-        Step(2L) to 604_800,
-        Step(3L) to 604_800,
-        Step(4L) to 604_800
+        Step(1) to 604_800,
+        Step(2) to 604_800,
+        Step(3) to 604_800,
+        Step(4) to 604_800
     ),
     @SerialName("notifications") val notifications: NotificationsConfig = NotificationsConfig(),
     @SerialName("duration_to_bonus") val durationToBonus: Collection<DurationBonus> = listOf(
-        DurationBonus(0.5, 8L),
-        DurationBonus(1.0, 5L),
-        DurationBonus(2.0, 3L)
+        DurationBonus(0.5, 8),
+        DurationBonus(1.0, 5),
+        DurationBonus(2.0, 3)
     )
 )
 

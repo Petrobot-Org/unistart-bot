@@ -4,15 +4,18 @@ import ru.spbstu.application.auth.entities.StartInfo;
 import java.time.Duration;
 
 CREATE TABLE StartInfo(
-    id INTEGER AS StartInfo.Id PRIMARY KEY AUTOINCREMENT,
-    phoneNumber TEXT AS PhoneNumber UNIQUE,
-    begin INTEGER AS Instant NOT NULL,
-    duration INTEGER AS Duration NOT NULL
+    id BIGSERIAL AS StartInfo.Id PRIMARY KEY,
+    phoneNumber TEXT AS PhoneNumber UNIQUE NOT NULL,
+    begin BIGINT AS Instant NOT NULL,
+    duration BIGINT AS Duration NOT NULL
 );
 
 add:
-INSERT OR REPLACE INTO StartInfo(phoneNumber, begin, duration)
-VALUES (:phoneNumber, :begin, :duration);
+INSERT INTO StartInfo(phoneNumber, begin, duration)
+VALUES (:phoneNumber, :begin, :duration)
+ON CONFLICT(phoneNumber)
+DO UPDATE SET begin = :begin, duration = :duration
+RETURNING id;
 
 containsPhoneNumber:
 SELECT COUNT(1) FROM StartInfo

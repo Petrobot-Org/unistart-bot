@@ -3,42 +3,42 @@ import ru.spbstu.application.auth.entities.Occupation;
 import ru.spbstu.application.auth.entities.PhoneNumber;
 import ru.spbstu.application.auth.entities.User;
 
-CREATE TABLE User (
-    id INTEGER AS User.Id PRIMARY KEY,
-    phoneNumber TEXT AS PhoneNumber UNIQUE,
+CREATE TABLE Users (
+    id BIGINT AS User.Id PRIMARY KEY,
+    phoneNumber TEXT AS PhoneNumber UNIQUE NOT NULL,
     avatar TEXT AS Avatar NOT NULL,
     occupation TEXT AS Occupation NOT NULL,
-    availableStepsCount INTEGER,
-    amountOfCoins INTEGER
+    availableStepsCount INTEGER NOT NULL,
+    amountOfCoins INTEGER NOT NULL
 );
 
 get:
-SELECT * FROM User
+SELECT * FROM Users
 WHERE id = :id;
 
 getByPhoneNumber:
-SELECT * FROM User
+SELECT * FROM Users
 WHERE phoneNumber = :phoneNumber;
 
 add:
-INSERT INTO User(id, phoneNumber, avatar, occupation, availableStepsCount, amountOfCoins)
+INSERT INTO Users(id, phoneNumber, avatar, occupation, availableStepsCount, amountOfCoins)
 VALUES (:id, :phoneNumber, :avatar, :occupation, :availableStepsCount, :amountOfCoins);
 
 containsPhoneNumber:
-SELECT COUNT(1) FROM User
+SELECT COUNT(1) FROM Users
 WHERE phoneNumber = :phoneNumber;
 
 sortByAmountOfCoins:
-SELECT * FROM User
+SELECT * FROM Users
 ORDER BY amountOfCoins DESC;
 
 updateAmountOfCoins:
-UPDATE User
+UPDATE Users
 SET amountOfCoins = :newAmountOfCoins
 WHERE id = :id;
 
 updateAvailableStepsCount:
-UPDATE User
+UPDATE Users
 SET availableStepsCount = :newAvailableStepsCount
 WHERE id = :id;
 

@@ -21,7 +21,9 @@ dependencies {
     implementation(libs.kotlinx.html)
     implementation(libs.bundles.koin)
     implementation(libs.bundles.logging)
-    implementation(libs.sqldelight.sqlite)
+    implementation(libs.postgresql)
+    implementation(libs.hikari)
+    implementation(libs.sqldelight.jdbc)
     implementation(libs.kaml)
     implementation(libs.bundles.poi)
     implementation(libs.quartz)
@@ -42,8 +44,8 @@ application {
 sqldelight {
     database("AppDatabase") {
         packageName = "ru.spbstu.application.data.source"
+        dialect("app.cash.sqldelight:postgresql-dialect:2.0.0-alpha03")
         sourceFolders = listOf("sqldelight")
-        verifyMigrations = true
     }
 }
 

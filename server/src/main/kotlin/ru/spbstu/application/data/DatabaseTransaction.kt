@@ -6,5 +6,4 @@ interface DatabaseTransaction {
 
 interface DatabaseTransactionWithResult {
     operator fun <R> invoke(body: () -> R): R
-    fun changes(): Long
 }

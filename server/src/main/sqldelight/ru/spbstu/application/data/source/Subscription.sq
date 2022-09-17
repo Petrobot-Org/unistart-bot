@@ -4,17 +4,19 @@ import ru.spbstu.application.auth.entities.Subscription;
 import ru.spbstu.application.auth.entities.User;
 
 CREATE TABLE Subscription (
-    id INTEGER AS Subscription.Id PRIMARY KEY AUTOINCREMENT,
-    start INTEGER AS Instant NOT NULL,
-    duration INTEGER AS Duration NOT NULL,
-    userId INTEGER AS User.Id NOT NULL,
-    FOREIGN KEY (userId) REFERENCES User (id),
+    id BIGSERIAL AS Subscription.Id PRIMARY KEY,
+    start BIGINT AS Instant NOT NULL,
+    duration BIGINT AS Duration NOT NULL,
+    userId BIGINT AS User.Id NOT NULL,
     UNIQUE(start, duration, userId)
 );
 
 add:
-INSERT OR IGNORE INTO Subscription(start, duration, userId)
-VALUES (:start, :duration, :userId);
+INSERT INTO Subscription(start, duration, userId)
+VALUES (:start, :duration, :userId)
+ON CONFLICT(start, duration, userId)
+DO NOTHING
+RETURNING id;
 
 get:
 SELECT * FROM Subscription

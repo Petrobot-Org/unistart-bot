@@ -10,10 +10,10 @@ class CalculateDurationBonusUseCase(
     private val config: AppConfig,
     private val getStepDuration: GetStepDurationUseCase
 ) {
-    operator fun invoke(step: Step, startedAt: Instant, endedAt: Instant): Long {
+    operator fun invoke(step: Step, startedAt: Instant, endedAt: Instant): Int {
         val baseStepDuration = getStepDuration(step).duration
         return config.durationToBonus
             .filter { Duration.between(startedAt, endedAt) < baseStepDuration * it.durationFactor }
-            .maxOfOrNull { it.bonus } ?: 0L
+            .maxOfOrNull { it.bonus } ?: 0
     }
 }

@@ -1,12 +1,12 @@
 package ru.spbstu.application.data.adapters
 
-import com.squareup.sqldelight.ColumnAdapter
+import app.cash.sqldelight.ColumnAdapter
 import ru.spbstu.application.steps.entities.Step
 
-object StepAdapter : ColumnAdapter<Step, Long> {
-    override fun decode(databaseValue: Long): Step =
+object StepAdapter : ColumnAdapter<Step, Int> {
+    override fun decode(databaseValue: Int): Step =
         Step(databaseValue)
 
-    override fun encode(value: Step): Long =
+    override fun encode(value: Step): Int =
         value.value
 }

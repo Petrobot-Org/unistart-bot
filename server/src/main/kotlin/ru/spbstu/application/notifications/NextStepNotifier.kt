@@ -21,7 +21,7 @@ private const val UserIdKey = "userId"
 private const val StepKey = "step"
 private const val BonusKey = "bonus"
 
-typealias SendNextStepMessage = (User.Id, Duration, Step, Long) -> Unit
+typealias SendNextStepMessage = (User.Id, Duration, Step, Int) -> Unit
 
 class NextStepNotifier(
     private val config: AppConfig,
@@ -93,8 +93,8 @@ class NextStepNotifier(
             val jobDataMap = context!!.jobDetail.jobDataMap
             val triggerDataMap = context.trigger.jobDataMap
             val userId = User.Id(jobDataMap.getLong(UserIdKey))
-            val step = Step(jobDataMap.getLong(StepKey))
-            val bonus = triggerDataMap.getLong(BonusKey)
+            val step = Step(jobDataMap.getInt(StepKey))
+            val bonus = triggerDataMap.getInt(BonusKey)
             sendMessage(userId, duration, step, bonus)
         }
     }
