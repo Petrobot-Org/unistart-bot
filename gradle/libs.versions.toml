@@ -48,7 +48,7 @@ poi = { module = "org.apache.poi:poi", version.ref = "poi" }
 poi-ooxml = { module = "org.apache.poi:poi-ooxml", version.ref = "poi" }
 
 junit-jupiter = "org.junit.jupiter:junit-jupiter:5.9.0"
-mockk = "io.mockk:mockk:1.9.3"
+mockk = "io.mockk:mockk:1.12.8"
 
 quartz = { module = "org.quartz-scheduler:quartz", version = "2.3.2" }
 tgbotapi-fsm = "com.ithersta.tgbotapi:tgbotapi-fsm:0.16.0"
