@@ -1,6 +1,6 @@
 package ru.spbstu.application.data.adapters
 
-import com.squareup.sqldelight.ColumnAdapter
+import app.cash.sqldelight.ColumnAdapter
 import java.time.Instant
 
 object InstantAdapter : ColumnAdapter<Instant, Long> {

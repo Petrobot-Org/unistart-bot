@@ -16,14 +16,13 @@ class AddPhoneNumbersUseCase(
     private val transactionWithResult: DatabaseTransactionWithResult
 ) {
     operator fun invoke(phoneNumbers: Set<PhoneNumber>, start: Instant, duration: Duration) = transactionWithResult {
-        val allChanges = phoneNumbers.sumOf {
+        val allChanges = phoneNumbers.count {
             val user = userRepository.get(it)
             if (user == null) {
                 startInfoRepository.add(StartInfo(it, start, duration))
             } else {
                 subscriptionRepository.add(start, duration, user.id)
             }
-            transactionWithResult.changes()
         }
         return@transactionWithResult allChanges
     }

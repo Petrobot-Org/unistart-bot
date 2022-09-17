@@ -7,8 +7,8 @@ data class User(
     override val phoneNumber: PhoneNumber,
     override val avatar: Avatar,
     override val occupation: Occupation,
-    override val availableStepsCount: Long,
-    override val amountOfCoins: Long
+    override val availableStepsCount: Int,
+    override val amountOfCoins: Int
 ) : UserData {
     @Serializable
     @JvmInline
@@ -20,6 +20,6 @@ interface UserData {
     val phoneNumber: PhoneNumber
     val avatar: Avatar
     val occupation: Occupation
-    val availableStepsCount: Long
-    val amountOfCoins: Long
+    val availableStepsCount: Int
+    val amountOfCoins: Int
 }

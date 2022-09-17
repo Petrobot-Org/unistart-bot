@@ -1,0 +1,71 @@
+version: '3.9'
+
+secrets:
+  telegram_token:
+    file: /home/www/unistart/.token
+
+services:
+  db:
+    image: "postgres:14"
+    environment:
+      POSTGRES_DB: unistart
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres:/var/lib/postgresql/data/
+    networks:
+      - db
+
+  pgadmin:
+    image: "dpage/pgadmin4:6.13"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: schilyaev.vlad@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: unistart_default_password
+      PGADMIN_LISTEN_PORT: 80
+    ports:
+      - "15433:80"
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    depends_on:
+      - db
+    networks:
+      - db
+
+  app:
+    build: .
+    restart: always
+    depends_on:
+      - db
+    secrets:
+      - telegram_token
+    environment:
+      DATABASE_NAME: unistart
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+      DATABASE_SERVER: db
+      DUMP_USER_ID: 105293829
+      TOKEN_FILE: /run/secrets/telegram_token
+    networks:
+      - db
+      - app
+    #volumes:
+    #  - app:/
+
+  cloudflared:
+    image: "cloudflare/cloudflared:latest"
+    command: 'tunnel --config /etc/cloudflared/config.yml run'
+    depends_on:
+      - app
+    volumes:
+      - '/etc/cloudflared/:/etc/cloudflared/'
+    networks:
+      - app
+
+volumes:
+  postgres:
+  pgadmin:
+  app:
+
+networks:
+  db:
+  app:

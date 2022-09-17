@@ -1,0 +1,14 @@
+ALTER TABLE BonusAccounting
+ADD CONSTRAINT fk_bonus_accounting_user_id
+FOREIGN KEY (userId)
+REFERENCES Users(id);
+
+ALTER TABLE CompletedStep
+ADD CONSTRAINT fk_completed_step_user_id
+FOREIGN KEY (userId)
+REFERENCES Users(id);
+
+ALTER TABLE Subscription
+ADD CONSTRAINT fk_subscription_user_id
+FOREIGN KEY (userId)
+REFERENCES Users(id);

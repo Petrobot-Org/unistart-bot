@@ -15,7 +15,6 @@ import dev.inmo.tgbotapi.types.ChatId
 import dev.inmo.tgbotapi.types.UserId
 import dev.inmo.tgbotapi.types.message.MarkdownParseMode
 import dev.inmo.tgbotapi.types.message.MarkdownV2ParseMode
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.spbstu.application.auth.entities.users.BaseUser
@@ -48,7 +47,7 @@ fun RoleFilterBuilder<SubscribedUser>.scamper() {
             message.delete(this)
             val (state, bonusType) = state.onQuestionAnswered(message.content.text) ?: return@onText
             val messages = giveBonusWithMessage(message.chat.id, bonusType, Step(1))
-            GlobalScope.launch {
+            coroutineScope.launch {
                 delay(6.seconds)
                 messages.forEach { it.delete(this@onText) }
             }

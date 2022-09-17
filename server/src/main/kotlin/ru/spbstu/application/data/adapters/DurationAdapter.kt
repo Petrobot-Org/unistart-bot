@@ -1,6 +1,6 @@
 package ru.spbstu.application.data.adapters
 
-import com.squareup.sqldelight.ColumnAdapter
+import app.cash.sqldelight.ColumnAdapter
 import java.time.Duration
 
 object DurationAdapter : ColumnAdapter<Duration, Long> {

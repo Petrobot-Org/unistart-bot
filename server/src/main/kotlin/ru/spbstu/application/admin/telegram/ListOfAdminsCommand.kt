@@ -72,11 +72,13 @@ fun StateMachineBuilder.listOfAdminsCommand() {
                     return@onContact
                 }
                 adminRepository.add(User.Id(userId.chatId))
-                editMessageReplyMarkup(
-                    chat = it.chat,
-                    messageId = state.messageId,
-                    replyMarkup = listOfAdminButtons()
-                )
+                runCatching {
+                    editMessageReplyMarkup(
+                        chat = it.chat,
+                        messageId = state.messageId,
+                        replyMarkup = listOfAdminButtons()
+                    )
+                }
                 setState(AdminMenu)
             }
             onDocument { message ->
@@ -92,11 +94,13 @@ fun StateMachineBuilder.listOfAdminsCommand() {
                 }.onFailure {
                     sendTextMessage(message.chat, Strings.DatabaseError)
                 }
-                editMessageReplyMarkup(
-                    chat = message.chat,
-                    messageId = state.messageId,
-                    replyMarkup = listOfAdminButtons()
-                )
+                runCatching {
+                    editMessageReplyMarkup(
+                        chat = message.chat,
+                        messageId = state.messageId,
+                        replyMarkup = listOfAdminButtons()
+                    )
+                }
                 setState(AdminMenu)
             }
         }

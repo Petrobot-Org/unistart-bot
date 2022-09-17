@@ -56,9 +56,9 @@ fun createAdminPanel(): ReplyKeyboardMarkup {
         row {
             simpleButton(Strings.AdminPanel.Menu.ListOfAdmins)
         }
-        row {
+        /*row { FIXME: Re-enable once docker compose volume is connected
             simpleButton(Strings.AdminPanel.Menu.UploadTrends)
-        }
+        }*/
         row {
             simpleButton(Strings.BackToSteps)
         }

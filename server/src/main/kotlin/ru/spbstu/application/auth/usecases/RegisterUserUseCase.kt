@@ -24,7 +24,7 @@ class RegisterUserUseCase(
         phoneNumber: PhoneNumber,
         avatar: Avatar,
         occupation: Occupation,
-        startStep: Long,
+        startStep: Int,
         at: Instant
     ) = transaction {
         userRepository.add(User(userId, phoneNumber, avatar, occupation, startStep, 0))

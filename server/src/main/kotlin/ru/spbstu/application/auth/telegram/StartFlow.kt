@@ -154,8 +154,8 @@ fun StateMachineBuilder.startFlow() {
             }
             onText { message ->
                 val (startLevel, firstStepInfo) = when (message.content.text) {
-                    Strings.SuperIdea, Strings.NotMyIdea -> 2L to Strings.StartWithSecondStep
-                    Strings.SoSoIdea, Strings.NoIdea -> 1L to Strings.StartWithFirstStep
+                    Strings.SuperIdea, Strings.NotMyIdea -> 2 to Strings.StartWithSecondStep
+                    Strings.SoSoIdea, Strings.NoIdea -> 1 to Strings.StartWithFirstStep
                     else -> return@onText
                 }
                 val userId = User.Id(message.chat.id.chatId)

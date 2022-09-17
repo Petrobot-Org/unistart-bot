@@ -47,7 +47,9 @@ suspend fun RequestsExecutor.sendAvailableSteps(chat: ChatId, user: SubscribedUs
             oneTimeKeyboard = true
         ) {
             row { simpleButton(Strings.GetMyStats) }
-            steps.take(user.availableStepsCount.toInt()).chunked(2).forEach {
+            steps
+                .take(1) // FIXME: Remove when other steps are ready
+                .take(user.availableStepsCount).chunked(2).forEach {
                 row {
                     it.forEach { simpleButton(it) }
                 }

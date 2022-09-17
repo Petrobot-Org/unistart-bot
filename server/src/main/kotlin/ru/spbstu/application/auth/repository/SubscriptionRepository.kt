@@ -6,6 +6,6 @@ import java.time.Duration
 import java.time.Instant
 
 interface SubscriptionRepository {
-    fun add(start: Instant, duration: Duration, userId: User.Id)
+    fun add(start: Instant, duration: Duration, userId: User.Id): Boolean
     fun get(userId: User.Id): List<Subscription>
 }

@@ -56,7 +56,7 @@ fun StateMachineBuilder.uploadPhoneNumbersCommand() {
             onText { message ->
                 val dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.uuuu")
                 val start = runCatching {
-                    val date = dateTimeFormatter.parse(message.content.text, LocalDate::from)
+                    val date = LocalDate.parse(message.content.text, dateTimeFormatter)
                     date.atStartOfDay(zoneId).toInstant()
                 }.getOrElse {
                     sendTextMessage(message.chat, UploadPhoneNumbers.InvalidDate)
@@ -84,6 +84,7 @@ fun StateMachineBuilder.uploadPhoneNumbersCommand() {
                 }.onFailure {
                     sendTextMessage(message.chat, Strings.DatabaseError)
                 }
+                setState(AdminMenu)
             }
         }
     }

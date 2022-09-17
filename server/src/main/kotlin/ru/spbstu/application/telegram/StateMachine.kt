@@ -10,9 +10,12 @@ import com.ithersta.tgbotapi.fsm.entities.triggers.onText
 import com.ithersta.tgbotapi.fsm.entities.triggers.onTransition
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.types.UserId
+import io.ktor.util.logging.*
+import mu.KotlinLogging
 import ru.spbstu.application.admin.telegram.adminCommands
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.entities.users.BaseUser
+import ru.spbstu.application.auth.entities.users.ExpiredUser
 import ru.spbstu.application.auth.entities.users.SubscribedUser
 import ru.spbstu.application.auth.telegram.startFlow
 import ru.spbstu.application.auth.usecases.GetUserUseCase
@@ -32,12 +35,15 @@ typealias RoleFilterBuilder<U> = RoleFilterBuilder<DialogState, BaseUser, U, Use
 typealias StateFilterBuilder<S, U> = StateFilterBuilder<DialogState, BaseUser, S, U, UserId>
 typealias StatefulContext<S, U> = StatefulContext<DialogState, BaseUser, S, U>
 
+private val logger = KotlinLogging.logger { }
+
 fun createStateMachine(
     getUser: GetUserUseCase,
     stateRepository: UserDialogStateRepository
 ) = stateMachine({ getUser(User.Id(it.chatId), Instant.now()) }, stateRepository) {
     onException { userId, throwable ->
-        sendTextMessage(userId, Strings.Exception(throwable.message))
+        logger.error(throwable)
+        sendTextMessage(userId, Strings.Exception(throwable::class.toString()))
     }
     includeHelp()
     anyRole {
@@ -47,6 +53,7 @@ fun createStateMachine(
         }
     }
     startFlow()
+    adminCommands()
     role<SubscribedUser> {
         state<EmptyState> {
             onTransition { sendAvailableSteps(it, user) }
@@ -55,6 +62,16 @@ fun createStateMachine(
         }
         step1()
     }
-    adminCommands()
+    expiredUserFallback()
     fallback()
+}
+
+private fun StateMachineBuilder<DialogState, BaseUser, UserId>.expiredUserFallback() {
+    role<ExpiredUser> {
+        anyState {
+            onText {
+                sendTextMessage(it.chat, Strings.NotSubscribed)
+            }
+        }
+    }
 }

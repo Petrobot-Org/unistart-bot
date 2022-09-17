@@ -1,6 +1,6 @@
 package ru.spbstu.application.data.adapters
 
-import com.squareup.sqldelight.ColumnAdapter
+import app.cash.sqldelight.ColumnAdapter
 import ru.spbstu.application.auth.entities.StartInfo
 
 object StartInfoIdAdapter : ColumnAdapter<StartInfo.Id, Long> {
