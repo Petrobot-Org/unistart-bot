@@ -2,7 +2,9 @@ package ru.spbstu.application.telegram
 
 import java.io.File
 
-fun readToken(): String {
+val telegramToken by lazy { readToken().filterNot { it.isWhitespace() } }
+
+private fun readToken(): String {
     return System.getenv()["TOKEN"] ?: readFromFile()
 }
 

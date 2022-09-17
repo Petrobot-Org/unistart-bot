@@ -13,15 +13,13 @@ class TelegramBot(
     private val configureNotifiers: ConfigureNotifiers,
     private val stateMachine: StateMachine<*, *, *>
 ) {
-    val bot = telegramBot(readToken()) {
+    val bot = telegramBot(telegramToken) {
         requestsLimiter = CommonLimiter(lockCount = 30, regenTime = 1000)
         client = HttpClient(OkHttp)
     }
 
     suspend fun start() {
-        bot.buildBehaviourWithLongPolling(
-            defaultExceptionsHandler = { it.printStackTrace() }
-        ) {
+        bot.buildBehaviourWithLongPolling {
             configureNotifiers(scope)
             with(stateMachine) { collect() }
         }.join()

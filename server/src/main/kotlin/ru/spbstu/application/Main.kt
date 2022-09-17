@@ -17,7 +17,7 @@ import ru.spbstu.application.configuration.configureSerialization
 import ru.spbstu.application.telegram.TelegramBot
 
 suspend fun main() {
-    embeddedServer(Netty, port = 8080, host = "127.0.0.1") {
+    embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
         install(Koin) {
             slf4jLogger()
             modules(unistartModule)
