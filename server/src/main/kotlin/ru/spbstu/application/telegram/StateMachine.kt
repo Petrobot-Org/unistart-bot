@@ -47,6 +47,7 @@ fun createStateMachine(
         }
     }
     startFlow()
+    adminCommands()
     role<SubscribedUser> {
         state<EmptyState> {
             onTransition { sendAvailableSteps(it, user) }
@@ -55,6 +56,5 @@ fun createStateMachine(
         }
         step1()
     }
-    adminCommands()
     fallback()
 }
