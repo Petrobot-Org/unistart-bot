@@ -4,6 +4,8 @@ import com.ithersta.tgbotapi.fsm.entities.StateMachine
 import dev.inmo.tgbotapi.bot.ktor.telegramBot
 import dev.inmo.tgbotapi.bot.settings.limiters.CommonLimiter
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviourWithLongPolling
+import io.ktor.client.*
+import io.ktor.client.engine.okhttp.*
 import kotlinx.serialization.Serializable
 import ru.spbstu.application.notifications.ConfigureNotifiers
 
@@ -13,7 +15,8 @@ class TelegramBot(
     private val stateMachine: StateMachine<*, *, *>
 ) {
     val bot = telegramBot(token.value) {
-        requestsLimiter = CommonLimiter(20, 1000)
+        requestsLimiter = CommonLimiter(lockCount = 30, regenTime = 1000)
+        client = HttpClient(OkHttp)
     }
 
     suspend fun start() {
