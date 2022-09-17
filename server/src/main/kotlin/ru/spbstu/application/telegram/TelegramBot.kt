@@ -6,7 +6,6 @@ import dev.inmo.tgbotapi.bot.settings.limiters.CommonLimiter
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviourWithLongPolling
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
-import kotlinx.serialization.Serializable
 import ru.spbstu.application.notifications.ConfigureNotifiers
 
 class TelegramBot(
