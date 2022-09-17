@@ -84,6 +84,7 @@ fun StateMachineBuilder.uploadPhoneNumbersCommand() {
                 }.onFailure {
                     sendTextMessage(message.chat, Strings.DatabaseError)
                 }
+                setState(AdminMenu)
             }
         }
     }
