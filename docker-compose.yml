@@ -2,7 +2,7 @@ version: '3.9'
 
 secrets:
   telegram_token:
-    file: /Users/ithersta/unistart/.token
+    file: /home/www/unistart/.token
 
 services:
   db:
