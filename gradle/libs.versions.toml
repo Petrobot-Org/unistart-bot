@@ -10,7 +10,7 @@ kotlin-logging = "2.1.23"
 sqldelight = "1.5.3"
 kaml = "0.46.0"
 poi = "5.2.2"
-compose = "1.2.0-alpha01-dev770"
+compose = "1.2.0-beta01"
 
 [libraries]
 ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
