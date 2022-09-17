@@ -15,6 +15,7 @@ import mu.KotlinLogging
 import ru.spbstu.application.admin.telegram.adminCommands
 import ru.spbstu.application.auth.entities.User
 import ru.spbstu.application.auth.entities.users.BaseUser
+import ru.spbstu.application.auth.entities.users.ExpiredUser
 import ru.spbstu.application.auth.entities.users.SubscribedUser
 import ru.spbstu.application.auth.telegram.startFlow
 import ru.spbstu.application.auth.usecases.GetUserUseCase
@@ -61,5 +62,16 @@ fun createStateMachine(
         }
         step1()
     }
+    expiredUserFallback()
     fallback()
+}
+
+private fun StateMachineBuilder<DialogState, BaseUser, UserId>.expiredUserFallback() {
+    role<ExpiredUser> {
+        anyState {
+            onText {
+                sendTextMessage(it.chat, Strings.NotSubscribed)
+            }
+        }
+    }
 }
