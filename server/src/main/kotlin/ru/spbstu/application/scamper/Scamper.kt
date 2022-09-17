@@ -48,7 +48,7 @@ fun RoleFilterBuilder<SubscribedUser>.scamper() {
             message.delete(this)
             val (state, bonusType) = state.onQuestionAnswered(message.content.text) ?: return@onText
             val messages = giveBonusWithMessage(message.chat.id, bonusType, Step(1))
-            GlobalScope.launch {
+            coroutineScope.launch {
                 delay(6.seconds)
                 messages.forEach { it.delete(this@onText) }
             }
