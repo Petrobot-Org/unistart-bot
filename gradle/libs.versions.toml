@@ -50,7 +50,7 @@ kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml" }
 poi = { module = "org.apache.poi:poi", version.ref = "poi" }
 poi-ooxml = { module = "org.apache.poi:poi-ooxml", version.ref = "poi" }
 
-junit-jupiter = "org.junit.jupiter:junit-jupiter:5.9.0"
+junit-jupiter = "org.junit.jupiter:junit-jupiter:5.9.1"
 mockk = "io.mockk:mockk:1.12.8"
 
 quartz = { module = "org.quartz-scheduler:quartz", version = "2.3.2" }
