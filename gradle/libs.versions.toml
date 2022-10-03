@@ -54,7 +54,7 @@ junit-jupiter = "org.junit.jupiter:junit-jupiter:5.9.1"
 mockk = "io.mockk:mockk:1.13.2"
 
 quartz = { module = "org.quartz-scheduler:quartz", version = "2.3.2" }
-tgbotapi-fsm = "com.ithersta.tgbotapi:tgbotapi-fsm:0.16.0"
+tgbotapi-fsm = "com.ithersta.tgbotapi:tgbotapi-fsm:0.17.0"
 
 [plugins]
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
