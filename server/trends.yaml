@@ -1,0 +1,68 @@
+cards_per_game: 3
+sets:
+  "Gartner":
+    - name: "Data Fabric"
+      description: "Data fabric provides a flexible, resilient integration of data sources\
+      \ across platforms and business users, making data available everywhere it’\
+      s needed regardless where the data lives."
+      filename: "fabric.webp"
+    - name: "Cybersecurity Mesh"
+      description: "Cybersecurity mesh is a flexible, composable architecture that integrates\
+      \ widely distributed and disparate security services."
+      filename: "cybersecurity.webp"
+    - name: "Privacy-Enhancing Computation"
+      description: "Privacy-enhancing computation secures the processing of personal\
+      \ data in untrusted environments — which is increasingly critical due to evolving\
+      \ privacy and data protection laws as well as growing consumer concerns."
+      filename: "privacy.webp"
+    - name: "Cloud-Native Platforms"
+      description: "Cloud-native platforms are technologies that allow you to build\
+      \ new application architectures that are resilient, elastic and agile — enabling\
+      \ you to respond to rapid digital change."
+      filename: "cloud.webp"
+    - name: "Composable Applications"
+      description: "Composable applications are built from business-centric modular\
+      \ components.\n\nComposable applications make it easier to use and reuse code,\
+      \ accelerating the time to market for new software solutions and releasing enterprise\
+      \ value."
+      filename: "lego.webp"
+  "Коллекция Перекрестков":
+    - name: "Образец 1"
+      description: "–"
+      filename: "1.webp"
+    - name: "Образец 2"
+      description: "–"
+      filename: "2.webp"
+    - name: "Образец 3"
+      description: "–"
+      filename: "3.webp"
+    - name: "Образец 4"
+      description: "–"
+      filename: "4.webp"
+    - name: "Образец 5"
+      description: "–"
+      filename: "5.webp"
+    - name: "Образец 6"
+      description: "–"
+      filename: "6.webp"
+    - name: "Образец 7"
+      description: "–"
+      filename: "7.webp"
+    - name: "Образец 8"
+      description: "–"
+      filename: "8.webp"
+    - name: "Образец 9"
+      description: "–"
+      filename: "9.webp"
+    - name: "Образец 10"
+      description: "–"
+      filename: "10.webp"
+    - name: "Образец 11"
+      description: "–"
+      filename: "11.webp"
+    - name: "Образец 12"
+      description: "–"
+      filename: "12.webp"
+    - name: "Образец 13"
+      description: "–"
+      filename: "13.webp"

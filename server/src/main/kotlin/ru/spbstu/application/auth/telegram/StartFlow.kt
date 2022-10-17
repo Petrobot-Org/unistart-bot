@@ -102,15 +102,11 @@ fun StateMachineBuilder.startFlow() {
             onTransition {
                 sendTextMessage(
                     it, Strings.ChooseOccupation,
-                    replyMarkup = ReplyKeyboardMarkup(
-                        buttons = arrayOf(
-                            SimpleKeyboardButton(Strings.OccupationByString.keys.elementAt(6)),
-                            SimpleKeyboardButton(Strings.OccupationByString.keys.elementAt(7)),
-                            SimpleKeyboardButton(Strings.Student)
-                        ),
-                        resizeKeyboard = true,
-                        oneTimeKeyboard = true
-                    )
+                    replyMarkup = replyKeyboard(resizeKeyboard = true, oneTimeKeyboard = true) {
+                        row { simpleButton(Strings.OccupationByString.keys.elementAt(6)) }
+                        row { simpleButton(Strings.OccupationByString.keys.elementAt(7)) }
+                        row { simpleButton(Strings.Student) }
+                    }
                 )
             }
             onText {
