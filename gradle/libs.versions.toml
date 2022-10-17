@@ -1,6 +1,6 @@
 [versions]
 kotlin = "1.7.10"
-serialization = "1.4.0"
+serialization = "1.4.1"
 ktor = "2.1.2"
 tgbotapi = "3.2.7"
 koin = "3.2.2"
