@@ -1,6 +1,7 @@
 timezone: Europe/Moscow
 public_hostname: "https://unistart.ithersta.com" # Публичный адрес веб-приложения
 root_admin_user_ids: # Список Telegram user id админов
+  - 159711317
   - 105293829
 default_step_durations_seconds: # Длительность шагов по умолчанию
   1: 604800
