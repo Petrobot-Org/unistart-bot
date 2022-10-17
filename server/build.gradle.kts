@@ -44,7 +44,7 @@ application {
 sqldelight {
     database("AppDatabase") {
         packageName = "ru.spbstu.application.data.source"
-        dialect("app.cash.sqldelight:postgresql-dialect:2.0.0-alpha03")
+        dialect("app.cash.sqldelight:postgresql-dialect:2.0.0-alpha04")
         sourceFolders = listOf("sqldelight")
     }
 }
