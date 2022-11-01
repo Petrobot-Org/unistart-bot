@@ -2,7 +2,7 @@
 kotlin = "1.7.10"
 serialization = "1.4.0"
 ktor = "2.1.2"
-tgbotapi = "3.2.7"
+tgbotapi = "3.3.1"
 koin = "3.2.2"
 kotlinx-html = "0.8.0"
 slf4j = "2.0.3"
